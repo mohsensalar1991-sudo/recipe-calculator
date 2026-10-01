@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ccalc-shell-v0.1.0';
+const CACHE_NAME = 'ccalc-shell-v0.2.0';
 const ASSETS = ['./', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
