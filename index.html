@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>حساب‌گر قیمت شیرینی و کیک</title>
 <meta name="theme-color" content="#C98A2B">
 <meta name="mobile-web-app-capable" content="yes">
@@ -53,6 +53,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px);}
   --border:rgba(44,59,38,.18);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Vazirmatn',Tahoma,Arial,sans-serif;font-size:1.0625rem;line-height:1.65;padding-bottom:calc(var(--nav-h) + 26px);}
 button:focus-visible,.inp:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--primary);outline-offset:2px;}
@@ -74,10 +75,10 @@ h1,h2{margin:0 0 4px;}
 .btn.sm{padding:10px 14px;font-size:.875rem;min-height:42px;width:auto;}
 
 label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
-.hint{font-size:.8125rem;color:var(--muted);margin:-2px 0 8px;}
+.hint{font-size:.8125rem;color:var(--muted);margin:6px 0 12px;line-height:1.7;}
 .inp,select{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:14px;border-radius:12px;font-family:inherit;font-size:1.0625rem;outline:none;}
 .inp:focus,select:focus{border-color:var(--primary);}
-.field{margin-bottom:14px;}
+.field{margin-bottom:18px;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
 .item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;}
@@ -231,6 +232,12 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 </div>
 
 <div id="view-settings" class="wrap hidden">
+  <div class="card" id="about-card">
+    <h2>ℹ️ درباره برنامه</h2>
+    <div class="stat-row"><span>حساب‌گر قنادی — نسخه</span><b id="about-version"></b></div>
+    <div class="stat-row"><span>آخرین ذخیره</span><b id="about-saved">—</b></div>
+  </div>
+
   <div class="card">
     <h2>🎨 شخصی‌سازی ظاهر برنامه</h2>
     <p class="hint">رنگ‌بندی و اندازه نوشته‌ها رو مطابق سلیقه و چشم خودتون تنظیم کنید.</p>
@@ -272,12 +279,6 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
     <p class="hint">این گزینه همه‌ی مواد اولیه و محصولات ثبت‌شده رو برای همیشه پاک می‌کنه. قبلش حتماً یک فایل پشتیبان بگیرید.</p>
     <button class="btn danger" onclick="askDeleteAll()">🗑️ پاک کردن کامل اطلاعات</button>
   </div>
-
-  <div class="card" id="about-card">
-    <h2>ℹ️ درباره برنامه</h2>
-    <div class="stat-row"><span>حساب‌گر قنادی — نسخه</span><b id="about-version"></b></div>
-    <div class="stat-row"><span>آخرین ذخیره</span><b id="about-saved">—</b></div>
-  </div>
 </div>
 
 <nav class="bottom-nav">
@@ -312,8 +313,9 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
     </div>
     <div class="field">
       <label>قیمت خرید (تومان)</label>
-      <input type="tel" class="inp" id="mat-price" placeholder="مثلاً 350000" onblur="fmtInput(this)" oninput="updateUnitPriceHint()">
+      <input type="tel" class="inp" id="mat-price" placeholder="مثلاً 350.000" oninput="onMoneyInput(this);updateUnitPriceHint();updatePriceWords();">
       <div class="hint">قیمتی که برای همین مقدار پرداخت کردید</div>
+      <div class="hint" id="mat-price-words" style="font-weight:600;color:var(--text);"></div>
     </div>
     <div class="row2">
       <div class="field">
@@ -333,7 +335,8 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
     </div>
     <div class="hint">مثال: اگه ۱ کیلو آرد رو ۳۵۰ هزار تومان خریدید → مقدار = 1، واحد = کیلوگرم</div>
     <div class="hint" id="mat-unitprice" style="font-weight:700;color:var(--text);"></div>
-    <div class="field" id="mat-density-field">
+    <hr style="border:none;border-top:1px solid var(--border);margin:22px 0 16px;">
+    <div class="field" id="mat-density-field" style="margin-top:0;">
       <label>وزن هر ۱ لیتر از این ماده به کیلوگرم (اختیاری)</label>
       <input type="tel" class="inp" id="mat-density" placeholder="مثلاً 0.92 برای روغن" oninput="onMatDensityInput()">
       <div class="hint">برای موادی مثل روغن، شیر، ماست، گلاب. اگه نام ماده رو تایپ کنید ممکنه خودش عدد مناسب رو پیشنهاد بده. اگه این ماده رو هم به لیتر بخرید و هم به لیتر توی دستور مصرف کنید، چگالی لازم نیست. ولی اگه یک‌جا با لیتر و یک‌جا با گرم حسابش کنید، پر کردن این فیلد لازمه؛ وگرنه برنامه بهتون هشدار می‌ده.</div>
@@ -366,7 +369,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
     </div>
 
     <div class="card">
-      <h2>🧂 مواد لازم</h2>
+      <h2>🥣 مواد لازم</h2>
       <div id="prod-ing-list"></div>
       <button class="btn ghost" onclick="openPicker()">➕ افزودن از فهرست مواد اولیه</button>
     </div>
@@ -487,7 +490,7 @@ const UNITS = {
 };
 const BASE_LABEL = {mass:'گرم', vol:'میلی‌لیتر', count:'عدد'};
 const STALE_DAYS = 60;
-const APP_VERSION = '0.1.0';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
+const APP_VERSION = '0.2.0';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
 const SCHEMA_VERSION = 2;             // نسخه‌ی ساختار داده — از APP_VERSION جداست
 const APP_ID = 'cake-price-calculator';
 const KEY_STATE = 'cc_state_v2';
@@ -551,13 +554,78 @@ function toNum(s){
   const n=parseFloat(v);
   return (isNaN(n)||!isFinite(n)) ? 0 : n;
 }
-function fmtMoney(n){ return Math.round(n||0).toLocaleString('en-US'); }      // فقط برای پول
+function fmtMoney(n){ return groupMoneyDigits(String(Math.round(n||0))); }      // فقط برای پول
 function fmtInt(n){ return Math.round(n||0).toLocaleString('en-US'); }        // برای شمارش (تعداد ماده/محصول)
 function fmtQty(n){                                                          // فقط برای مقدار؛ اعشار حفظ می‌شه
   n=Number(n)||0;
   return n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:3});
 }
 function fmtInput(el){ const v=toNum(el.value); el.value = v? fmtMoney(v) : ''; }
+const FA_UNITS=['','یک','دو','سه','چهار','پنج','شش','هفت','هشت','نه'];
+const FA_TEENS=['ده','یازده','دوازده','سیزده','چهارده','پانزده','شانزده','هفده','هجده','نوزده'];
+const FA_TENS=['','','بیست','سی','چهل','پنجاه','شصت','هفتاد','هشتاد','نود'];
+const FA_HUNDREDS=['','صد','دویست','سیصد','چهارصد','پانصد','ششصد','هفتصد','هشتصد','نهصد'];
+const FA_SCALES=['','هزار','میلیون','میلیارد','بیلیون'];
+function threeDigitsToWordsFa(n){
+  if(n<=0) return '';
+  const h=Math.floor(n/100), rest=n%100;
+  const parts=[];
+  if(h>0) parts.push(FA_HUNDREDS[h]);
+  if(rest>0){
+    if(rest<10) parts.push(FA_UNITS[rest]);
+    else if(rest<20) parts.push(FA_TEENS[rest-10]);
+    else{
+      const t=Math.floor(rest/10), u=rest%10;
+      parts.push(u===0 ? FA_TENS[t] : FA_TENS[t]+' و '+FA_UNITS[u]);
+    }
+  }
+  return parts.join(' و ');
+}
+function numberToWordsFa(n){
+  n=Math.floor(Math.abs(n||0));
+  if(n===0) return 'صفر';
+  if(n>=Math.pow(1000,FA_SCALES.length)) return ''; // بزرگ‌تر از چیزی که این برنامه واقعاً بهش نیاز داره
+  const groups=[]; let x=n;
+  while(x>0){ groups.push(x%1000); x=Math.floor(x/1000); }
+  const parts=[];
+  for(let i=groups.length-1;i>=0;i--){
+    if(groups[i]===0) continue;
+    const w=threeDigitsToWordsFa(groups[i]);
+    parts.push(i===0 ? w : w+' '+FA_SCALES[i]);
+  }
+  let result=parts.join(' و ');
+  if(n===1000) result='هزار';  // حالت رند و تنهای «هزار تومان» بدون «یک»
+  return result;
+}
+function updatePriceWords(){
+  const el=document.getElementById('mat-price-words');
+  if(!el) return;
+  const price=moneyVal(document.getElementById('mat-price'));
+  el.textContent = price>0 ? numberToWordsFa(price)+' تومان' : '';
+}
+function groupMoneyDigits(raw){
+  const neg = /^-/.test(raw);
+  raw = String(raw).replace(/[^\d]/g,'').replace(/^0+(?=\d)/, '');
+  const grouped = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return (neg && grouped) ? '-'+grouped : grouped;
+}
+function moneyVal(el){ return toNum(String((el&&el.value)||'').replace(/\./g,'')); }
+function onMoneyInput(el){
+  // جداکننده‌ی هزارگان رو همون لحظه که تایپ می‌کنه نشون می‌ده (۱۲۵.۰۰۰ به‌جای ۱۲۵۰۰۰)
+  const start = el.selectionStart==null ? el.value.length : el.selectionStart;
+  const digitsBefore = faDigits(el.value.slice(0,start)).replace(/[^\d]/g,'').length;
+  const raw = faDigits(el.value).replace(/[^\d]/g,'');
+  const grouped = groupMoneyDigits(raw);
+  el.value = grouped;
+  if(el.setSelectionRange){
+    let count=0, pos=grouped.length;
+    if(digitsBefore===0) pos=0;
+    else{
+      for(let i=0;i<grouped.length;i++){ if(/\d/.test(grouped[i])){ count++; if(count===digitsBefore){ pos=i+1; break; } } }
+    }
+    try{ el.setSelectionRange(pos,pos); }catch(e){}
+  }
+}
 function escapeHtml(s){
   return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -1065,7 +1133,7 @@ function toggleDensityField(){
 }
 function updateUnitPriceHint(){
   const el=document.getElementById('mat-unitprice');
-  const price=toNum(document.getElementById('mat-price').value);
+  const price=moneyVal(document.getElementById('mat-price'));
   const amount=toNum(document.getElementById('mat-amount').value);
   const unit=document.getElementById('mat-unit').value;
   if(!(price>0) || !(amount>0) || !UNITS[unit]){ el.textContent=''; return; }
@@ -1125,12 +1193,13 @@ function openMaterialEditor(id){
   }
   toggleDensityField();
   renderHistory(m);
+  updatePriceWords();
   openModal('modal-material');
 }
 async function saveMaterial(){
   const raw={
     name:document.getElementById('mat-name').value.trim(),
-    price:document.getElementById('mat-price').value,
+    price:document.getElementById('mat-price').value.replace(/\./g,''),
     amount:document.getElementById('mat-amount').value,
     density:document.getElementById('mat-density').value
   };
@@ -1269,7 +1338,7 @@ function renderExtras(){
     const row=document.createElement('div'); row.className='ex-row';
     row.innerHTML='<div class="ex-top">'+
       '<input type="text" class="inp" placeholder="مثلاً: جعبه" value="'+escapeHtml(e.name)+'" aria-label="نام هزینه" oninput="updateExtra('+idx+',\'name\',this.value)">'+
-      '<input type="tel" class="inp" style="max-width:132px" placeholder="مبلغ (تومان)" value="'+(e.amount?fmtMoney(e.amount):'')+'" aria-label="مبلغ هزینه" oninput="updateExtra('+idx+',\'amount\',this.value)" onblur="fmtInput(this)">'+
+      '<input type="tel" class="inp" style="max-width:132px" placeholder="مبلغ (تومان)" value="'+(e.amount?fmtMoney(e.amount):'')+'" aria-label="مبلغ هزینه" oninput="onMoneyInput(this);updateExtra('+idx+',\'amount\',this.value);">'+
       '<button class="x-btn" aria-label="حذف این هزینه" onclick="removeExtra('+idx+')">✕</button></div>'+
       '<div class="seg" role="radiogroup" aria-label="نوع هزینه">'+
         '<button type="button" role="radio" aria-checked="'+(e.mode!=='scale')+'" class="'+(e.mode!=='scale'?'on':'')+'" onclick="setExtraMode('+idx+',\'fixed\')">ثابت برای کل محصول</button>'+
@@ -1282,7 +1351,7 @@ function addExtra(){ editingProduct.extras.push({id:newId(),name:'',amount:0,mod
 function updateExtra(idx,key,val){
   const e=editingProduct.extras[idx]; if(!e) return;
   if(key==='name') e.name=val;
-  if(key==='amount') e.amount=toNum(val);
+  if(key==='amount') e.amount=toNum(String(val).replace(/\./g,''));
   renderProductResult();
 }
 function setExtraMode(idx,mode){
