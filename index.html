@@ -441,7 +441,8 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 
 <script>
 /* ============================================================================
-   Version 0.1.0 — Stable Foundation Release
+   Stable Foundation Release — نسخه‌ی فعلی برنامه از ثابت APP_VERSION خونده می‌شه (پایین همین فایل)،
+   این‌جا به‌صورت دستی تکرار نمی‌شه تا هیچ‌وقت با نسخه‌ی واقعی ناهماهنگ نشه.
    منشور فنی این برنامه — قبل از هر تغییری بخون (نسخه‌ی کامل: MANIFEST.md،
    ساختار داده: DATA_SCHEMA.md، تاریخچه‌ی نسخه‌ها: CHANGELOG.md)
    ----------------------------------------------------------------------------
@@ -490,6 +491,9 @@ const UNITS = {
 };
 const BASE_LABEL = {mass:'گرم', vol:'میلی‌لیتر', count:'عدد'};
 const STALE_DAYS = 60;
+const PROFIT_MAX = 150;       // یک قانون واحد؛ Slider، Validation و Restore همه از همین استفاده می‌کنن.
+                               // اینجا، کنار بقیه‌ی ثابت‌های پایه، تعریف می‌شه — نه پایین‌تر از boot() —
+                               // چون sanitizeState از همین الان (در جریان خودِ boot) بهش نیاز داره.
 const APP_VERSION = '0.2.0';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
 const SCHEMA_VERSION = 2;             // نسخه‌ی ساختار داده — از APP_VERSION جداست
 const APP_ID = 'cake-price-calculator';
@@ -1398,7 +1402,6 @@ function addIng(mid){
 }
 
 /* نتیجه‌ی قیمت */
-const PROFIT_MAX=150;  // یک قانون واحد؛ Slider، Validation و Restore همه از همین استفاده می‌کنن
 function readProductForm(){
   editingProduct.finalWeight=toNum(document.getElementById('prod-weight').value);
   const pr=parseInt(document.getElementById('prod-profit').value,10);
