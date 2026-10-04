@@ -430,6 +430,16 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
   </div>
 </div>
 
+<div class="dlg-ov" id="update-ov" aria-hidden="true">
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="update-title" aria-describedby="update-msg">
+    <div class="dlg-ic t-confirm" id="update-ic">✨</div>
+    <h2 id="update-title">نسخه جدید موجود است ✨</h2>
+    <div class="dlg-msg" id="update-msg"></div>
+    <div class="dlg-msg hidden" id="update-status" style="text-align:center;font-weight:700;color:var(--primary);"></div>
+    <div class="dlg-btns" id="update-btns"></div>
+  </div>
+</div>
+
 <div class="dlg-ov" id="dlg-ov" aria-hidden="true" onclick="dlgBackdrop(event)">
   <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-title" aria-describedby="dlg-msg">
     <div class="dlg-ic" id="dlg-ic"></div>
@@ -494,13 +504,14 @@ const STALE_DAYS = 60;
 const PROFIT_MAX = 150;       // یک قانون واحد؛ Slider، Validation و Restore همه از همین استفاده می‌کنن.
                                // اینجا، کنار بقیه‌ی ثابت‌های پایه، تعریف می‌شه — نه پایین‌تر از boot() —
                                // چون sanitizeState از همین الان (در جریان خودِ boot) بهش نیاز داره.
-const APP_VERSION = '0.2.0';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
+const APP_VERSION = '0.3.0';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
 const SCHEMA_VERSION = 2;             // نسخه‌ی ساختار داده — از APP_VERSION جداست
 const APP_ID = 'cake-price-calculator';
 const KEY_STATE = 'cc_state_v2';
 const KEY_LEGACY_M = 'cc_materials_v1';
 const KEY_LEGACY_P = 'cc_products_v1';
 const KEY_CORRUPT = 'cc_state_corrupt_backup';
+const KEY_PRE_MIGRATION_BACKUP = 'cc_state_pre_migration_backup';
 const THEMES = [
   {id:'auto', label:'خودکار', bg:'#FCF0DC', primary:'#C98A2B'},
   {id:'light', label:'روشن', bg:'#FCF0DC', primary:'#C98A2B'},
@@ -949,12 +960,55 @@ function sampleState(){
     ]
   };
 }
+/* ---------- Migration (برای ارتقای Schema در آینده؛ الان خالیه چون SCHEMA_VERSION عوض نشده) ----------
+   وقتی یه روز SCHEMA_VERSION بالا رفت (مثلاً 2→3)، فقط کافیه یک تابع migrateState رو اینجا ثبت کنید:
+     SCHEMA_MIGRATIONS[2] = function(data){ ...تبدیل ساختار از schema 2 به 3...؛ return newData; };
+   migrateState به‌صورت خودکار زنجیره‌ی لازم رو پیدا و اجرا می‌کنه؛ قبلش یه بک‌آپ خام گرفته می‌شه
+   (KEY_PRE_MIGRATION_BACKUP) و نتیجه‌ی نهایی قبل از اینکه جایگزین داده‌ی فعلی بشه، با sanitizeState
+   کامل اعتبارسنجی می‌شه — اگه هر مرحله شکست بخوره، چیزی نوشته/جایگزین نمی‌شه. */
+const SCHEMA_MIGRATIONS = {};
+function migrateState(data){
+  let cur = data;
+  let fromVer = (cur && cur.schemaVersion!=null) ? cur.schemaVersion : (cur && cur.version!=null ? cur.version : 1);
+  const steps=[];
+  let guard=0;
+  while(fromVer < SCHEMA_VERSION){
+    if(++guard>20) return {ok:false, error:'migration-loop'};
+    const fn = SCHEMA_MIGRATIONS[fromVer];
+    if(!fn) return {ok:false, error:'migration-missing', from:fromVer};
+    let next;
+    try{ next = fn(cur); }catch(e){ return {ok:false, error:'migration-threw', from:fromVer}; }
+    if(!next || typeof next!=='object') return {ok:false, error:'migration-bad-result', from:fromVer};
+    const nextVer = (next.schemaVersion!=null) ? next.schemaVersion : fromVer+1;
+    if(nextVer<=fromVer) return {ok:false, error:'migration-no-progress', from:fromVer};
+    steps.push(fromVer+'→'+nextVer);
+    cur = next; fromVer = nextVer;
+  }
+  return {ok:true, data:cur, steps};
+}
 function loadState(){
   let raw=null, lm=null, lp=null;
   try{ raw=localStorage.getItem(KEY_STATE); lm=localStorage.getItem(KEY_LEGACY_M); lp=localStorage.getItem(KEY_LEGACY_P); }
   catch(e){ return {status:'fresh',state:sampleState(),unavailable:true}; }
   if(raw!=null){
-    try{ const r=sanitizeState(JSON.parse(raw)); if(r.ok) return {status:'ok',state:r.state}; }catch(e){}
+    try{
+      const parsed=JSON.parse(raw);
+      const fromVer=(parsed.schemaVersion!=null)?parsed.schemaVersion:(parsed.version!=null?parsed.version:1);
+      let toValidate=parsed, didMigrate=false;
+      if(fromVer<SCHEMA_VERSION && Object.keys(SCHEMA_MIGRATIONS).length>0){
+        try{
+          localStorage.setItem(KEY_PRE_MIGRATION_BACKUP, JSON.stringify({
+            app:APP_ID, backupCreatedAt:new Date().toISOString(), reason:'pre-migration',
+            fromSchemaVersion:fromVer, toSchemaVersion:SCHEMA_VERSION, raw
+          }));
+        }catch(e){}
+        const m=migrateState(parsed);
+        if(!m.ok) return {status:'corrupt',raw};
+        toValidate=m.data; didMigrate=true;
+      }
+      const r=sanitizeState(toValidate);
+      if(r.ok) return {status:(didMigrate?'migrated':'ok'), state:r.state};
+    }catch(e){}
     return {status:'corrupt',raw};
   }
   if(lm==null && lp==null) return {status:'fresh',state:sampleState()};
@@ -1687,9 +1741,121 @@ if(storageBlocked){
     primary:{label:'بازیابی از فایل پشتیبان'},secondary:{label:'فعلاً ببندم'}}).then(yes=>{ if(yes) pickRestoreFile(); });
 }
 
+/* ============================================================================
+   به‌روزرسانی امن PWA — بدون نیاز به حذف/نصب مجدد
+   ----------------------------------------------------------------------------
+   اصل مهم: این بخش فقط «کد/ظاهر» برنامه رو آپدیت می‌کنه (از طریق Service Worker و Cache).
+   به داده‌ی کاربر (localStorage) اصلاً دست نمی‌زنه — آپدیت کد و داده‌ی کاربر دو سیستم کاملاً
+   جدان. تنها مسیری که داده می‌تونه تغییر کنه، migrateState (بالای همین فایل) هست که خودش
+   backup‌-قبل-از-migrate و rollback-روی-شکست داره.
+   ============================================================================ */
+function compareVersions(a,b){
+  const pa=String(a||'0').split('.').map(n=>parseInt(n,10)||0);
+  const pb=String(b||'0').split('.').map(n=>parseInt(n,10)||0);
+  for(let i=0;i<Math.max(pa.length,pb.length);i++){
+    const x=pa[i]||0, y=pb[i]||0;
+    if(x>y) return 1;
+    if(x<y) return -1;
+  }
+  return 0;
+}
+async function fetchVersionInfo(){
+  try{
+    const res=await fetch('./version.json', {cache:'no-store'});
+    if(!res || !res.ok) return null;
+    const data=await res.json();
+    if(!data || data.app!==APP_ID || typeof data.version!=='string') return null;
+    return data;
+  }catch(e){ return null; }
+}
+
+let swRegistration=null, waitingWorker=null, updateReloading=false, updateFailTimer=null;
+
+function setUpdateUI(mode, opts){
+  opts=opts||{};
+  const ov=document.getElementById('update-ov');
+  const msg=document.getElementById('update-msg');
+  const status=document.getElementById('update-status');
+  const btns=document.getElementById('update-btns');
+  const title=document.getElementById('update-title');
+  if(mode==='offer'){
+    title.textContent='نسخه جدید موجود است ✨';
+    msg.innerHTML='<p>نسخه جدیدی از حساب‌گر قیمت شیرینی و کیک آماده شده است. برای دریافت آخرین امکانات و اصلاحات، برنامه را بروزرسانی کنید.</p>';
+    msg.classList.remove('hidden'); status.classList.add('hidden');
+    btns.innerHTML='<button type="button" class="btn ghost" onclick="dismissUpdate()">بعداً</button><button type="button" class="btn" onclick="performUpdate()">بروزرسانی</button>';
+    ov.classList.add('open'); ov.setAttribute('aria-hidden','false');
+  } else if(mode==='progress'){
+    msg.classList.add('hidden');
+    status.classList.remove('hidden'); status.textContent=opts.text||'';
+    btns.innerHTML='<button type="button" class="btn" disabled style="opacity:.6;">'+(opts.text||'')+'</button>';
+  } else if(mode==='failed'){
+    title.textContent='بروزرسانی انجام نشد';
+    msg.innerHTML='<p>اطلاعات شما محفوظ است. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.</p>';
+    msg.classList.remove('hidden'); status.classList.add('hidden');
+    btns.innerHTML='<button type="button" class="btn ghost" onclick="dismissUpdate()">بعداً</button><button type="button" class="btn" onclick="performUpdate()">تلاش دوباره</button>';
+  } else if(mode==='hide'){
+    ov.classList.remove('open'); ov.setAttribute('aria-hidden','true');
+  }
+}
+function dismissUpdate(){ setUpdateUI('hide'); }
+function offerUpdate(worker){
+  waitingWorker=worker;
+  setUpdateUI('offer');
+}
+async function performUpdate(){
+  if(updateFailTimer) clearTimeout(updateFailTimer);
+  updateFailTimer=setTimeout(function(){ if(!updateReloading) setUpdateUI('failed'); }, 15000);
+  try{
+    setUpdateUI('progress',{text:'در حال آماده‌سازی بروزرسانی...'});
+    if(swRegistration){
+      setUpdateUI('progress',{text:'در حال دریافت نسخه جدید...'});
+      try{ await swRegistration.update(); }catch(e){}
+    }
+    const w = (swRegistration && swRegistration.waiting) || waitingWorker;
+    if(w){
+      setUpdateUI('progress',{text:'در حال فعال‌سازی...'});
+      w.postMessage({type:'SKIP_WAITING'});
+      // بقیه‌ی کار (reload) با رویداد controllerchange پایین همین فایل انجام می‌شه
+    } else {
+      // sw جدیدی در انتظار نبود (شاید فقط کد صفحه عوض شده، نه خود sw) — فقط دوباره بارگذاری کن
+      clearTimeout(updateFailTimer);
+      setUpdateUI('progress',{text:'در حال بارگذاری دوباره...'});
+      setTimeout(function(){ window.location.reload(); }, 300);
+    }
+  }catch(e){
+    clearTimeout(updateFailTimer);
+    setUpdateUI('failed');
+  }
+}
+async function checkForUpdate(){
+  const info=await fetchVersionInfo();
+  if(!info) return; // آفلاین یا خطای شبکه → بی‌صدا هیچ کاری نکن؛ چیزی خراب نمی‌شه
+  if(compareVersions(info.version, APP_VERSION)>0){
+    if(swRegistration){ try{ await swRegistration.update(); }catch(e){} }
+    if(!(document.getElementById('update-ov').classList.contains('open'))) setUpdateUI('offer');
+  }
+}
+
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./sw.js').catch(function(){});
+    navigator.serviceWorker.register('./sw.js').then(function(reg){
+      swRegistration=reg;
+      if(reg.waiting && reg.active) offerUpdate(reg.waiting);
+      reg.addEventListener('updatefound', function(){
+        const nw=reg.installing;
+        if(!nw) return;
+        nw.addEventListener('statechange', function(){
+          if(nw.state==='installed' && navigator.serviceWorker.controller) offerUpdate(nw);
+        });
+      });
+      checkForUpdate();
+    }).catch(function(){});
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      if(updateReloading) return;
+      updateReloading=true;
+      if(updateFailTimer) clearTimeout(updateFailTimer);
+      window.location.reload();
+    });
   });
 }
 </script>
