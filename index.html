@@ -92,14 +92,15 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .empty{text-align:center;color:var(--muted);padding:40px 16px;line-height:1.9;}
 .empty .big{font-size:2.5rem;margin-bottom:10px;}
 
-.ing-row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:8px;}
-.ing-row .ic{width:32px;height:32px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-.ing-row .nm{flex:1;min-width:0;}
-.ing-row .nm > div:first-child{font-weight:700;font-size:.9375rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.ing-row .nm .hint{font-size:.6875rem;margin-top:1px !important;}
-.ing-row .qty{display:flex;align-items:stretch;background:var(--surface2);border-radius:10px;flex-shrink:0;overflow:hidden;}
+.ing-row{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:8px;}
+.ing-row .ic{width:32px;height:32px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;margin-top:1px;}
+.ing-row .nm{flex:1;min-width:0;padding-top:4px;}
+.ing-row .nm .t{font-weight:700;font-size:.9375rem;line-height:1.45;overflow-wrap:break-word;word-break:break-word;white-space:normal;}
+.ing-row .nm .hint{font-size:.6875rem;margin-top:2px !important;}
+.ing-row .qty{display:inline-flex;align-items:stretch;background:var(--surface2);border-radius:10px;flex-shrink:0;overflow:hidden;margin-top:8px;}
 .ing-row .qty input{width:54px;border:none;background:none;padding:12px 2px;font-size:1rem;text-align:center;color:var(--text);font-family:inherit;}
 .ing-row .qty select{border:none;background:none;padding:12px 2px 12px 6px;font-size:.8125rem;color:var(--text);font-family:inherit;width:72px;}
+.ing-row .x-btn{margin-top:1px;}
 .ing-row .qty .div{width:1px;background:var(--border);margin:6px 0;}
 .x-btn{background:var(--surface2);border:none;color:var(--text);font-size:1rem;width:44px;height:44px;border-radius:50%;padding:0;cursor:pointer;flex-shrink:0;}
 
@@ -128,6 +129,9 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
 .sheet-head h2{font-size:1.125rem;}
 .close-btn{background:var(--surface2);border:none;width:44px;height:44px;border-radius:50%;font-size:1.125rem;color:var(--text);cursor:pointer;flex-shrink:0;}
+.sheet-head-actions{display:flex;align-items:center;gap:10px;}
+.head-icon-btn{width:44px;height:44px;border-radius:50%;border:none;background:var(--surface2);font-size:1.125rem;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;}
+.head-icon-btn:active{transform:scale(.95);}
 
 .toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 60px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:12px 20px;border-radius:20px;font-size:1rem;font-weight:600;z-index:250;opacity:0;transition:.3s;pointer-events:none;text-align:center;max-width:88vw;line-height:1.7;}
 .toast.show{opacity:1;}
@@ -268,7 +272,8 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
     <div class="stat-row"><span>تعداد مواد اولیه ثبت‌شده</span><b id="stat-mat">0</b></div>
     <div class="stat-row"><span>تعداد محصولات ثبت‌شده</span><b id="stat-prod">0</b></div>
     <div style="height:12px"></div>
-    <button class="btn" onclick="doBackup()">📥 دریافت فایل پشتیبان</button>
+    <button class="btn" onclick="doBackup()">📤 اشتراک‌گذاری فایل پشتیبان</button>
+    <p class="hint" style="margin-top:8px;">با زدن این دکمه می‌تونید فایل رو مستقیم به تلگرام (مثلاً «پیام‌های ذخیره‌شده») یا هر برنامه‌ی دیگه بفرستید؛ از اونجا بعداً راحت‌تر پیداش می‌کنید.</p>
     <div style="height:10px"></div>
     <button class="btn outline" onclick="document.getElementById('restore-file').click()">📤 بازیابی از فایل پشتیبان</button>
     <input type="file" id="restore-file" accept="application/json" class="hidden" onchange="doRestore(event)">
@@ -291,7 +296,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 
 <div class="modal-ov" id="modal-material">
   <div class="sheet">
-    <div class="sheet-head"><h2 id="mat-modal-title">ماده اولیه جدید</h2><button class="close-btn" aria-label="بستن" onclick="closeModal('modal-material')">✕</button></div>
+    <div class="sheet-head"><h2 id="mat-modal-title">ماده اولیه جدید</h2><div class="sheet-head-actions"><button class="head-icon-btn hidden" id="mat-del-icon" aria-label="حذف این ماده" onclick="deleteMaterial()">🗑️</button><button class="head-icon-btn" aria-label="ذخیره ماده اولیه" onclick="saveMaterial()">💾</button><button class="close-btn" aria-label="بستن" onclick="closeModal('modal-material')">✕</button></div></div>
     <div class="hint" id="mat-stale-warn" style="display:none;color:var(--danger);background:var(--surface2);padding:10px;border-radius:10px;">⏰ این قیمت مدتی است بروزرسانی نشده. لطفاً بررسی کنید که هنوز درست باشه.</div>
     <div class="field">
       <label>نام ماده</label>
@@ -315,7 +320,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
       <label>قیمت خرید (تومان)</label>
       <input type="tel" class="inp" id="mat-price" placeholder="مثلاً 350.000" oninput="onMoneyInput(this);updateUnitPriceHint();updatePriceWords();">
       <div class="hint">قیمتی که برای همین مقدار پرداخت کردید</div>
-      <div class="hint" id="mat-price-words" style="font-weight:600;color:var(--text);"></div>
+      <div class="hint" id="mat-price-words" style="font-weight:700;color:var(--primary);"></div>
     </div>
     <div class="row2">
       <div class="field">
@@ -361,7 +366,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 
 <div class="modal-ov" id="modal-product">
   <div class="sheet">
-    <div class="sheet-head"><h2 id="prod-modal-title">محصول جدید</h2><button class="close-btn" aria-label="بستن" onclick="closeModal('modal-product')">✕</button></div>
+    <div class="sheet-head"><h2 id="prod-modal-title">محصول جدید</h2><div class="sheet-head-actions"><button class="head-icon-btn hidden" id="prod-del-icon" aria-label="حذف این محصول" onclick="deleteProduct()">🗑️</button><button class="head-icon-btn" aria-label="ذخیره محصول" onclick="saveProduct()">💾</button><button class="close-btn" aria-label="بستن" onclick="closeModal('modal-product')">✕</button></div></div>
 
     <div class="card">
       <label>نام محصول</label>
@@ -379,8 +384,9 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
       <div class="field">
         <label>وزن نهایی محصول (گرم)</label>
         <input type="tel" class="inp" id="prod-weight" placeholder="مثلاً 1000" oninput="renderProductResult()">
-        <div class="hint">وزن واقعی کیک یا شیرینی که پختید، حتی اگه رند نباشه (مثلاً 700 یا 1200)</div>
+        <div class="hint">با مواد اولیه‌ی بالا یک کیک یا شیرینی پختید؟ بعد از پخت، وزنش کنید و همون عدد رو اینجا بنویسید — هر چقدر هم که شد، رند نبودنش اشکالی نداره.</div>
       </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:22px 0 16px;">
       <div class="field" style="margin-bottom:0;">
         <label>هزینه‌های جانبی (اختیاری)</label>
         <div class="hint">مثل جعبه، بسته‌بندی، روبان یا دستمزد. اگه ندارید، چیزی اضافه نکنید.<br>«ثابت برای کل محصول» یعنی با کم و زیاد شدن وزن عوض نمی‌شه (مثل جعبه). «متناسب با وزن» یعنی با وزن کم و زیاد می‌شه.</div>
@@ -395,7 +401,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
         <label>سود روی هزینه (Markup)</label>
         <div class="hint" style="margin-top:-4px;">این درصد به قیمت تمام‌شده اضافه می‌شه؛ مثلاً اگه هزینه ۱۰۰,۰۰۰ تومان باشه و اینجا ۳۰٪ بذارید، قیمت فروش می‌شه ۱۳۰,۰۰۰ تومان.</div>
         <div class="slider-row">
-          <input type="range" min="0" max="150" value="30" id="prod-profit" oninput="renderProductResult()">
+          <input type="range" min="0" max="150" step="5" value="30" id="prod-profit" oninput="renderProductResult()">
           <span class="pct" id="prod-profit-val">30%</span>
         </div>
       </div>
@@ -504,7 +510,7 @@ const STALE_DAYS = 60;
 const PROFIT_MAX = 150;       // یک قانون واحد؛ Slider، Validation و Restore همه از همین استفاده می‌کنن.
                                // اینجا، کنار بقیه‌ی ثابت‌های پایه، تعریف می‌شه — نه پایین‌تر از boot() —
                                // چون sanitizeState از همین الان (در جریان خودِ boot) بهش نیاز داره.
-const APP_VERSION = '0.3.0';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
+const APP_VERSION = '0.3.1';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
 const SCHEMA_VERSION = 2;             // نسخه‌ی ساختار داده — از APP_VERSION جداست
 const APP_ID = 'cake-price-calculator';
 const KEY_STATE = 'cc_state_v2';
@@ -530,6 +536,7 @@ const CATEGORIES = [
   {id:'egg', label:'تخم‌مرغ', icon:'🥚'},
   {id:'fruit', label:'میوه و خشکبار', icon:'🍇'},
   {id:'spice', label:'ادویه و طعم‌دهنده', icon:'🌿'},
+  {id:'chocolate', label:'شکلات و کاکائو', icon:'🍫'},
   {id:'pack', label:'بسته‌بندی', icon:'📦'},
   {id:'other', label:'سایر', icon:'🔸'}
 ];
@@ -1228,6 +1235,7 @@ function openMaterialEditor(id){
   if(id && !m) return;
   editingMaterialId=id||null;
   document.getElementById('mat-del-btn').classList.toggle('hidden', !id);
+  document.getElementById('mat-del-icon').classList.toggle('hidden', !id);
   document.getElementById('mat-modal-title').textContent = id? 'ویرایش ماده اولیه' : 'ماده اولیه جدید';
   const warnEl=document.getElementById('mat-stale-warn');
   if(m){
@@ -1331,6 +1339,7 @@ function openProductEditor(id){
   let src=null;
   if(id){ src=products.find(x=>x.id===id); if(!src) return; }
   document.getElementById('prod-del-btn').classList.toggle('hidden', !id);
+  document.getElementById('prod-del-icon').classList.toggle('hidden', !id);
   document.getElementById('prod-modal-title').textContent = id? 'ویرایش محصول':'محصول جدید';
   editingProduct = src ? JSON.parse(JSON.stringify(src)) : {id:null,name:'',items:[],extras:[],finalWeight:0,profit:30};
   if(!Array.isArray(editingProduct.extras)) editingProduct.extras=[];
@@ -1353,7 +1362,7 @@ function renderIngList(){
     const m=materials.find(x=>x.id===it.materialId);
     const row=document.createElement('div'); row.className='ing-row';
     if(!m){
-      row.innerHTML='<span class="ic">⚠️</span><div class="nm"><div>ماده حذف‌شده</div><div class="hint" style="color:var(--danger);margin:0;">این ماده حذف شده؛ سطر را پاک کنید یا ماده را دوباره بسازید.</div></div><button class="x-btn" aria-label="حذف این سطر" onclick="removeIng('+idx+')">✕</button>';
+      row.innerHTML='<span class="ic">⚠️</span><div class="nm"><div class="t">ماده حذف‌شده</div><div class="hint" style="color:var(--danger);margin:0;">این ماده حذف شده؛ سطر را پاک کنید یا ماده را دوباره بسازید.</div></div><button class="x-btn" aria-label="حذف این سطر" onclick="removeIng('+idx+')">✕</button>';
     } else {
       const catIcon=(CATEGORIES.find(c=>c.id===(m.category||'other'))||{icon:'🔸'}).icon;
       const r=convertItem(m,it.amount,it.unit);
@@ -1366,7 +1375,7 @@ function renderIngList(){
         }[r.reason]||'⚠️ اطلاعات ناقص است')+'</div>';
       }
       row.innerHTML='<span class="ic">'+catIcon+'</span>'+
-        '<div class="nm"><div>'+escapeHtml(m.name)+'</div>'+warn+'</div>'+
+        '<div class="nm"><div class="t">'+escapeHtml(m.name)+'</div>'+warn+'</div>'+
         '<div class="qty">'+
           '<input type="tel" value="'+escapeHtml(it.amount)+'" aria-label="مقدار مصرف" onchange="updateIng('+idx+',\'amount\',this.value)">'+
           '<span class="div"></span>'+
