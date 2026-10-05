@@ -1,7 +1,7 @@
 // نسخه‌ی کش با نسخه‌ی برنامه هماهنگه (APP_VERSION توی خود فایل اصلی و version.json). موقع بالا
 // بردن نسخه‌ی برنامه، این مقدار (و version.json) رو هم دستی به‌روز کن — tests.js این هماهنگی رو
 // به‌صورت خودکار چک می‌کنه تا این مورد فراموش نشه.
-const CACHE_NAME = 'ccalc-shell-v0.3.0';
+const CACHE_NAME = 'ccalc-shell-v0.3.1';
 const ASSETS = ['./', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
