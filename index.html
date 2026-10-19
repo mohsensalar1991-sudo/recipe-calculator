@@ -13,8 +13,11 @@
 <link rel="icon" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <script>(function(){try{var t=localStorage.getItem('cc_theme');if(t&&t!=='auto')document.documentElement.setAttribute('data-theme',t);var fs=parseInt(localStorage.getItem('cc_fontscale'));if(fs)document.documentElement.style.fontSize=(16*fs/100)+'px';}catch(e){}})();</script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap">
+<link rel="preload" href="./fonts/Vazirmatn-subset.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* فونت وزیرمتن به‌صورت محلی (نه از گوگل): بدون اینترنت هم دقیقاً همین ظاهر رو داره و باز شدن برنامه
+   منتظر هیچ سروری نمی‌مونه. مجوز فونت (OFL) کنار فایل، توی پوشه‌ی fonts هست. */
+@font-face{font-family:'Vazirmatn';src:url('./fonts/Vazirmatn-subset.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
 :root{
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -92,26 +95,52 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .empty{text-align:center;color:var(--muted);padding:40px 16px;line-height:1.9;}
 .empty .big{font-size:2.5rem;margin-bottom:10px;}
 
-.ing-row{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:8px;}
-.ing-row .ic{width:32px;height:32px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;margin-top:1px;}
-.ing-row .nm{flex:1;min-width:0;padding-top:4px;}
-.ing-row .nm .t{font-weight:700;font-size:.9375rem;line-height:1.45;overflow-wrap:break-word;word-break:break-word;white-space:normal;}
-.ing-row .nm .hint{font-size:.6875rem;margin-top:2px !important;}
-.ing-row .qty{display:inline-flex;align-items:stretch;background:var(--surface2);border-radius:10px;flex-shrink:0;overflow:hidden;margin-top:8px;}
-.ing-row .qty input{width:54px;border:none;background:none;padding:12px 2px;font-size:1rem;text-align:center;color:var(--text);font-family:inherit;}
-.ing-row .qty select{border:none;background:none;padding:12px 2px 12px 6px;font-size:.8125rem;color:var(--text);font-family:inherit;width:72px;}
-.ing-row .x-btn{margin-top:1px;}
-.ing-row .qty .div{width:1px;background:var(--border);margin:6px 0;}
+/* ---- کارت بخش‌دار: هدر کاملاً جدا از محتوا ---- */
+.card.sec{padding:0;overflow:hidden;}
+.sec-hd{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);background:color-mix(in srgb,var(--primary) 13%,var(--surface));border-bottom:1px solid var(--border);border-inline-start:5px solid var(--primary);}
+.sec-ic{flex:0 0 36px;width:36px;height:36px;border-radius:11px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.125rem;line-height:1;}
+.sec-hd h2{margin:0;font-size:1.0625rem;font-weight:800;line-height:1.4;flex:1;min-width:0;}
+.sec-bd{padding:16px 14px;}
+.sec.danger .sec-hd{border-inline-start-color:var(--danger);background:var(--surface2);}
+.sub-hd{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:.9375rem;font-weight:800;}
+.sub-hd::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--primary);flex:0 0 4px;}
+.opt{font-weight:600;font-size:.8125rem;color:var(--muted);}
+.sec-sep{border:none;border-top:1px dashed var(--border);margin:20px 0 16px;}
+
+/* ---- لیست مواد لازم: هر ماده یک کارت دوخطه (نام کامل در خط اول، مقدار و هزینه در خط دوم) ---- */
+.ing-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px 12px;margin-bottom:10px;}
+.ing-top{display:flex;align-items:flex-start;gap:10px;}
+.ing-ic{flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.0625rem;margin-top:2px;}
+.ing-name{flex:1;min-width:0;font-weight:700;font-size:.9688rem;line-height:1.6;padding-top:4px;overflow-wrap:anywhere;word-break:normal;}
+.ing-del{flex:0 0 44px;width:44px;height:44px;border:none;background:transparent;color:var(--muted);font-size:1.0625rem;border-radius:50%;cursor:pointer;margin:-4px -8px -4px 0;padding:0;font-family:inherit;}
+.ing-del:active{background:var(--surface2);}
+.ing-ctl{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 10px;margin-top:8px;}
+.ing-cost{display:flex;flex-direction:column;align-items:flex-end;font-weight:800;font-size:.9688rem;line-height:1.4;white-space:nowrap;}
+.ing-cost small{font-weight:600;color:var(--muted);font-size:.75rem;}
+.ing-warn{margin-top:8px;font-size:.8125rem;color:var(--danger);font-weight:600;line-height:1.7;}
+.ing-total{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 4px 12px;font-size:.9375rem;color:var(--muted);}
+.ing-total b{color:var(--text);font-size:1rem;}
+.ing-empty{border:2px dashed var(--border);border-radius:14px;padding:18px 12px;margin-bottom:12px;text-align:center;color:var(--muted);font-size:.875rem;line-height:1.8;}
+.qty{display:inline-flex;align-items:stretch;background:var(--surface2);border:1px solid var(--border);border-radius:12px;flex-shrink:0;overflow:hidden;}
+.qty input{width:72px;border:none;background:none;padding:11px 6px;font-size:1.0625rem;font-weight:700;text-align:center;color:var(--text);font-family:inherit;outline:none;}
+.qty select{border:none;background:none;padding:11px 4px 11px 8px;font-size:.875rem;color:var(--text);font-family:inherit;width:98px;outline:none;}
+.qty .div{width:1px;background:var(--border);margin:8px 0;}
+.qty:focus-within{border-color:var(--primary);}
+.btn.add{background:transparent;border:2px dashed var(--primary);color:var(--text);}
 .x-btn{background:var(--surface2);border:none;color:var(--text);font-size:1rem;width:44px;height:44px;border-radius:50%;padding:0;cursor:pointer;flex-shrink:0;}
 
 .result{background:var(--surface2);border:1.5px solid var(--primary);border-radius:14px;padding:16px;margin:14px 0;}
-.result .line{display:flex;justify-content:space-between;font-size:.875rem;padding:5px 0;color:var(--muted);}
+.result .line{display:flex;justify-content:space-between;gap:10px;font-size:.875rem;padding:5px 0;color:var(--muted);}
+.result .line>span:last-child,.stat-row>:last-child{white-space:nowrap;}
 .result .main{border-top:1px solid var(--border);margin-top:6px;padding-top:10px;}
 .result .main .lbl{display:block;font-size:.8125rem;font-weight:600;color:var(--muted);margin-bottom:3px;}
-.result .main .val{display:block;font-size:1.5rem;font-weight:800;color:var(--success);white-space:nowrap;}
+.result .main .val{display:block;font-size:1.5rem;font-weight:800;color:var(--success);}
+.result .val .num,.qty-box .val .num{white-space:nowrap;}
+.result .val small,.qty-box .val small{font-size:.8125rem;font-weight:700;color:var(--muted);}
+.result .line small,.stat-row small{font-size:1em;font-weight:inherit;}
 
 .slider-row{display:flex;align-items:center;gap:10px;}
-.slider-row input[type=range]{flex:1;height:6px;}
+.slider-row input[type=range]{flex:1;height:6px;accent-color:var(--primary);}
 .slider-row .pct{font-weight:800;font-size:1.0625rem;width:54px;text-align:center;color:var(--primary);}
 
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom,0px);}
@@ -124,9 +153,9 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .modal-ov{position:fixed;inset:0;background:rgba(30,20,10,.55);z-index:100;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:.25s;}
 .modal-ov.open{opacity:1;pointer-events:all;}
 #modal-picker{z-index:110;}
-.sheet{background:var(--bg);width:100%;max-height:92vh;border-radius:22px 22px 0 0;padding:20px;padding-bottom:36px;overflow-y:auto;transform:translateY(100%);transition:.25s;}
+.sheet{background:var(--bg);width:100%;max-height:92vh;max-height:92dvh;border-radius:22px 22px 0 0;padding:20px;padding-bottom:36px;overflow-y:auto;overscroll-behavior:contain;transform:translateY(100%);transition:.25s;}
 .modal-ov.open .sheet{transform:translateY(0);}
-.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.sheet-head{position:sticky;top:-20px;z-index:6;display:flex;justify-content:space-between;align-items:center;gap:10px;margin:-20px -20px 14px;padding:14px 20px 10px;background:var(--bg);border-bottom:1px solid var(--border);}
 .sheet-head h2{font-size:1.125rem;}
 .close-btn{background:var(--surface2);border:none;width:44px;height:44px;border-radius:50%;font-size:1.125rem;color:var(--text);cursor:pointer;flex-shrink:0;}
 .sheet-head-actions{display:flex;align-items:center;gap:10px;}
@@ -136,14 +165,15 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 60px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:12px 20px;border-radius:20px;font-size:1rem;font-weight:600;z-index:250;opacity:0;transition:.3s;pointer-events:none;text-align:center;max-width:88vw;line-height:1.7;}
 .toast.show{opacity:1;}
 
-.picker-row{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px;flex-wrap:wrap;}
-.picker-row .nm{flex:1;font-weight:600;font-size:.9375rem;min-width:90px;}
-.picker-row input{width:60px;padding:8px;font-size:.875rem;text-align:center;background:var(--surface2);}
-.picker-row select{width:76px;padding:8px 2px;font-size:.75rem;background:var(--surface2);}
+.picker-row{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:10px;}
+.picker-row .p-name{display:flex;align-items:flex-start;gap:8px;font-weight:700;font-size:.9688rem;line-height:1.6;overflow-wrap:anywhere;}
+.picker-row .p-ic{flex:0 0 28px;width:28px;height:28px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:.9375rem;margin-top:2px;}
+.picker-row .p-ctl{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.picker-row .p-ctl .btn{margin-inline-start:auto;width:auto;min-width:96px;}
 .added-badge{font-size:.8125rem;color:var(--success);font-weight:700;}
 
 .help-box{background:var(--surface2);border-radius:14px;padding:14px;font-size:.875rem;color:var(--text);line-height:1.9;}
-.stat-row{display:flex;justify-content:space-between;padding:6px 0;font-size:.875rem;}
+.stat-row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;font-size:.875rem;}
 
 .theme-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
 .theme-btn{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:2px solid transparent;border-radius:14px;padding:8px 4px;cursor:pointer;font-family:inherit;color:var(--text);font-size:.75rem;width:70px;}
@@ -152,11 +182,12 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .fs-row{display:flex;gap:8px;}
 .fs-btn{flex:1;background:var(--surface2);border:2px solid transparent;border-radius:12px;padding:10px 2px;font-family:inherit;color:var(--text);cursor:pointer;text-align:center;}
 .fs-btn.active{border-color:var(--primary);background:var(--surface);}
-.fs-btn .lbl{font-size:.75rem;display:block;margin-top:3px;}
+.fs-btn .lbl{font-size:.8125rem;display:block;margin-top:3px;line-height:1.5;}
 
 /* ---- status badges ---- */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:.8125rem;font-weight:700;border:1.5px solid currentColor;background:var(--surface);white-space:nowrap;flex-shrink:0;}
 .b-green{color:var(--success);} .b-orange{color:var(--warn);} .b-red{color:var(--danger);}
+.badge .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:currentColor;flex:0 0 10px;}
 .item .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
 
 /* ---- result box ---- */
@@ -189,6 +220,29 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .banner b{color:var(--danger);}
 .banner-btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
 
+/* ---- یادآوری پشتیبان / نصب برنامه (بالای لیست‌ها) ---- */
+.top-banners{max-width:560px;margin:0 auto;padding:12px 16px 0;}
+.top-banners:empty{display:none;}
+.bnr{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin-bottom:10px;}
+.bnr.warn{border-color:var(--warn);}
+.bnr-t{display:block;font-size:1rem;font-weight:800;margin-bottom:2px;}
+.bnr p{margin:0 0 10px;font-size:.875rem;color:var(--muted);line-height:1.8;}
+.bnr-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.bnr-btns .btn{flex:1 1 130px;width:auto;}
+
+/* ---- وضعیت پشتیبان، نسخه‌های خودکار، نصب ---- */
+.bk-status{display:flex;gap:10px;align-items:flex-start;background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:12px;margin-bottom:12px;line-height:1.8;font-size:.9375rem;}
+.bk-status.ok{border-color:var(--success);}
+.bk-status.warn{border-color:var(--warn);}
+.bk-status .bk-ic{font-size:1.25rem;line-height:1.5;}
+.bk-gap{height:12px;}
+.btn-note{font-size:.8125rem;color:var(--muted);line-height:1.8;margin:6px 2px 0;}
+.auto-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.auto-row:last-child{border-bottom:none;}
+.auto-row .a-t{font-weight:700;font-size:.9375rem;}
+.auto-row .a-s{font-size:.8125rem;color:var(--muted);line-height:1.7;}
+.install-ok{display:flex;gap:10px;align-items:center;color:var(--success);font-weight:700;}
+
 /* ---- in-app dialog ---- */
 .dlg-ov{position:fixed;inset:0;background:rgba(20,12,4,.6);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
 .dlg-ov.open{opacity:1;pointer-events:all;}
@@ -213,13 +267,16 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 </div>
 
 <div id="corrupt-banner" class="banner hidden" role="alert">
-  <b>اطلاعات ذخیره‌شده مشکل دارد.</b>
-  <div>اطلاعات شما لزوماً از بین نرفته است. از فایل پشتیبان استفاده کنید.</div>
+  <b id="banner-title">اطلاعات ذخیره‌شده مشکل دارد.</b>
+  <div id="banner-desc">اطلاعات شما لزوماً از بین نرفته است. از فایل پشتیبان یا نسخه‌های ایمنی خودکار برنامه استفاده کنید.</div>
   <div class="banner-btns">
-    <button class="btn sm" onclick="pickRestoreFile()">📤 بازیابی از فایل پشتیبان</button>
-    <button class="btn sm ghost" onclick="startFresh()">شروع با اطلاعات خالی</button>
+    <button type="button" class="btn sm" id="banner-restore-btn" onclick="pickRestoreFile()">📥 بازیابی از فایل پشتیبان</button>
+    <button type="button" class="btn sm outline hidden" id="banner-auto-btn" onclick="goAutoCopies()">🛟 نسخه‌های خودکار</button>
+    <button type="button" class="btn sm ghost" id="banner-fresh-btn" onclick="startFresh()">شروع با اطلاعات خالی</button>
+    <button type="button" class="btn sm hidden" id="banner-reload-btn" onclick="window.location.reload()">🔄 بارگذاری دوباره</button>
   </div>
 </div>
+<div id="top-banners" class="top-banners"></div>
 
 <div id="view-products" class="wrap">
   <div class="field">
@@ -236,53 +293,74 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 </div>
 
 <div id="view-settings" class="wrap hidden">
-  <div class="card" id="about-card">
-    <h2>ℹ️ درباره برنامه</h2>
-    <div class="stat-row"><span>حساب‌گر قنادی — نسخه</span><b id="about-version"></b></div>
-    <div class="stat-row"><span>آخرین ذخیره</span><b id="about-saved">—</b></div>
-  </div>
+  <div class="card sec" id="backup-card">
+    <div class="sec-hd"><span class="sec-ic">💾</span><h2>پشتیبان‌گیری از اطلاعات</h2></div>
+    <div class="sec-bd">
+      <div id="bk-status" class="bk-status"></div>
+      <p class="hint" style="margin-top:0;">اطلاعات شما فقط روی همین گوشی ذخیره می‌شه. اگه گوشی گم یا عوض بشه، یا حافظه‌ی مرورگر پاک بشه، اطلاعات از بین می‌ره؛ پس هر چند وقت یک‌بار یک فایل پشتیبان بگیرید و جایی امن (تلگرام، گوگل‌درایو و...) نگه دارید.</p>
+      <div class="stat-row"><span>تعداد مواد اولیه ثبت‌شده</span><b id="stat-mat">0</b></div>
+      <div class="stat-row"><span>تعداد محصولات ثبت‌شده</span><b id="stat-prod">0</b></div>
+      <div class="bk-gap"></div>
 
-  <div class="card">
-    <h2>🎨 شخصی‌سازی ظاهر برنامه</h2>
-    <p class="hint">رنگ‌بندی و اندازه نوشته‌ها رو مطابق سلیقه و چشم خودتون تنظیم کنید.</p>
-    <div class="theme-grid" id="theme-grid"></div>
-    <label>اندازه نوشته‌ها</label>
-    <div class="fs-row" id="fs-row"></div>
-  </div>
+      <button class="btn" onclick="downloadBackup()">💾 ذخیره‌ی فایل پشتیبان در گوشی</button>
+      <p class="btn-note">فایل توی حافظه‌ی خود گوشی (معمولاً پوشه‌ی «Download» یا «دانلودها») ذخیره می‌شه.</p>
 
-  <div class="card">
-    <h2>🔢 گرد کردن قیمت فروش</h2>
-    <p class="hint">قیمت فروش پیشنهادی به یک عدد گرد و قابل فروش نزدیک می‌شه (قیمت تمام‌شده گرد نمی‌شه، همیشه دقیقه).</p>
-    <div class="fs-row" id="round-row"></div>
-  </div>
+      <div class="bk-gap"></div>
+      <button class="btn outline" id="share-btn" onclick="shareBackup()">📤 اشتراک‌گذاری فایل پشتیبان (تلگرام، واتساپ و...)</button>
+      <p class="btn-note" id="share-note">صفحه‌ی اشتراک‌گذاری گوشی باز می‌شه؛ مثلاً «تلگرام» و بعد «پیام‌های ذخیره‌شده» (Saved Messages) رو انتخاب کنید تا فایل همیشه توی تلگرام خودتون بمونه.</p>
 
-  <div class="card">
-    <h2>📱 نصب روی صفحه اصلی گوشی</h2>
-    <p class="hint">برای اینکه مثل یک برنامه، آیکون این حساب‌گر روی صفحه گوشی‌تون باشه:</p>
-    <div class="help-box">
-      ۱. توی مرورگر کروم، دکمه سه‌نقطه ⋮ بالای صفحه رو بزنید.<br>
-      ۲. گزینه «افزودن به صفحه اصلی» رو انتخاب کنید.<br>
-      ۳. تایید کنید. از این به بعد با زدن آیکون، مستقیم همین‌جا باز می‌شه.
+      <div class="bk-gap"></div>
+      <button class="btn ghost" onclick="pickRestoreFile()">📥 بازیابی از فایل پشتیبان</button>
+      <input type="file" id="restore-file" class="hidden" onchange="doRestore(event)">
     </div>
   </div>
 
-  <div class="card">
-    <h2>💾 پشتیبان‌گیری از اطلاعات</h2>
-    <p class="hint">اطلاعات شما فقط روی همین گوشی ذخیره می‌شه. اگه گوشی عوض بشه یا حافظه مرورگر پاک بشه، اطلاعات از بین می‌ره. هر چند وقت یک‌بار یک فایل پشتیبان بگیرید و در گوگل‌درایو یا تلگرام خودتون نگه دارید.</p>
-    <div class="stat-row"><span>تعداد مواد اولیه ثبت‌شده</span><b id="stat-mat">0</b></div>
-    <div class="stat-row"><span>تعداد محصولات ثبت‌شده</span><b id="stat-prod">0</b></div>
-    <div style="height:12px"></div>
-    <button class="btn" onclick="doBackup()">📤 اشتراک‌گذاری فایل پشتیبان</button>
-    <p class="hint" style="margin-top:8px;">با زدن این دکمه می‌تونید فایل رو مستقیم به تلگرام (مثلاً «پیام‌های ذخیره‌شده») یا هر برنامه‌ی دیگه بفرستید؛ از اونجا بعداً راحت‌تر پیداش می‌کنید.</p>
-    <div style="height:10px"></div>
-    <button class="btn outline" onclick="document.getElementById('restore-file').click()">📤 بازیابی از فایل پشتیبان</button>
-    <input type="file" id="restore-file" accept="application/json" class="hidden" onchange="doRestore(event)">
+  <div class="card sec" id="auto-card">
+    <div class="sec-hd"><span class="sec-ic">🛟</span><h2>نسخه‌های ایمنی خودکار</h2></div>
+    <div class="sec-bd">
+      <p class="hint" style="margin-top:0;">برنامه خودش، همین‌جا روی گوشی، چند نسخه‌ی ایمنی نگه می‌داره (مثلاً «قبل از آخرین تغییر»). اگه اشتباهی چیزی پاک شد یا تغییری خراب شد، می‌تونید از اینجا برگردید. این نسخه‌ها فقط روی همین گوشی‌ان و جای فایل پشتیبان رو نمی‌گیرن.</p>
+      <div id="auto-list"></div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>⚠️ منطقه حساس</h2>
-    <p class="hint">این گزینه همه‌ی مواد اولیه و محصولات ثبت‌شده رو برای همیشه پاک می‌کنه. قبلش حتماً یک فایل پشتیبان بگیرید.</p>
-    <button class="btn danger" onclick="askDeleteAll()">🗑️ پاک کردن کامل اطلاعات</button>
+  <div class="card sec">
+    <div class="sec-hd"><span class="sec-ic">🎨</span><h2>شخصی‌سازی ظاهر برنامه</h2></div>
+    <div class="sec-bd">
+      <p class="hint" style="margin-top:0;">رنگ‌بندی و اندازه نوشته‌ها رو مطابق سلیقه و چشم خودتون تنظیم کنید.</p>
+      <div class="theme-grid" id="theme-grid"></div>
+      <label>اندازه نوشته‌ها</label>
+      <div class="fs-row" id="fs-row"></div>
+    </div>
+  </div>
+
+  <div class="card sec">
+    <div class="sec-hd"><span class="sec-ic">🔢</span><h2>گرد کردن قیمت فروش</h2></div>
+    <div class="sec-bd">
+      <p class="hint" style="margin-top:0;">قیمت فروش پیشنهادی به یک عدد گرد و قابل فروش نزدیک می‌شه (قیمت تمام‌شده گرد نمی‌شه، همیشه دقیقه).</p>
+      <div class="fs-row" id="round-row"></div>
+    </div>
+  </div>
+
+  <div class="card sec" id="install-card">
+    <div class="sec-hd"><span class="sec-ic">📱</span><h2>نصب روی صفحه اصلی گوشی</h2></div>
+    <div class="sec-bd" id="install-body"></div>
+  </div>
+
+  <div class="card sec" id="about-card">
+    <div class="sec-hd"><span class="sec-ic">ℹ️</span><h2>درباره برنامه</h2></div>
+    <div class="sec-bd">
+      <div class="stat-row"><span>حساب‌گر قنادی — نسخه</span><b id="about-version"></b></div>
+      <div class="stat-row"><span>آخرین ذخیره</span><b id="about-saved">—</b></div>
+      <div class="stat-row"><span>محافظت حافظه در برابر پاک‌شدن خودکار</span><b id="about-persist">—</b></div>
+    </div>
+  </div>
+
+  <div class="card sec danger">
+    <div class="sec-hd"><span class="sec-ic">⚠️</span><h2>منطقه حساس</h2></div>
+    <div class="sec-bd">
+      <p class="hint" style="margin-top:0;">این گزینه همه‌ی مواد اولیه و محصولات ثبت‌شده رو پاک می‌کنه. قبلش حتماً یک فایل پشتیبان بگیرید.</p>
+      <button class="btn danger" onclick="askDeleteAll()">🗑️ پاک کردن کامل اطلاعات</button>
+    </div>
   </div>
 </div>
 
@@ -296,56 +374,63 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 
 <div class="modal-ov" id="modal-material">
   <div class="sheet">
-    <div class="sheet-head"><h2 id="mat-modal-title">ماده اولیه جدید</h2><div class="sheet-head-actions"><button class="head-icon-btn hidden" id="mat-del-icon" aria-label="حذف این ماده" onclick="deleteMaterial()">🗑️</button><button class="head-icon-btn" aria-label="ذخیره ماده اولیه" onclick="saveMaterial()">💾</button><button class="close-btn" aria-label="بستن" onclick="closeModal('modal-material')">✕</button></div></div>
+    <div class="sheet-head"><h2 id="mat-modal-title">ماده اولیه جدید</h2><div class="sheet-head-actions"><button class="head-icon-btn hidden" id="mat-del-icon" aria-label="حذف این ماده" onclick="deleteMaterial()">🗑️</button><button class="head-icon-btn" aria-label="ذخیره ماده اولیه" onclick="saveMaterial()">💾</button><button class="close-btn" aria-label="بستن" onclick="requestClose('modal-material')">✕</button></div></div>
     <div class="hint" id="mat-stale-warn" style="display:none;color:var(--danger);background:var(--surface2);padding:10px;border-radius:10px;">⏰ این قیمت مدتی است بروزرسانی نشده. لطفاً بررسی کنید که هنوز درست باشه.</div>
-    <div class="field">
-      <label>نام ماده</label>
-      <input type="text" class="inp" id="mat-name" placeholder="مثلاً: آرد، شکر، تخم‌مرغ، روغن" oninput="onMatNameInput()">
-    </div>
-    <div class="field">
-      <label>دسته‌بندی</label>
-      <select class="inp" id="mat-category">
-        <option value="flour">🌾 آرد و غلات</option>
-        <option value="sugar">🍬 شکر و شیرین‌کننده</option>
-        <option value="dairy">🧈 لبنیات</option>
-        <option value="oil">🫒 روغن و چربی</option>
-        <option value="egg">🥚 تخم‌مرغ</option>
-        <option value="fruit">🍇 میوه و خشکبار</option>
-        <option value="spice">🌿 ادویه و طعم‌دهنده</option>
-        <option value="pack">📦 بسته‌بندی</option>
-        <option value="other">🔸 سایر</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>قیمت خرید (تومان)</label>
-      <input type="tel" class="inp" id="mat-price" placeholder="مثلاً 350.000" oninput="onMoneyInput(this);updateUnitPriceHint();updatePriceWords();">
-      <div class="hint">قیمتی که برای همین مقدار پرداخت کردید</div>
-      <div class="hint" id="mat-price-words" style="font-weight:700;color:var(--primary);"></div>
-    </div>
-    <div class="row2">
-      <div class="field">
-        <label>مقدار خریداری‌شده</label>
-        <input type="tel" class="inp" id="mat-amount" placeholder="مثلاً 1" oninput="updateUnitPriceHint()">
-      </div>
-      <div class="field">
-        <label>واحد</label>
-        <select class="inp" id="mat-unit" onchange="toggleDensityField()">
-          <option value="kg">کیلوگرم</option>
-          <option value="g">گرم</option>
-          <option value="l">لیتر</option>
-          <option value="ml">میلی‌لیتر</option>
-          <option value="count">عدد</option>
-        </select>
+
+    <div class="card sec">
+      <div class="sec-hd"><span class="sec-ic">🏷️</span><h2>مشخصات ماده</h2></div>
+      <div class="sec-bd">
+        <div class="field">
+          <label for="mat-name">نام ماده</label>
+          <input type="text" class="inp" id="mat-name" placeholder="مثلاً: آرد، شکر، تخم‌مرغ، روغن" oninput="onMatNameInput()" autocomplete="off">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="mat-category">دسته‌بندی</label>
+          <select class="inp" id="mat-category" onchange="onMatCategoryChange()"></select>
+          <div class="hint" id="mat-category-eg" style="margin-bottom:0;"></div>
+        </div>
       </div>
     </div>
-    <div class="hint">مثال: اگه ۱ کیلو آرد رو ۳۵۰ هزار تومان خریدید → مقدار = 1، واحد = کیلوگرم</div>
-    <div class="hint" id="mat-unitprice" style="font-weight:700;color:var(--text);"></div>
-    <hr style="border:none;border-top:1px solid var(--border);margin:22px 0 16px;">
-    <div class="field" id="mat-density-field" style="margin-top:0;">
-      <label>وزن هر ۱ لیتر از این ماده به کیلوگرم (اختیاری)</label>
-      <input type="tel" class="inp" id="mat-density" placeholder="مثلاً 0.92 برای روغن" oninput="onMatDensityInput()">
-      <div class="hint">برای موادی مثل روغن، شیر، ماست، گلاب. اگه نام ماده رو تایپ کنید ممکنه خودش عدد مناسب رو پیشنهاد بده. اگه این ماده رو هم به لیتر بخرید و هم به لیتر توی دستور مصرف کنید، چگالی لازم نیست. ولی اگه یک‌جا با لیتر و یک‌جا با گرم حسابش کنید، پر کردن این فیلد لازمه؛ وگرنه برنامه بهتون هشدار می‌ده.</div>
+
+    <div class="card sec">
+      <div class="sec-hd"><span class="sec-ic">💳</span><h2>قیمت خرید</h2></div>
+      <div class="sec-bd">
+        <div class="field">
+          <label for="mat-price">قیمت خرید (تومان)</label>
+          <input type="text" inputmode="numeric" class="inp" id="mat-price" placeholder="مثلاً 350.000" oninput="onMoneyInput(this);updateUnitPriceHint();updatePriceWords();">
+          <div class="hint">قیمتی که برای همین مقدار پرداخت کردید</div>
+          <div class="hint" id="mat-price-words" style="font-weight:700;color:var(--primary);"></div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="mat-amount">مقدار خریداری‌شده</label>
+            <input type="text" inputmode="decimal" class="inp" id="mat-amount" placeholder="مثلاً 1" oninput="normDecimalInput(this);updateUnitPriceHint()">
+          </div>
+          <div class="field">
+            <label for="mat-unit">واحد</label>
+            <select class="inp" id="mat-unit" onchange="toggleDensityField()">
+              <option value="kg">کیلوگرم</option>
+              <option value="g">گرم</option>
+              <option value="l">لیتر</option>
+              <option value="ml">میلی‌لیتر</option>
+              <option value="count">عدد</option>
+            </select>
+          </div>
+        </div>
+        <div class="hint">مثال: اگه ۱ کیلو آرد رو ۳۵۰ هزار تومان خریدید → مقدار = 1، واحد = کیلوگرم</div>
+        <div class="hint" id="mat-unitprice" style="font-weight:700;color:var(--text);margin-bottom:0;"></div>
+      </div>
     </div>
+
+    <div class="card sec" id="mat-density-field">
+      <div class="sec-hd"><span class="sec-ic">⚗️</span><h2>چگالی <span class="opt">(اختیاری)</span></h2></div>
+      <div class="sec-bd">
+        <label for="mat-density">وزن هر ۱ لیتر از این ماده به کیلوگرم</label>
+        <input type="text" inputmode="decimal" class="inp" id="mat-density" placeholder="مثلاً 0.92 برای روغن" oninput="normDecimalInput(this);onMatDensityInput()">
+        <div class="hint" style="margin-bottom:0;">برای موادی مثل روغن، شیر، ماست، گلاب. اگه نام ماده رو تایپ کنید ممکنه خودش عدد مناسب رو پیشنهاد بده. اگه این ماده رو هم به لیتر بخرید و هم به لیتر توی دستور مصرف کنید، چگالی لازم نیست. ولی اگه یک‌جا با لیتر و یک‌جا با گرم حسابش کنید، پر کردن این فیلد لازمه؛ وگرنه برنامه بهتون هشدار می‌ده.</div>
+      </div>
+    </div>
+
     <div class="field hidden" id="mat-history-wrap">
       <button type="button" class="btn ghost sm" onclick="toggleHistory()">📈 مشاهده تاریخچه قیمت</button>
       <div id="mat-history-list" class="hidden" style="margin-top:10px;"></div>
@@ -359,63 +444,71 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 <div class="modal-ov" id="modal-picker">
   <div class="sheet">
     <div class="sheet-head"><h2>افزودن ماده به محصول</h2><button class="close-btn" aria-label="بستن" onclick="closeModal('modal-picker')">✕</button></div>
-    <input type="text" class="inp" id="picker-search" placeholder="🔍 جستجو در مواد اولیه" oninput="renderPicker()" style="margin-bottom:14px;">
+    <input type="text" class="inp" id="picker-search" placeholder="🔍 جستجو در مواد اولیه" oninput="renderPicker()" style="margin-bottom:14px;" autocomplete="off">
     <div id="picker-list"></div>
   </div>
 </div>
 
 <div class="modal-ov" id="modal-product">
   <div class="sheet">
-    <div class="sheet-head"><h2 id="prod-modal-title">محصول جدید</h2><div class="sheet-head-actions"><button class="head-icon-btn hidden" id="prod-del-icon" aria-label="حذف این محصول" onclick="deleteProduct()">🗑️</button><button class="head-icon-btn" aria-label="ذخیره محصول" onclick="saveProduct()">💾</button><button class="close-btn" aria-label="بستن" onclick="closeModal('modal-product')">✕</button></div></div>
+    <div class="sheet-head"><h2 id="prod-modal-title">محصول جدید</h2><div class="sheet-head-actions"><button class="head-icon-btn hidden" id="prod-del-icon" aria-label="حذف این محصول" onclick="deleteProduct()">🗑️</button><button class="head-icon-btn" aria-label="ذخیره محصول" onclick="saveProduct()">💾</button><button class="close-btn" aria-label="بستن" onclick="requestClose('modal-product')">✕</button></div></div>
 
-    <div class="card">
-      <label>نام محصول</label>
-      <input type="text" class="inp" id="prod-name" placeholder="مثلاً: کیک شکلاتی، شیرینی زبان">
-    </div>
-
-    <div class="card">
-      <h2>🥣 مواد لازم</h2>
-      <div id="prod-ing-list"></div>
-      <button class="btn ghost" onclick="openPicker()">➕ افزودن از فهرست مواد اولیه</button>
-    </div>
-
-    <div class="card">
-      <h2>⚖️ وزن و هزینه‌های جانبی</h2>
-      <div class="field">
-        <label>وزن نهایی محصول (گرم)</label>
-        <input type="tel" class="inp" id="prod-weight" placeholder="مثلاً 1000" oninput="renderProductResult()">
-        <div class="hint">با مواد اولیه‌ی بالا یک کیک یا شیرینی پختید؟ بعد از پخت، وزنش کنید و همون عدد رو اینجا بنویسید — هر چقدر هم که شد، رند نبودنش اشکالی نداره.</div>
-      </div>
-      <hr style="border:none;border-top:1px solid var(--border);margin:22px 0 16px;">
-      <div class="field" style="margin-bottom:0;">
-        <label>هزینه‌های جانبی (اختیاری)</label>
-        <div class="hint">مثل جعبه، بسته‌بندی، روبان یا دستمزد. اگه ندارید، چیزی اضافه نکنید.<br>«ثابت برای کل محصول» یعنی با کم و زیاد شدن وزن عوض نمی‌شه (مثل جعبه). «متناسب با وزن» یعنی با وزن کم و زیاد می‌شه.</div>
-        <div id="prod-extras-list"></div>
-        <button type="button" class="btn ghost" onclick="addExtra()">➕ افزودن هزینه جانبی</button>
+    <div class="card sec">
+      <div class="sec-hd"><span class="sec-ic">🍰</span><h2>نام محصول</h2></div>
+      <div class="sec-bd">
+        <input type="text" class="inp" id="prod-name" aria-label="نام محصول" placeholder="مثلاً: کیک شکلاتی، شیرینی زبان" autocomplete="off" oninput="scheduleDraftSave()">
       </div>
     </div>
 
-    <div class="card">
-      <h2>💰 سود و قیمت فروش</h2>
-      <div class="field">
-        <label>سود روی هزینه (Markup)</label>
-        <div class="hint" style="margin-top:-4px;">این درصد به قیمت تمام‌شده اضافه می‌شه؛ مثلاً اگه هزینه ۱۰۰,۰۰۰ تومان باشه و اینجا ۳۰٪ بذارید، قیمت فروش می‌شه ۱۳۰,۰۰۰ تومان.</div>
-        <div class="slider-row">
-          <input type="range" min="0" max="150" step="5" value="30" id="prod-profit" oninput="renderProductResult()">
-          <span class="pct" id="prod-profit-val">30%</span>
+    <div class="card sec">
+      <div class="sec-hd"><span class="sec-ic">🥣</span><h2>مواد لازم</h2></div>
+      <div class="sec-bd">
+        <div id="prod-ing-list"></div>
+        <button class="btn add" onclick="openPicker()">➕ افزودن از فهرست مواد اولیه</button>
+      </div>
+    </div>
+
+    <div class="card sec">
+      <div class="sec-hd"><span class="sec-ic">⚖️</span><h2>وزن و هزینه‌های جانبی</h2></div>
+      <div class="sec-bd">
+        <div class="field">
+          <div class="sub-hd">وزن نهایی محصول (گرم)</div>
+          <input type="text" inputmode="decimal" class="inp" id="prod-weight" aria-label="وزن نهایی محصول به گرم" placeholder="مثلاً 1000" oninput="normDecimalInput(this);renderProductResult()">
+          <div class="hint">با مواد اولیه‌ی بالا یک کیک یا شیرینی پختید؟ بعد از پخت، وزنش کنید و همون عدد رو اینجا بنویسید — هر چقدر هم که شد، رند نبودنش اشکالی نداره.</div>
+        </div>
+        <hr class="sec-sep">
+        <div class="field" style="margin-bottom:0;">
+          <div class="sub-hd">هزینه‌های جانبی <span class="opt">(اختیاری)</span></div>
+          <div class="hint">مثل جعبه، بسته‌بندی، روبان یا دستمزد. اگه ندارید، چیزی اضافه نکنید.<br>«ثابت برای کل محصول» یعنی با کم و زیاد شدن وزن عوض نمی‌شه (مثل جعبه). «متناسب با وزن» یعنی با وزن کم و زیاد می‌شه.</div>
+          <div id="prod-extras-list"></div>
+          <button type="button" class="btn add" onclick="addExtra()">➕ افزودن هزینه جانبی</button>
         </div>
       </div>
-      <div class="result" id="prod-result"></div>
-      <div class="field" style="margin-top:14px;margin-bottom:0;">
-        <label>💵 قیمت برای مقدار دلخواه</label>
-        <div class="row2">
-          <input type="tel" class="inp" id="qty-amt" placeholder="مثلاً 1.5" oninput="renderQtyCalc()">
-          <select class="inp" id="qty-unit" onchange="renderQtyCalc()">
-            <option value="kg">کیلوگرم</option>
-            <option value="g">گرم</option>
-          </select>
+    </div>
+
+    <div class="card sec">
+      <div class="sec-hd"><span class="sec-ic">💰</span><h2>سود و قیمت فروش</h2></div>
+      <div class="sec-bd">
+        <div class="field">
+          <div class="sub-hd">سود روی هزینه (Markup)</div>
+          <div class="hint" style="margin-top:0;">این درصد به قیمت تمام‌شده اضافه می‌شه؛ مثلاً اگه هزینه ۱۰۰,۰۰۰ تومان باشه و اینجا ۳۰٪ بذارید، قیمت فروش می‌شه ۱۳۰,۰۰۰ تومان.</div>
+          <div class="slider-row">
+            <input type="range" min="0" max="150" step="5" value="30" id="prod-profit" aria-label="درصد سود" oninput="renderProductResult()">
+            <span class="pct" id="prod-profit-val">30%</span>
+          </div>
         </div>
-        <div id="qty-result" style="margin-top:8px;"></div>
+        <div class="result" id="prod-result"></div>
+        <div class="field" style="margin-top:14px;margin-bottom:0;">
+          <div class="sub-hd">💵 قیمت برای مقدار دلخواه</div>
+          <div class="row2">
+            <input type="text" inputmode="decimal" class="inp" id="qty-amt" aria-label="مقدار دلخواه" placeholder="مثلاً 1.5" oninput="normDecimalInput(this);renderQtyCalc()">
+            <select class="inp" id="qty-unit" aria-label="واحد مقدار دلخواه" onchange="renderQtyCalc()">
+              <option value="kg">کیلوگرم</option>
+              <option value="g">گرم</option>
+            </select>
+          </div>
+          <div id="qty-result" style="margin-top:8px;"></div>
+        </div>
       </div>
     </div>
 
@@ -497,6 +590,17 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
       فایل از SCHEMA_VERSION فعلی بزرگ‌تر باشه، Restore متوقف می‌شه با پیام واضح.
   12) هیچ confirm/alert/prompt مرورگری نداریم؛ فقط showDialog (Promise-based، با
       Focus trap و Escape) و toast داخلی.
+  13) ذخیره‌ی فایل پشتیبان (downloadBackup) و اشتراک‌گذاری آن (shareBackup) دو کار جدا با دو
+      دکمه‌ی جدا هستن. هر دو فقط وقتی «پشتیبان گرفته شد» حساب می‌شن که واقعاً انجام شده باشن.
+  14) persist فقط اطلاعاتِ سالم (sanitizeState) رو می‌نویسه، بعد از نوشتن دوباره می‌خونه و مقایسه
+      می‌کنه، و اگه پنجره/تب دیگه‌ای بعد از بارگذاری ما چیزی نوشته باشه (savedAt عوض شده) روش
+      نمی‌نویسه (conflict). نسخه‌های ایمنی خودکار (cc_auto_*) و نسخه‌ی کمکی IndexedDB فقط «بعد از
+      موفقیت ذخیره‌ی اصلی» ساخته می‌شن و هیچ‌وقت جلوی ذخیره‌ی اصلی رو نمی‌گیرن.
+  15) دکمه‌ی Back اندروید اول فرم بازِ برنامه رو می‌بنده (modalStack + History API)، نه کل برنامه رو؛
+      فرم با تغییر ذخیره‌نشده قبل از بسته شدن می‌پرسه. تعداد ورودی‌های history = تعداد فرم‌های باز.
+  16) برنامه هیچ منبع خارجی (فونت/اسکریپت/تصویر از اینترنت) نداره؛ فونت وزیرمتن محلی است (fonts/).
+  17) Service Worker فقط کش‌های خودش (پیشوند ccalc-shell-) رو پاک می‌کنه؛ آدرس github.io بین چند برنامه
+      مشترکه و کش/ذخیره‌ی برنامه‌های دیگه نباید دست بخوره.
    ============================================================================ */
 const UNITS = {
   kg:{label:'کیلوگرم',type:'mass',factor:1000},
@@ -510,7 +614,7 @@ const STALE_DAYS = 60;
 const PROFIT_MAX = 150;       // یک قانون واحد؛ Slider، Validation و Restore همه از همین استفاده می‌کنن.
                                // اینجا، کنار بقیه‌ی ثابت‌های پایه، تعریف می‌شه — نه پایین‌تر از boot() —
                                // چون sanitizeState از همین الان (در جریان خودِ boot) بهش نیاز داره.
-const APP_VERSION = '0.3.1';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
+const APP_VERSION = '0.4.0';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
 const SCHEMA_VERSION = 2;             // نسخه‌ی ساختار داده — از APP_VERSION جداست
 const APP_ID = 'cake-price-calculator';
 const KEY_STATE = 'cc_state_v2';
@@ -518,6 +622,11 @@ const KEY_LEGACY_M = 'cc_materials_v1';
 const KEY_LEGACY_P = 'cc_products_v1';
 const KEY_CORRUPT = 'cc_state_corrupt_backup';
 const KEY_PRE_MIGRATION_BACKUP = 'cc_state_pre_migration_backup';
+const KEY_META = 'cc_backup_meta_v1';          // وضعیت پشتیبان‌گیری (آخرین پشتیبان، تعداد تغییرات از آن موقع، ...)؛ جزو «داده‌ی اصلی» نیست
+// نسخه‌های ایمنیِ خودکار (فقط روی همین گوشی): «قبل از آخرین تغییر»، «ابتدای هر روز» (۳ روز اخیر)، «قبل از کارهای پرخطر» (۲ تا)
+const AUTO_SLOTS = ['cc_auto_last','cc_auto_day0','cc_auto_day1','cc_auto_day2','cc_auto_risk0','cc_auto_risk1'];
+const AUTO_MAX_CHARS = 400000;                // اگه اطلاعات از این بزرگ‌تر شد، نسخه‌ی ایمنی خودکار ساخته نمی‌شه تا جای ذخیره برای خودِ اطلاعات بمونه
+const KEY_DRAFT = 'cc_draft_v1';              // پیش‌نویس خودکارِ فرم محصول (اگه وسط ویرایش برنامه بسته شد)؛ جزو «داده‌ی اصلی» نیست
 const THEMES = [
   {id:'auto', label:'خودکار', bg:'#FCF0DC', primary:'#C98A2B'},
   {id:'light', label:'روشن', bg:'#FCF0DC', primary:'#C98A2B'},
@@ -527,35 +636,80 @@ const THEMES = [
   {id:'green', label:'سبز آرام', bg:'#EEF3E7', primary:'#4F7A3D'}
 ];
 const FONT_SIZES = [{id:90,label:'کوچک'},{id:100,label:'معمولی'},{id:115,label:'بزرگ'},{id:130,label:'خیلی بزرگ'}];
-const ROUND_STEPS = [{id:0,label:'بدون گرد کردن'},{id:1000,label:'۱,۰۰۰ ت'},{id:5000,label:'۵,۰۰۰ ت'},{id:10000,label:'۱۰,۰۰۰ ت'}];
+const ROUND_STEPS = [{id:0,label:'بدون گرد کردن'},{id:1000,label:'۱,۰۰۰ تومان'},{id:5000,label:'۵,۰۰۰ تومان'},{id:10000,label:'۱۰,۰۰۰ تومان'}];
 const CATEGORIES = [
-  {id:'flour', label:'آرد و غلات', icon:'🌾'},
-  {id:'sugar', label:'شکر و شیرین‌کننده', icon:'🍬'},
-  {id:'dairy', label:'لبنیات', icon:'🧈'},
-  {id:'oil', label:'روغن و چربی', icon:'🫒'},
-  {id:'egg', label:'تخم‌مرغ', icon:'🥚'},
-  {id:'fruit', label:'میوه و خشکبار', icon:'🍇'},
-  {id:'spice', label:'ادویه و طعم‌دهنده', icon:'🌿'},
-  {id:'chocolate', label:'شکلات و کاکائو', icon:'🍫'},
-  {id:'pack', label:'بسته‌بندی', icon:'📦'},
-  {id:'other', label:'سایر', icon:'🔸'}
+  {id:'flour',     label:'آرد و غلات',             icon:'🌾', eg:'آرد، نشاسته، سمولینا، پودر سوخاری'},
+  {id:'sugar',     label:'شکر و شیرین‌کننده',       icon:'🍬', eg:'شکر، پودر قند، عسل، شیره، گلوکز'},
+  {id:'dairy',     label:'لبنیات',                icon:'🥛', eg:'شیر، خامه، کره، ماست، پنیر'},
+  {id:'oil',       label:'روغن و چربی',            icon:'🌻', eg:'روغن مایع، روغن جامد، مارگارین'},
+  {id:'egg',       label:'تخم‌مرغ',               icon:'🥚', eg:'تخم‌مرغ، زرده، سفیده'},
+  {id:'chocolate', label:'شکلات و کاکائو',         icon:'🍫', eg:'شکلات، چیپس شکلات، پودر کاکائو، کوورچر'},
+  {id:'coffee',    label:'قهوه و چای',             icon:'☕', eg:'قهوه، نسکافه، چای، دمنوش'},
+  {id:'fruit',     label:'میوه و میوه خشک',        icon:'🍇', eg:'میوه تازه، کشمش، برگه، آلو، خرما'},
+  {id:'nuts',      label:'مغز و آجیل',             icon:'🥜', eg:'بادام، گردو، پسته، فندق، نارگیل، کنجد'},
+  {id:'spice',     label:'ادویه و طعم‌دهنده',       icon:'🌿', eg:'وانیل، هل، دارچین، زعفران، اسانس، گلاب'},
+  {id:'baking',    label:'مواد کمکی پخت',          icon:'🥄', eg:'بکینگ‌پودر، جوش‌شیرین، مخمر، ژلاتین'},
+  {id:'filling',   label:'مربا، کرم و مواد آماده',  icon:'🥫', eg:'مربا، نوتلا، پودر پودینگ، بیسکویت، ویفر'},
+  {id:'decor',     label:'تزئین و رنگ خوراکی',      icon:'🎨', eg:'رنگ خوراکی، فوندانت، اسپرینکل، نقل'},
+  {id:'pack',      label:'بسته‌بندی',              icon:'📦', eg:'جعبه، ظرف، روبان، فویل'},
+  {id:'other',     label:'سایر',                  icon:'🔸', eg:''}
 ];
+/* آیکون‌ها عمداً از اموجی‌های قدیمی و پشتیبانی‌شده روی همه‌ی اندرویدها انتخاب شدن (نه 🫒/🧈 که روی اندروید ۱۱ و پایین‌تر
+   به‌جای تصویر، مربع خالی نشون داده می‌شن). */
+/* پیشنهاد خودکار دسته‌بندی از روی نام ماده. به ترتیب اولویت بررسی می‌شه؛ کلیدواژه‌ها روی نامِ «بدون فاصله» تطبیق داده می‌شن
+   و پیشوند «=» یعنی «باید کلمه‌ی کامل باشه» (مثلاً «=هل» به «هلو» نمی‌خوره، و «=رنگ» به «نارنگی»). */
+const CAT_RULES = [
+  {id:'chocolate', kw:['شکلات','کاکائو','کاکاو','کوورچر','چیپس','گاناش']},
+  {id:'sugar',     kw:['شکر','قند','عسل','=شیره','گلوکز','=شربت','نبات','استیویا','فروکتوز','ملاس','شیرینکننده']},
+  {id:'baking',    kw:['بکینگ','بیکینگ','جوششیرین','مخمر','ژلاتین','آگار','سیتریک','بیکربنات','=سودا']},
+  {id:'decor',     kw:['رنگخوراکی','=رنگ','فوندانت','اسپرینکل','ورقطلا','پودرطلا','=نقل','مروارید','=تاپر','تزئین','تزیین','=شمع']},
+  {id:'filling',   kw:['مربا','نوتلا','پودینگ','کاستارد','ویفر','بیسکویت','کارامل','پتیبور','=کرم','=سس','ژله','پودرکیک','کیکآماده']},
+  {id:'coffee',    kw:['قهوه','نسکافه','اسپرسو','کاپوچینو','=چای','دمنوش','ماچا']},
+  {id:'spice',     kw:['وانیل','=هل','دارچین','زعفران','اسانس','عصاره','گلاب','بهارنارنج','زنجبیل','جوزهندی','میخک','زردچوبه','=نمک','ادویه','=زیره','=سماق']},
+  {id:'oil',       kw:['روغن','مارگارین','شورتنینگ']},
+  {id:'flour',     kw:['آرد','نشاسته','سمولینا','سوخاری','کورنفلور','=جو','جودوسر','بلغور','گندم','=برنج']},
+  {id:'egg',       kw:['تخممرغ','=زرده','=سفیده']},
+  {id:'dairy',     kw:['=شیر','خامه','ماست','پنیر','=کره','=دوغ','=کشک']},
+  {id:'nuts',      kw:['بادام','گردو','پسته','فندق','نارگیل','کنجد','تخمه','خشخاش','آجیل','کاجو','=مغز']},
+  {id:'fruit',     kw:['میوه','پرتقال','لیمو','=سیب','موز','توت','کشمش','=آلو','زردآلو','انجیر','خرما','برگه','انبه','آناناس','گیلاس','آلبالو','انار','هلو','زرشک','بلوبری','کیوی','نارنگی','طالبی','هندوانه','انگور']},
+  {id:'pack',      kw:['جعبه','کارتن','ظرف','روبان','فویل','کیسه','پاکت','سلفون','برچسب','کاغذ','=کاپ','دستمال']}
+];
+function suggestCategory(name){
+  const nn=normFa(name);
+  if(!nn) return null;
+  const tokens=nn.split(' '), ns=nn.replace(/ /g,'');
+  for(const r of CAT_RULES){
+    for(const k of r.kw){
+      if(k.charAt(0)==='='){ if(tokens.indexOf(k.slice(1))!==-1) return r.id; }
+      else if(ns.indexOf(k)!==-1) return r.id;
+    }
+  }
+  return null;
+}
 const DENSITY_HINTS = [
   {kw:'روغن', val:0.92},
   {kw:'ماست', val:1.03},
   {kw:'خامه', val:1.01},
-  {kw:'شیر', val:1.03},
+  {kw:'شیر', val:1.03, exact:true},          // «شیر» فقط به‌عنوان کلمه‌ی کامل؛ «شیره» و «شیرینی» نباید بخورن
   {kw:'گلاب', val:1.0},
   {kw:'عسل', val:1.42},
-  {kw:'شربت', val:1.3},
-  {kw:'آب', val:1.0}
+  {kw:'شربت', val:1.3, exact:true},        // «تخم شربتی» (دانه) شربت نیست
+  {kw:'آبلیمو', val:1.03},
+  {kw:'آب', val:1.0, exact:true}             // «آب» فقط به‌عنوان کلمه‌ی کامل
 ];
 function guessDensity(name){
-  const n=(name||'').trim();
-  if(!n) return null;
-  for(const d of DENSITY_HINTS){ if(n.indexOf(d.kw)!==-1) return d; }
+  const nn=normFa(name);
+  if(!nn) return null;
+  const tokens=nn.split(' '), ns=nn.replace(/ /g,'');
+  for(const d of DENSITY_HINTS){
+    if(d.exact ? tokens.indexOf(d.kw)!==-1 : ns.indexOf(d.kw)!==-1) return d;
+  }
   return null;
 }
+/* ---------- ابزارهای امن برای localStorage ---------- */
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } }
+function lsRemove(k){ try{ localStorage.removeItem(k); }catch(e){} }
 
 /* ---------- اعداد: خواندن و نمایش ---------- */
 function faDigits(s){
@@ -563,7 +717,25 @@ function faDigits(s){
   return String(s==null?'':s).replace(/[۰-۹٠-٩]/g,d=>map[d]);
 }
 function normalizeNumText(s){
-  return faDigits(s).replace(/٫/g,'.').replace(/[٬,،\s\u200c\u200e\u200f]/g,'');
+  // «/» (و «٫») رو همون اعشار حساب می‌کنیم: خیلی‌ها «۱/۵» رو برای ۱٫۵ می‌نویسن؛ قبلاً «/» بی‌صدا حذف می‌شد و ۱/۵ می‌شد ۱۵
+  return faDigits(s).replace(/[٫\/⁄∕]/g,'.').replace(/[٬,،\s\u200c\u200e\u200f]/g,'');
+}
+function normFa(s){                            // یکسان‌سازی متن فارسی برای جستجو و تطبیق (ي/ك عربی، نیم‌فاصله، اعراب، ارقام)
+  return faDigits(String(s==null?'':s))
+    .replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[ۀة]/g,'ه')
+    .replace(/[\u064B-\u065F\u0670\u0640]/g,'')
+    .replace(/[\u200c\u200d\u200e\u200f]/g,' ')
+    .replace(/\s+/g,' ').trim().toLowerCase();
+}
+function normDecimalInput(el){                 // همون لحظه‌ی تایپ: ارقام فارسی → لاتین، «/» و «٫» → «.» تا کاربر ببینه چی حساب می‌شه
+  if(!el) return;
+  const before=String(el.value==null?'':el.value);
+  const after=faDigits(before).replace(/[٫\/⁄∕]/g,'.');
+  if(after!==before){
+    let pos=null; try{ pos=el.selectionStart; }catch(e){}
+    el.value=after;
+    try{ if(pos!=null && el.setSelectionRange) el.setSelectionRange(pos,pos); }catch(e){}
+  }
 }
 function hasNegativeSign(s){ return /^[-−–—]/.test(normalizeNumText(s)); }
 function toNum(s){
@@ -577,6 +749,7 @@ function toNum(s){
   return (isNaN(n)||!isFinite(n)) ? 0 : n;
 }
 function fmtMoney(n){ return groupMoneyDigits(String(Math.round(n||0))); }      // فقط برای پول
+function moneyU(n){ return '<span class="num">'+fmtMoney(n)+'</span> <small>تومان</small>'; }   // عدد + «تومان» کامل (نه «ت»)؛ عدد هیچ‌وقت وسط شکسته نمی‌شه
 function fmtInt(n){ return Math.round(n||0).toLocaleString('en-US'); }        // برای شمارش (تعداد ماده/محصول)
 function fmtQty(n){                                                          // فقط برای مقدار؛ اعشار حفظ می‌شه
   n=Number(n)||0;
@@ -713,9 +886,11 @@ function fmtDateFa(dateStr){
 }
 function roundPrice(n){                       // فقط برای قیمت فروش
   let s=1000;
-  try{ const v=parseInt(localStorage.getItem('cc_round')); if(!isNaN(v)) s=v; }catch(e){}
+  const v=parseInt(lsGet('cc_round')); if(!isNaN(v)) s=v;
   if(s<=0 || n<=0) return n;
-  return Math.ceil(n/s)*s;
+  const q=n/s, r=Math.round(q);
+  // خطای ممیز شناور (مثلاً ۱۳۰۰۰۰٫۰۰۰۰۰۰۰۰۰۰۰۳) نباید قیمت رو یک پله‌ی کامل بالاتر ببره
+  return (Math.abs(q-r)<1e-9 ? r : Math.ceil(q))*s;
 }
 
 /* ---------- موتور محاسبه (خالص؛ بدون DOM) ---------- */
@@ -799,7 +974,8 @@ function materialStatus(m){ return daysSince(m.priceUpdatedAt)>=STALE_DAYS ? 'or
 const STATUS_LABEL = {green:'دقیق', orange:'نیاز به بررسی', red:'قابل محاسبه نیست'};
 const STATUS_ICON = {green:'🟢', orange:'🟠', red:'🔴'};
 function badge(st, label){
-  return '<span class="badge b-'+st+'">'+STATUS_ICON[st]+' '+(label||STATUS_LABEL[st])+'</span>';
+  // دایره‌ی رنگی با CSS (نه اموجی 🟢/🟠 که روی اندروید ۱۰ و پایین‌تر نمایش داده نمی‌شه)
+  return '<span class="badge b-'+st+'"><i class="dot" aria-hidden="true"></i>'+(label||STATUS_LABEL[st])+'</span>';
 }
 
 /* ---------- ساخت / اصلاح ماده (خالص؛ قابل تست) ---------- */
@@ -942,8 +1118,19 @@ function parseBackupText(text){
   if(typeof text!=='string' || text.length===0) return {ok:false,error:'فایل خالی است'};
   if(text.length>8000000) return {ok:false,error:'حجم فایل بیش از حد بزرگ است'};
   let data;
-  try{ data=JSON.parse(text); }catch(e){ return {ok:false,error:'فایل خراب است یا فایل پشتیبان این برنامه نیست'}; }
-  return sanitizeState(data);
+  try{ data=JSON.parse(text.replace(/^\uFEFF/,'')); }catch(e){ return {ok:false,error:'فایل خراب است یا فایل پشتیبان این برنامه نیست'}; }
+  let toValidate=data;
+  try{                                           // فایل پشتیبانِ مربوط به Schema قدیمی‌تر هم مثل داده‌ی ذخیره‌شده از مسیر Migration رد می‌شه (وقتی Migration ثبت شده باشه)
+    const fromVer=(data && data.schemaVersion!=null) ? data.schemaVersion : (data && data.version!=null ? data.version : 1);
+    if(isNum(fromVer) && fromVer<SCHEMA_VERSION && Object.keys(SCHEMA_MIGRATIONS).length>0){
+      const m=migrateState(data);
+      if(!m.ok) return {ok:false,error:'این فایل مربوط به نسخه‌ی قدیمی‌تری از برنامه است و تبدیل نشد'};
+      toValidate=m.data;
+    }
+  }catch(e){}
+  const r=sanitizeState(toValidate);
+  if(r.ok) r.settings=sanitizeSettings(data && data.settings);   // تنظیمات ظاهری (اختیاری)
+  return r;
 }
 
 /* ---------- ذخیره‌سازی واحد و اتمیک ---------- */
@@ -993,14 +1180,25 @@ function migrateState(data){
   }
   return {ok:true, data:cur, steps};
 }
+/* ---------- ذخیره‌سازی واحد و اتمیک: خواندن ---------- */
+function stampOf(raw){                        // «زمان آخرین ذخیره» (savedAt) از متن خام رکورد؛ اگه نبود یا خراب بود null
+  if(typeof raw!=='string') return null;
+  try{ const o=JSON.parse(raw); return (o && typeof o.savedAt==='string') ? o.savedAt : null; }catch(e){ return null; }
+}
+function readStoredStamp(){
+  try{ const raw=localStorage.getItem(KEY_STATE); return {ok:true, exists:raw!=null, stamp:stampOf(raw)}; }
+  catch(e){ return {ok:false}; }
+}
 function loadState(){
   let raw=null, lm=null, lp=null;
   try{ raw=localStorage.getItem(KEY_STATE); lm=localStorage.getItem(KEY_LEGACY_M); lp=localStorage.getItem(KEY_LEGACY_P); }
   catch(e){ return {status:'fresh',state:sampleState(),unavailable:true}; }
   if(raw!=null){
+    let newer=false;
     try{
       const parsed=JSON.parse(raw);
       const fromVer=(parsed.schemaVersion!=null)?parsed.schemaVersion:(parsed.version!=null?parsed.version:1);
+      if(isNum(fromVer) && fromVer>SCHEMA_VERSION) newer=true;      // با نسخه‌ی جدیدتری از برنامه ذخیره شده (نه «خراب»)
       let toValidate=parsed, didMigrate=false;
       if(fromVer<SCHEMA_VERSION && Object.keys(SCHEMA_MIGRATIONS).length>0){
         try{
@@ -1010,13 +1208,13 @@ function loadState(){
           }));
         }catch(e){}
         const m=migrateState(parsed);
-        if(!m.ok) return {status:'corrupt',raw};
+        if(!m.ok) return {status:'corrupt',raw,newer};
         toValidate=m.data; didMigrate=true;
       }
       const r=sanitizeState(toValidate);
-      if(r.ok) return {status:(didMigrate?'migrated':'ok'), state:r.state};
+      if(r.ok) return {status:(didMigrate?'migrated':'ok'), state:r.state, stamp:(typeof parsed.savedAt==='string'?parsed.savedAt:null)};
     }catch(e){}
-    return {status:'corrupt',raw};
+    return {status:'corrupt',raw,newer};
   }
   if(lm==null && lp==null) return {status:'fresh',state:sampleState()};
   try{
@@ -1026,13 +1224,58 @@ function loadState(){
   return {status:'corrupt',raw:'materials='+lm+'\nproducts='+lp};
 }
 let materials=[], products=[], storageBlocked=false, storageCorruptRaw=null;
+let loadedStamp=null;            // «زمان ذخیره»ی رکوردی که همین پنجره بارگذاری کرده (یا خودش آخرین بار نوشته)؛ برای تشخیص تداخل با پنجره‌ی دیگر
+let conflictDetected=false, lastPersistError=null;
+let storageLow=false, storageUnavailable=false, storageBlockNewer=false, bootStatus=null, mirrorDbPromise=null;
+// ثابت‌های پایین قبل از boot() تعریف می‌شن چون persist (در مهاجرتِ همون لحظه‌ی boot) بهشون نیاز داره
+const MIRROR_DB='cc_mirror_v1', MIRROR_STORE='kv';
+const REMIND_AFTER_CHANGES=10, REMIND_AFTER_DAYS=7, FIRST_REMIND_CHANGES=3;
+
+/* ---------- ذخیره‌سازی واحد و اتمیک: نوشتن ---------- */
+function isQuotaError(e){
+  return !!e && (e.name==='QuotaExceededError' || e.name==='NS_ERROR_DOM_QUOTA_REACHED' || e.code===22 || e.code===1014 || /quota/i.test(String(e.message||'')));
+}
+function buildStateDoc(stamp){
+  return JSON.stringify({app:APP_ID,appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,savedAt:stamp,materials,products});
+}
+/* persist یعنی «واقعاً و قابل‌اطمینان ذخیره کن یا false بده و هیچ چیز رو خراب نکن»:
+   ۱) فقط اطلاعاتی نوشته می‌شه که دفعه‌ی بعد هم «سالم» خونده بشه (sanitizeState)؛
+   ۲) اگه پنجره/تب دیگه‌ای بعد از بارگذاری ما چیزی نوشته باشه، روی کارش نمی‌نویسیم (conflict)؛
+   ۳) اگه حافظه پر بود، اول نسخه‌های خودکار پاک می‌شن (خودِ اطلاعات اولویت داره) و یک بار دیگه تلاش می‌شه؛
+   ۴) بعد از نوشتن، دوباره خونده و با چیزی که نوشتیم مقایسه می‌شه؛
+   ۵) فقط بعد از موفقیت: نسخه‌ی ایمنی «قبل از این تغییر»، شمارنده‌ی یادآوری پشتیبان، و نسخه‌ی کمکی IndexedDB. */
 function persist(force){
-  if(storageBlocked && !force) return false;
+  lastPersistError=null;
+  if(storageBlocked && !force){ lastPersistError='blocked'; return false; }
+  let chk;
+  try{ chk=sanitizeState({materials,products,schemaVersion:SCHEMA_VERSION}); }catch(e){ chk={ok:false}; }
+  if(!chk.ok){ lastPersistError='invalid'; return false; }
+  let prevRaw=null;
+  try{ prevRaw=localStorage.getItem(KEY_STATE); }catch(e){ lastPersistError='write'; return false; }
+  if(prevRaw!=null && !force && stampOf(prevRaw)!==loadedStamp){ conflictDetected=true; lastPersistError='conflict'; return false; }
+  let t=Date.now();                             // «زمان ذخیره» همیشه اکیداً از قبلی بزرگ‌تره (حتی اگه چند ذخیره در یک میلی‌ثانیه باشه یا ساعت گوشی عقب کشیده شده باشه)
+  const lt=Date.parse(loadedStamp||'');
+  if(!isNaN(lt) && t<=lt) t=lt+1;
+  const stamp=new Date(t).toISOString();
+  const json=buildStateDoc(stamp);
   try{
-    const json=JSON.stringify({app:APP_ID,appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,savedAt:new Date().toISOString(),materials,products});
-    localStorage.setItem(KEY_STATE,json);
-    return localStorage.getItem(KEY_STATE)===json;
-  }catch(e){ return false; }
+    try{ localStorage.setItem(KEY_STATE,json); }
+    catch(e){
+      if(!isQuotaError(e)) throw e;
+      dropAutoCopies(); storageLow=true;            // جا برای خودِ اطلاعات باز کن و یک بار دیگه امتحان کن
+      localStorage.setItem(KEY_STATE,json);
+    }
+    if(localStorage.getItem(KEY_STATE)!==json) throw new Error('verify');
+  }catch(e){
+    lastPersistError = isQuotaError(e) ? 'quota' : ((e && e.message==='verify') ? 'verify' : 'write');
+    try{ if(prevRaw!=null && localStorage.getItem(KEY_STATE)!==prevRaw) localStorage.setItem(KEY_STATE,prevRaw); }catch(e2){}
+    return false;
+  }
+  loadedStamp=stamp; conflictDetected=false;
+  try{ if(!storageLow) rotateAutoCopies(prevRaw); }catch(e){}
+  try{ bumpChangeCounter(); }catch(e){}
+  try{ mirrorWrite(json); }catch(e){}
+  return true;
 }
 function snapshot(){ return JSON.stringify({materials,products}); }
 function restoreSnapshot(s){ const o=JSON.parse(s); materials=o.materials; products=o.products; }
@@ -1043,11 +1286,220 @@ function tryCommit(mutate){
   restoreSnapshot(snap);
   return false;
 }
+function adoptStoredStamp(){                  // «آخرین نوشته‌ی حافظه رو قبول دارم» (مثلاً بعد از بازیابی عمدی که باید همه‌چیز رو جایگزین کنه)
+  const c=readStoredStamp(); if(c.ok) loadedStamp=c.exists?c.stamp:null;
+}
+function applyLoaded(b){                      // نتیجه‌ی loadState رو روی حافظه‌ی برنامه می‌ذاره (چیزی ذخیره نمی‌کنه)
+  if(b.status==='corrupt'){ storageBlocked=true; storageCorruptRaw=b.raw; storageBlockNewer=!!b.newer; return; }
+  materials=b.state.materials; products=b.state.products;
+  loadedStamp=b.stamp||null;
+  storageBlocked=false; storageCorruptRaw=null; storageBlockNewer=false; conflictDetected=false;
+}
+function reloadFromStorage(){                 // آخرین اطلاعات ذخیره‌شده (مثلاً از پنجره‌ی دیگه) رو دوباره می‌خونه
+  const b=loadState();
+  if(b.status==='fresh' && !storageBlocked){
+    // رکورد از حافظه پاک شده (مثلاً «Clear data» یا برنامه‌ی دیگه روی همین آدرس)؛ نسخه‌ی توی حافظه‌ی برنامه ممکنه تنها نسخه باشه → دوباره می‌نویسیمش
+    if(!b.unavailable) persist();
+    return 'kept';
+  }
+  closeAllModals();
+  applyLoaded(b);
+  updateBanner(); renderAll();
+  return b.status;
+}
+function syncFromOtherWindow(){               // وقتی پنجره/تب دیگه چیزی نوشته (رویداد storage) یا دوباره به برنامه برگشتیم
+  const c=readStoredStamp();
+  if(!c.ok) return 'unreadable';
+  if(c.exists ? (c.stamp===loadedStamp) : (loadedStamp===null)) return 'same';
+  if(modalStack.length){ conflictDetected=c.exists; return 'deferred'; }     // وسط ویرایش فرم رو خراب نمی‌کنیم؛ موقع ذخیره، persist خودش تداخل رو تشخیص می‌ده
+  const r=reloadFromStorage();
+  if(r==='ok' || r==='migrated') toast('اطلاعات با آخرین تغییرات به‌روز شد');
+  return r;
+}
 (function boot(){
   const b=loadState();
-  if(b.status==='corrupt'){ storageBlocked=true; storageCorruptRaw=b.raw; }
-  else { materials=b.state.materials; products=b.state.products; if(b.status==='migrated') persist(); }
+  storageUnavailable=!!b.unavailable;
+  bootStatus=b.status;
+  applyLoaded(b);
+  if(b.status==='migrated') persist();
 })();
+
+/* ---------- نسخه‌های ایمنی خودکار (فقط روی همین گوشی؛ جای فایل پشتیبان رو نمی‌گیرن) ----------
+   cc_auto_last  = وضعیتِ «قبل از آخرین تغییر»
+   cc_auto_day0..2 = وضعیتِ «ابتدای روز» برای ۳ روزِ آخرِ استفاده
+   cc_auto_risk0..1 = وضعیتِ «قبل از کارهای پرخطر» (بازیابی، پاک کردن کامل، ...)
+   هر کدوم یک رکوردِ کاملِ همون لحظه است (بایت‌به‌بایت) داخل یک پوشش با زمان و تعداد. */
+function countsOfRaw(raw){
+  try{ const o=JSON.parse(raw); if(o && Array.isArray(o.materials) && Array.isArray(o.products)) return {m:o.materials.length,p:o.products.length}; }catch(e){}
+  return null;
+}
+function wrapAuto(why, note, raw, counts){
+  return JSON.stringify({app:APP_ID,kind:'auto-copy',why:why,note:note||'',at:new Date().toISOString(),day:todayLocal(),counts:counts,raw:raw});
+}
+function readAuto(key){
+  const t=lsGet(key); if(!t) return null;
+  try{
+    const o=JSON.parse(t);
+    if(o && o.app===APP_ID && o.kind==='auto-copy' && typeof o.raw==='string' && o.counts && isNum(o.counts.m) && isNum(o.counts.p)) return o;
+  }catch(e){}
+  return null;
+}
+function dropAutoCopies(){ AUTO_SLOTS.forEach(lsRemove); }
+function rotateAutoCopies(prevRaw){
+  if(typeof prevRaw!=='string' || prevRaw.length>AUTO_MAX_CHARS) return;
+  const counts=countsOfRaw(prevRaw);
+  if(!counts || (counts.m===0 && counts.p===0)) return;         // از وضعیت خالی نسخه‌ی ایمنی نمی‌سازیم (نباید جای نسخه‌ی با ارزش رو بگیره)
+  const today=todayLocal();
+  const d0=readAuto('cc_auto_day0');
+  if(!d0 || d0.day!==today){                                     // اولین تغییر امروز: وضعیت «ابتدای امروز» رو نگه دار و قدیمی‌ترها رو یک پله بده عقب
+    const t1=lsGet('cc_auto_day1'); if(t1) lsSet('cc_auto_day2', t1);
+    const t0=lsGet('cc_auto_day0'); if(t0) lsSet('cc_auto_day1', t0);
+    lsSet('cc_auto_day0', wrapAuto('day','',prevRaw,counts));
+  }
+  lsSet('cc_auto_last', wrapAuto('last','',prevRaw,counts));
+}
+function saveRiskCopy(note){                  // قبل از کارهای پرخطر: وضعیت «همین الان» رو جدا نگه می‌داره. true یعنی «لازم نبود یا ذخیره شد»
+  try{
+    if(storageBlocked) return true;
+    let raw=lsGet(KEY_STATE);
+    if(raw==null){
+      if(materials.length+products.length===0) return true;
+      raw=buildStateDoc(new Date().toISOString());
+    }
+    const counts=countsOfRaw(raw);
+    if(!counts) return false;
+    if(counts.m===0 && counts.p===0) return true;
+    if(raw.length>AUTO_MAX_CHARS*2) return false;
+    const prev=lsGet('cc_auto_risk0');
+    const doc=wrapAuto('risk',note,raw,counts);
+    if(prev) lsSet('cc_auto_risk1', prev);
+    if(lsSet('cc_auto_risk0', doc)) return true;
+    dropAutoCopyKinds(['cc_auto_day2','cc_auto_day1','cc_auto_last']);   // جا باز کن (قدیمی‌ترین‌ها اول) و یک بار دیگه
+    return lsSet('cc_auto_risk0', doc);
+  }catch(e){ return false; }
+}
+function dropAutoCopyKinds(keys){ keys.forEach(lsRemove); }
+function listAutoCopies(){
+  const order=['cc_auto_risk0','cc_auto_risk1','cc_auto_last','cc_auto_day0','cc_auto_day1','cc_auto_day2'];
+  const out=[], seen=new Set();
+  order.forEach(function(k){
+    const a=readAuto(k); if(!a) return;
+    if(a.counts.m===0 && a.counts.p===0) return;
+    if(seen.has(a.raw)) return;                                  // دو نسخه‌ی کاملاً یکسان فقط یک بار نشون داده می‌شه
+    seen.add(a.raw);
+    out.push({key:k, why:a.why, note:a.note||'', at:a.at, day:a.day, counts:a.counts});
+  });
+  out.sort(function(x,y){ return String(y.at).localeCompare(String(x.at)); });
+  return out;
+}
+
+/* ---------- نسخه‌ی کمکی در IndexedDB (حافظه‌ی دومِ مرورگر) ----------
+   اگه برنامه‌ی دیگه‌ای روی همین آدرس localStorage.clear() بزنه یا رکورد اصلی خراب بشه، این نسخه سالم می‌مونه.
+   هر خطایی اینجا بی‌صدا نادیده گرفته می‌شه؛ ذخیره‌ی اصلی هیچ‌وقت به این بخش وابسته نیست. */
+function mirrorDb(){
+  if(mirrorDbPromise) return mirrorDbPromise;
+  const p=new Promise(function(resolve,reject){
+    try{
+      if(typeof indexedDB==='undefined' || !indexedDB) return reject(new Error('no-idb'));
+      const rq=indexedDB.open(MIRROR_DB,1);
+      rq.onupgradeneeded=function(){ try{ rq.result.createObjectStore(MIRROR_STORE); }catch(e){} };
+      rq.onsuccess=function(){
+        const db=rq.result;
+        db.onversionchange=function(){ try{ db.close(); }catch(e){} mirrorDbPromise=null; };
+        db.onclose=function(){ mirrorDbPromise=null; };
+        resolve(db);
+      };
+      rq.onerror=function(){ reject(rq.error||new Error('idb-error')); };
+      rq.onblocked=function(){ reject(new Error('idb-blocked')); };
+    }catch(e){ reject(e); }
+  });
+  mirrorDbPromise=p;
+  p.catch(function(){ if(mirrorDbPromise===p) mirrorDbPromise=null; });
+  return p;
+}
+function mirrorWrite(json){
+  if(typeof indexedDB==='undefined') return;
+  mirrorDb().then(function(db){
+    const tx=db.transaction(MIRROR_STORE,'readwrite');
+    tx.objectStore(MIRROR_STORE).put({json:json,at:new Date().toISOString(),appVersion:APP_VERSION},'state');
+  }).catch(function(){});
+}
+function mirrorSeed(){                          // کاربری که از نسخه‌ی قبل اومده: بدون منتظر موندن برای اولین تغییر، همین الان از اطلاعات سالمِ فعلی یک نسخه‌ی کمکی می‌سازه
+  try{
+    if(storageBlocked || storageUnavailable || (bootStatus!=='ok' && bootStatus!=='migrated')) return;
+    if(materials.length+products.length===0) return;
+    const raw=lsGet(KEY_STATE); if(raw==null) return;
+    const cs=stampOf(raw);
+    mirrorRead().then(function(rec){
+      const ms=(rec && typeof rec.json==='string') ? stampOf(rec.json) : null;
+      if(ms && cs && Date.parse(ms)>Date.parse(cs)) return;       // نسخه‌ی کمکی جدیدتره؛ دست نمی‌زنیم
+      if(ms && ms===cs) return;                                    // همین الان هم‌روزه
+      if(lsGet(KEY_STATE)!==raw) return;                           // تو این فاصله ذخیره‌ی جدیدی شده؛ persist خودش نسخه‌ی کمکی رو می‌سازه
+      mirrorWrite(raw);
+    }).catch(function(){});
+  }catch(e){}
+}
+function mirrorRead(){
+  return mirrorDb().then(function(db){
+    return new Promise(function(resolve){
+      try{
+        const rq=db.transaction(MIRROR_STORE,'readonly').objectStore(MIRROR_STORE).get('state');
+        rq.onsuccess=function(){ resolve(rq.result||null); };
+        rq.onerror=function(){ resolve(null); };
+      }catch(e){ resolve(null); }
+    });
+  }).catch(function(){ return null; });
+}
+
+/* ---------- یادآوری پشتیبان‌گیری ---------- */
+function validISO(s){ return typeof s==='string' && !isNaN(Date.parse(s)); }
+function metaDefault(){ return {v:1,lastBackupAt:null,lastBackupKind:null,changes:0,firstChangeAt:null,snoozeUntil:null,installDismissedAt:null}; }
+function metaGet(){
+  const m=metaDefault();
+  try{
+    const t=lsGet(KEY_META);
+    if(t){
+      const o=JSON.parse(t);
+      if(o && typeof o==='object'){
+        if(validISO(o.lastBackupAt)) m.lastBackupAt=o.lastBackupAt;
+        if(o.lastBackupKind==='file' || o.lastBackupKind==='share') m.lastBackupKind=o.lastBackupKind;
+        if(isNum(o.changes) && o.changes>=0) m.changes=Math.floor(o.changes);
+        if(validISO(o.firstChangeAt)) m.firstChangeAt=o.firstChangeAt;
+        if(validISO(o.snoozeUntil)) m.snoozeUntil=o.snoozeUntil;
+        if(validISO(o.installDismissedAt)) m.installDismissedAt=o.installDismissedAt;
+      }
+    }
+  }catch(e){}
+  return m;
+}
+function metaSet(patch){ const m=Object.assign(metaGet(), patch||{}); lsSet(KEY_META, JSON.stringify(m)); return m; }
+function bumpChangeCounter(){ const m=metaGet(); metaSet({changes:m.changes+1, firstChangeAt:m.firstChangeAt||new Date().toISOString()}); }
+function markBackedUp(kind){ metaSet({lastBackupAt:new Date().toISOString(), lastBackupKind:(kind==='share'?'share':'file'), changes:0, firstChangeAt:null, snoozeUntil:null}); }
+function initMeta(){                          // کاربری که از نسخه‌ی قبل اومده و داده داره ولی هنوز سابقه‌ی پشتیبان نداره: ساعت یادآوری از «حالا» شروع می‌شه
+  try{
+    if(lsGet(KEY_META)==null && lsGet(KEY_STATE)!=null && !storageBlocked && (materials.length+products.length)>0) metaSet({firstChangeAt:new Date().toISOString()});
+  }catch(e){}
+}
+function localDateOf(iso){
+  const d=new Date(iso); if(isNaN(d)) return null;
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function daysSinceISO(iso){ const ld=localDateOf(iso); return ld ? daysSince(ld) : null; }
+function hasUserData(){ return !storageBlocked && lsGet(KEY_STATE)!=null && (materials.length+products.length)>0; }
+function backupStatus(){
+  const m=metaGet();
+  if(!hasUserData()) return {level:'none', changes:m.changes};
+  const ch=m.changes, last=m.lastBackupAt;
+  if(!last){
+    const age=m.firstChangeAt ? daysSinceISO(m.firstChangeAt) : 0;
+    if(ch>=FIRST_REMIND_CHANGES || (age!=null && age>=1)) return {level:'never', changes:ch};
+    return {level:'new', changes:ch};
+  }
+  const days=daysSinceISO(last);
+  if(ch>0 && (ch>=REMIND_AFTER_CHANGES || (days!=null && days>=REMIND_AFTER_DAYS))) return {level:'due', changes:ch, days:days, last:last, kind:m.lastBackupKind};
+  return {level:'ok', changes:ch, days:days, last:last, kind:m.lastBackupKind};
+}
+function backupSnoozed(){ const m=metaGet(); return !!m.snoozeUntil && Date.parse(m.snoozeUntil)>Date.now(); }
 
 /* ---------- پیام‌ها: Toast و Dialog داخلی ---------- */
 let toastT;
@@ -1089,7 +1541,7 @@ function dlgNext(){
   bt.appendChild(priBtn);
   dlgPrevFocus=document.activeElement;
   ov.classList.add('open'); ov.setAttribute('aria-hidden','false');
-  const focusEl=(type==='danger' && secBtn) ? secBtn : priBtn;
+  const focusEl=((type==='danger' || o.focusSecondary) && secBtn) ? secBtn : priBtn;       // کار خطرناک/بدون برگشت: فوکوس اول روی «انصراف»
   if(focusEl.focus) setTimeout(()=>focusEl.focus(),30);
 }
 function dlgClose(val){
@@ -1101,8 +1553,13 @@ function dlgClose(val){
   cur.resolve(val);
   dlgNext();
 }
+function updateOverlayOpen(){ const ov=document.getElementById('update-ov'); return !!(ov && ov.classList.contains('open')); }
 function dlgKey(e){
-  if(!dlgOpen || !dlgCur) return;
+  if(!dlgOpen || !dlgCur){
+    // Escape روی کامپیوتر: بالاترین فرم بازِ برنامه (با همون پرسش «تغییرات ذخیره نشده») بسته می‌شه
+    if(e && e.key==='Escape' && modalStack.length && !updateOverlayOpen()) requestClose(modalStack[modalStack.length-1]);
+    return;
+  }
   if(e.key==='Escape'){ dlgClose(dlgCur.o.secondary?false:true); return; }
   if(e.key==='Tab'){
     const btns=Array.from(document.getElementById('dlg-btns').children||[]);
@@ -1116,18 +1573,61 @@ function dlgKey(e){
 function dlgBackdrop(ev){
   if(ev.target && ev.target.id==='dlg-ov' && dlgCur && !dlgCur.o.secondary) dlgClose(true);
 }
+function dismissTopOverlay(){                 // دکمه‌ی Back گوشی: اول پنجره‌ی پیام (یا پنجره‌ی بروزرسانی) بسته می‌شه
+  if(dlgOpen && dlgCur){ dlgClose(dlgCur.o.secondary?false:true); return true; }
+  if(updateOverlayOpen()){ dismissUpdate(); return true; }
+  return false;
+}
 function showStorageError(){
+  const why=lastPersistError;
   if(storageBlocked){
     return showDialog({type:'error',title:'ذخیره‌ی جدید فعلاً غیرفعال است',
       message:'اطلاعات ذخیره‌شده‌ی قبلی مشکل دارد و برای اینکه بدتر نشه، تا وقتی تکلیفش روشن نشده چیزی ذخیره نمی‌شه.\nاز بالای صفحه «بازیابی از فایل پشتیبان» رو بزنید.',
       primary:{label:'باشه'}});
   }
+  if(why==='conflict'){
+    return showDialog({type:'warning',title:'اطلاعات در جای دیگری تغییر کرده',
+      message:'این برنامه روی همین گوشی در یک پنجره (یا تب) دیگر هم باز است و آنجا اطلاعات عوض شده. برای اینکه چیزی از بین نره، این تغییر ذخیره نشد.\nبا «بارگذاری دوباره»، آخرین اطلاعات نشون داده می‌شه؛ بعد تغییرتون رو دوباره انجام بدید.',
+      primary:{label:'بارگذاری دوباره'},secondary:{label:'فعلاً بمونم'}}).then(function(yes){ if(yes) reloadFromStorage(); return yes; });
+  }
+  if(why==='invalid'){
+    return showDialog({type:'error',title:'این تغییر ذخیره نشد',
+      message:'اطلاعات این تغییر کامل یا درست نبود و برای محافظت از بقیه‌ی اطلاعات، ذخیره نشد. اطلاعات قبلی شما حفظ شده است.\nاگه این پیام تکرار شد، یک فایل پشتیبان بگیرید و به سازنده‌ی برنامه خبر بدید.',
+      primary:{label:'باشه'}});
+  }
+  if(why==='quota'){
+    return showDialog({type:'error',title:'حافظه‌ی مرورگر پر است',
+      message:'اطلاعات جدید ذخیره نشد؛ اطلاعات قبلی شما حفظ شده است.\nهمین حالا یک فایل پشتیبان بگیرید، فضای خالی گوشی رو بیشتر کنید و دوباره امتحان کنید.',
+      primary:{label:'باشه'}});
+  }
   return showDialog({type:'error',title:'ذخیره نشد',
-    message:'اطلاعات ذخیره نشد. اطلاعات قبلی شما حفظ شده است.\nاحتمالاً حافظه‌ی گوشی پر است یا مرورگر در حالت خصوصی است. یک فایل پشتیبان بگیرید و کمی فضای گوشی رو خالی کنید.',
+    message:'اطلاعات ذخیره نشد. اطلاعات قبلی شما حفظ شده است.\nاحتمالاً حافظه‌ی گوشی پر است یا مرورگر در حالت خصوصی (ناشناس) است. یک فایل پشتیبان بگیرید و کمی فضای گوشی رو خالی کنید.',
     primary:{label:'باشه'}});
 }
-function renderAll(){ renderProducts(); renderMaterials(); renderSettings(); }
-function updateBanner(){ document.getElementById('corrupt-banner').classList.toggle('hidden', !storageBlocked); }
+function renderAll(){ renderProducts(); renderMaterials(); renderSettings(); renderTopBanners(); }
+function updateBanner(){
+  const el=document.getElementById('corrupt-banner');
+  el.classList.toggle('hidden', !storageBlocked);
+  const t=document.getElementById('banner-title'), d=document.getElementById('banner-desc');
+  const autoBtn=document.getElementById('banner-auto-btn'), restoreBtn=document.getElementById('banner-restore-btn');
+  const freshBtn=document.getElementById('banner-fresh-btn'), reloadBtn=document.getElementById('banner-reload-btn');
+  if(!storageBlocked) return;
+  if(storageBlockNewer){
+    t.textContent='این اطلاعات با نسخه‌ی جدیدتری از برنامه ذخیره شده است.';
+    d.textContent='برنامه‌ای که الان باز است قدیمی‌تر است. آن را کامل ببندید و دوباره باز کنید، یا از «بروزرسانی» استفاده کنید. اطلاعات شما سالم است و تا وقتی مشکل حل نشده چیزی روی آن نوشته نمی‌شود.';
+    if(reloadBtn) reloadBtn.classList.remove('hidden');
+    if(restoreBtn) restoreBtn.classList.add('hidden');
+    if(freshBtn) freshBtn.classList.add('hidden');
+    if(autoBtn) autoBtn.classList.add('hidden');
+    return;
+  }
+  t.textContent='اطلاعات ذخیره‌شده مشکل دارد.';
+  d.textContent='اطلاعات شما لزوماً از بین نرفته است. از فایل پشتیبان یا نسخه‌های ایمنی خودکار برنامه استفاده کنید.';
+  if(reloadBtn) reloadBtn.classList.add('hidden');
+  if(restoreBtn) restoreBtn.classList.remove('hidden');
+  if(freshBtn) freshBtn.classList.remove('hidden');
+  if(autoBtn) autoBtn.classList.toggle('hidden', listAutoCopies().length===0);
+}
 
 /* ---------- ناوبری ---------- */
 function switchTab(t){
@@ -1136,16 +1636,101 @@ function switchTab(t){
     document.getElementById('nav-'+v).classList.toggle('active', v===t);
   });
   document.getElementById('fab-btn').classList.toggle('hidden', t==='settings');
+  document.getElementById('top-banners').classList.toggle('hidden', t==='settings');
   if(t==='products') renderProducts();
   if(t==='materials') renderMaterials();
   if(t==='settings') renderSettings();
+  try{ window.scrollTo(0,0); }catch(e){}
 }
 function fabAction(){
   const onMaterials = !document.getElementById('view-materials').classList.contains('hidden');
   if(onMaterials) openMaterialEditor(null); else openProductEditor(null);
 }
-function openModal(id){ document.getElementById(id).classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function scrollToCard(id){
+  try{ const el=document.getElementById(id); if(el && el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+}
+function goAutoCopies(){ switchTab('settings'); scrollToCard('auto-card'); }
+function goBackupCard(){ switchTab('settings'); scrollToCard('backup-card'); }
+
+/* ---------- پنجره‌های باز (Modal) و دکمه‌ی Back گوشی ----------
+   هر فرم بازِ برنامه یک ورودی توی history مرورگر می‌ذاره؛ دکمه‌ی Back اندروید اول همون فرم رو می‌بنده (نه کل برنامه رو).
+   اگه فرم تغییر ذخیره‌نشده داشته باشه، قبل از بستن می‌پرسه. رابطه‌ی ثابت: تعداد ورودی‌های history = تعداد فرم‌های باز. */
+const modalStack=[];                          // شناسه‌ی فرم‌های باز، از پایین به بالا
+const modalSigs={};                           // «امضا»ی فرم در لحظه‌ی باز شدن، برای تشخیص تغییر ذخیره‌نشده
+let histDepth=0;                              // تعداد ورودی‌هایی که خودمون توی history گذاشتیم
+let expectPop=false, expectPopTimer=null, backFlushTimer=null;
+function modalOpen(id){ return modalStack.indexOf(id)!==-1; }
+function pushHist(){ try{ history.pushState({cc:1,d:histDepth+1},''); histDepth++; }catch(e){} }
+function syncPush(){ let g=0; while(histDepth<modalStack.length && g++<10){ const before=histDepth; pushHist(); if(histDepth===before) break; } }
+function scheduleBack(){
+  if(backFlushTimer) return;
+  backFlushTimer=setTimeout(flushBack,0);     // چند فرم که پشت‌سرهم بسته می‌شن، فقط یک بار history.go انجام می‌شه
+}
+function flushBack(){
+  backFlushTimer=null;
+  const extra=histDepth-modalStack.length;
+  if(extra<=0) return;
+  try{
+    expectPop=true; clearTimeout(expectPopTimer); expectPopTimer=setTimeout(function(){ expectPop=false; },800);
+    histDepth-=extra;
+    history.go(-extra);
+  }catch(e){ expectPop=false; }
+}
+function openModal(id){
+  const el=document.getElementById(id); if(!el || modalOpen(id)) return;
+  el.classList.add('open');
+  modalStack.push(id);
+  pushHist();
+  try{ const sh=el.querySelector && el.querySelector('.sheet'); if(sh) sh.scrollTop=0; }catch(e){}
+}
+function closeModal(id, fromPop){
+  const el=document.getElementById(id);
+  if(el) el.classList.remove('open');
+  const i=modalStack.lastIndexOf(id);
+  if(i===-1) return;
+  modalStack.splice(i,1);
+  delete modalSigs[id];
+  if(!fromPop) scheduleBack();
+  if(id==='modal-product') clearDraft();
+  if(modalStack.length===0) flushPendingUpdateOffer();
+}
+function closeAllModals(){ modalStack.slice().reverse().forEach(function(id){ closeModal(id); }); }
+function onPopState(){
+  if(expectPop){ expectPop=false; clearTimeout(expectPopTimer); return; }   // این popstate نتیجه‌ی history.go خودِ ماست
+  histDepth=Math.max(0,histDepth-1);                                         // کاربر Back زده؛ مرورگر یک ورودی ما رو برداشت
+  if(dismissTopOverlay()){ syncPush(); return; }                             // فقط پنجره‌ی پیام بسته شد؛ فرم‌ها سر جاشونن
+  if(!modalStack.length) return;                                             // چیزی از ما باز نیست: رفتار عادی مرورگر
+  const top=modalStack[modalStack.length-1];
+  if(!isDirty(top)){ closeModal(top,true); return; }
+  syncPush();                                                                // تا وقتی سوال نمایش داده می‌شه، Back دوباره هم درست کار کنه
+  askLeave(top).then(function(ok){ if(ok) closeModal(top); });
+}
+function currentSig(id){ if(id==='modal-material') return materialSig(); if(id==='modal-product') return productSig(); return null; }
+function isDirty(id){
+  const base=modalSigs[id]; if(base==null) return false;
+  try{ return currentSig(id)!==base; }catch(e){ return false; }
+}
+function askLeave(id){
+  return showDialog({type:'warning',title:'تغییرات ذخیره نشده',
+    message:id==='modal-product' ? 'اگه الان ببندید، تغییراتی که توی این محصول دادید ذخیره نمی‌شه.' : 'اگه الان ببندید، تغییراتی که دادید ذخیره نمی‌شه.',
+    primary:{label:'بستن بدون ذخیره'},secondary:{label:'ادامه‌ی ویرایش'},focusSecondary:true});
+}
+async function requestClose(id){
+  if(isDirty(id)){ const ok=await askLeave(id); if(!ok) return false; }
+  closeModal(id);
+  return true;
+}
+function materialSig(){
+  const g=function(id){ return String(document.getElementById(id).value==null?'':document.getElementById(id).value); };
+  return JSON.stringify([g('mat-name').trim(), g('mat-category'), g('mat-price'), g('mat-amount'), g('mat-unit'), g('mat-density')]);
+}
+function productSig(){
+  if(!editingProduct) return '';
+  const g=function(id){ return String(document.getElementById(id).value==null?'':document.getElementById(id).value); };
+  return JSON.stringify([g('prod-name').trim(), g('prod-weight'), g('prod-profit'),
+    editingProduct.items.map(function(i){ return [i.materialId,i.amount,i.unit]; }),
+    editingProduct.extras.map(function(e){ return [e.name||'',e.amount||0,e.mode]; })]);
+}
 
 /* ---------- مواد اولیه ---------- */
 function sectionHeader(txt, urgent){
@@ -1167,7 +1752,7 @@ function materialRow(x){
   return div;
 }
 function renderMaterials(){
-  const q=(document.getElementById('search-materials').value||'').toLowerCase();
+  const q=normFa(document.getElementById('search-materials').value||'');
   const list=document.getElementById('materials-list'); list.innerHTML='';
   if(materials.length===0){
     list.innerHTML='<div class="empty"><div class="big">🧺</div>هنوز مواد اولیه‌ای ثبت نکرده‌اید.<br>با دکمه + یک ماده اضافه کنید.</div>'; return;
@@ -1175,7 +1760,7 @@ function renderMaterials(){
   const meta = materials.map(m=>{
     const usage = products.filter(p=>(p.items||[]).some(it=>it.materialId===m.id)).length;
     return {m,usage,stale:daysSince(m.priceUpdatedAt)>=STALE_DAYS};
-  }).filter(x=>x.m.name.toLowerCase().includes(q));
+  }).filter(x=>!q || normFa(x.m.name).indexOf(q)!==-1);
   if(meta.length===0){ list.innerHTML='<div class="empty">چیزی پیدا نشد.</div>'; return; }
   const staleItems=meta.filter(x=>x.stale).sort((a,b)=>b.usage-a.usage);
   const restItems=meta.filter(x=>!x.stale);
@@ -1190,7 +1775,23 @@ function renderMaterials(){
     items.forEach(x=>list.appendChild(materialRow(x)));
   });
 }
-let editingMaterialId=null, matDensityAuto=false;
+let editingMaterialId=null, matDensityAuto=false, matCatAuto=false;
+function fillCategorySelect(){
+  const sel=document.getElementById('mat-category');
+  sel.innerHTML='<option value="">— انتخاب کنید —</option>'+CATEGORIES.map(c=>'<option value="'+c.id+'">'+c.icon+' '+escapeHtml(c.label)+'</option>').join('');
+}
+function updateCategoryHint(){
+  const sel=document.getElementById('mat-category'), box=document.getElementById('mat-category-eg');
+  const c=CATEGORIES.find(x=>x.id===sel.value);
+  let t='';
+  if(!c) t='نوع ماده را انتخاب کنید تا توی فهرست مواد، سر جای درست خودش قرار بگیره. اگه مطمئن نیستید، «سایر» را بزنید.';
+  else{
+    if(c.eg) t='مثلاً: '+c.eg+'.';
+    if(matCatAuto) t=(t?t+' ':'')+'✨ از روی نام ماده خودکار انتخاب شد؛ اگه درست نیست، عوضش کنید.';
+  }
+  box.textContent=t;
+}
+function onMatCategoryChange(){ matCatAuto=false; updateCategoryHint(); }
 function toggleDensityField(){
   const u=document.getElementById('mat-unit').value;
   document.getElementById('mat-density-field').classList.toggle('hidden', u==='count');
@@ -1206,10 +1807,20 @@ function updateUnitPriceHint(){
   el.textContent='قیمت هر '+BASE_LABEL[UNITS[unit].type]+': '+(up>=10?fmtMoney(up):fmtQty(up))+' تومان';
 }
 function onMatNameInput(){
+  const name=document.getElementById('mat-name').value;
+  // ۱) پیشنهاد دسته‌بندی: فقط تا وقتی کاربر خودش دسته‌ای انتخاب نکرده
+  const sel=document.getElementById('mat-category');
+  if(sel.value==='' || matCatAuto){
+    const s=suggestCategory(name);
+    if(s){ sel.value=s; matCatAuto=true; }
+    else if(matCatAuto){ sel.value=''; matCatAuto=false; }
+    updateCategoryHint();
+  }
+  // ۲) پیشنهاد چگالی
   const unit=document.getElementById('mat-unit').value;
   if(unit==='count') return;
   const densityInput=document.getElementById('mat-density');
-  const r=nextDensityForName({name:document.getElementById('mat-name').value, current:toNum(densityInput.value), isAuto:matDensityAuto});
+  const r=nextDensityForName({name:name, current:toNum(densityInput.value), isAuto:matDensityAuto});
   densityInput.value = r.value>0 ? r.value : '';
   matDensityAuto=r.isAuto;
 }
@@ -1238,9 +1849,10 @@ function openMaterialEditor(id){
   document.getElementById('mat-del-icon').classList.toggle('hidden', !id);
   document.getElementById('mat-modal-title').textContent = id? 'ویرایش ماده اولیه' : 'ماده اولیه جدید';
   const warnEl=document.getElementById('mat-stale-warn');
+  matCatAuto=false;
   if(m){
     document.getElementById('mat-name').value=m.name;
-    document.getElementById('mat-category').value=m.category||'other';
+    document.getElementById('mat-category').value=CATEGORIES.some(c=>c.id===m.category)?m.category:'other';
     document.getElementById('mat-price').value=fmtMoney(m.price);
     document.getElementById('mat-amount').value=m.amount;
     document.getElementById('mat-unit').value=m.unit;
@@ -1249,7 +1861,7 @@ function openMaterialEditor(id){
     warnEl.style.display = daysSince(m.priceUpdatedAt)>=STALE_DAYS ? 'block' : 'none';
   } else {
     document.getElementById('mat-name').value='';
-    document.getElementById('mat-category').value='other';
+    document.getElementById('mat-category').value='';            // ماده‌ی جدید: خالی؛ از روی نام پیشنهاد می‌شه یا کاربر انتخاب می‌کنه
     document.getElementById('mat-price').value='';
     document.getElementById('mat-amount').value='';
     document.getElementById('mat-unit').value='kg';
@@ -1260,6 +1872,8 @@ function openMaterialEditor(id){
   toggleDensityField();
   renderHistory(m);
   updatePriceWords();
+  updateCategoryHint();
+  modalSigs['modal-material']=materialSig();
   openModal('modal-material');
 }
 async function saveMaterial(){
@@ -1269,9 +1883,11 @@ async function saveMaterial(){
     amount:document.getElementById('mat-amount').value,
     density:document.getElementById('mat-density').value
   };
+  const category=document.getElementById('mat-category').value;
   const unit=document.getElementById('mat-unit').value;
   const problem=(msg)=>showDialog({type:'warning',title:'اطلاعات کامل نیست',message:msg,primary:{label:'باشه'}});
   if(!raw.name) return problem('لطفاً نام ماده را وارد کنید.');
+  if(!CATEGORIES.some(c=>c.id===category)) return problem('لطفاً دسته‌بندی ماده را انتخاب کنید. اگه مطمئن نیستید، «سایر» را بزنید.');
   if(hasNegativeSign(raw.price)||hasNegativeSign(raw.amount)||hasNegativeSign(raw.density)) return problem('عدد منفی مجاز نیست.');
   const price=toNum(raw.price), amount=toNum(raw.amount);
   if(!(price>0)) return problem('لطفاً قیمت خرید را وارد کنید.');
@@ -1282,7 +1898,7 @@ async function saveMaterial(){
     if(!(density>0)) return problem('چگالی باید عددی بزرگ‌تر از صفر باشد. اگر نمی‌دانید، این کادر را خالی بگذارید.');
   }
   const old = editingMaterialId ? materials.find(x=>x.id===editingMaterialId) : null;
-  const nm=buildMaterial(old,{name:raw.name,category:document.getElementById('mat-category').value,price,amount,unit,density,densityAuto:matDensityAuto},todayLocal());
+  const nm=buildMaterial(old,{name:raw.name,category,price,amount,unit,density,densityAuto:matDensityAuto},todayLocal());
   const ok=tryCommit(()=>{
     if(old){ const i=materials.findIndex(x=>x.id===old.id); if(i<0) throw new Error('gone'); materials[i]=nm; }
     else materials.push(nm);
@@ -1308,12 +1924,12 @@ async function deleteMaterial(){
 
 /* ---------- محصولات ---------- */
 function renderProducts(){
-  const q=(document.getElementById('search-products').value||'').toLowerCase();
+  const q=normFa(document.getElementById('search-products').value||'');
   const list=document.getElementById('products-list'); list.innerHTML='';
   if(products.length===0){
     list.innerHTML='<div class="empty"><div class="big">🧁</div>هنوز محصولی ثبت نکرده‌اید.<br>با دکمه + اولین کیک یا شیرینی خودتون رو اضافه کنید.</div>'; return;
   }
-  const filtered=products.filter(p=>p.name.toLowerCase().includes(q));
+  const filtered=products.filter(p=>!q || normFa(p.name).indexOf(q)!==-1);
   if(filtered.length===0){ list.innerHTML='<div class="empty">چیزی پیدا نشد.</div>'; return; }
   filtered.forEach(p=>{
     const c=calcProduct(p);
@@ -1335,7 +1951,7 @@ function renderProducts(){
   });
 }
 let editingProduct=null;
-function openProductEditor(id){
+function openProductEditor(id, draft){
   let src=null;
   if(id){ src=products.find(x=>x.id===id); if(!src) return; }
   document.getElementById('prod-del-btn').classList.toggle('hidden', !id);
@@ -1351,50 +1967,98 @@ function openProductEditor(id){
   document.getElementById('qty-amt').value='';
   document.getElementById('qty-result').innerHTML='';
   renderIngList(); renderExtras(); renderProductResult();
+  modalSigs['modal-product']=productSig();                      // «امضا»ی حالت اولیه (قبل از اعمال پیش‌نویس) برای تشخیص تغییر ذخیره‌نشده
   openModal('modal-product');
+  if(draft) applyDraftToEditor(draft);
 }
-function renderIngList(){
-  const box=document.getElementById('prod-ing-list'); box.innerHTML='';
-  if(editingProduct.items.length===0){
-    box.innerHTML='<div class="hint">هنوز ماده‌ای اضافه نکرده‌اید</div>'; return;
+/* ---- لیست «مواد لازم»: هر ماده یک کارت دوخطی؛ نام کامل در خط اول، مقدار/واحد و هزینه در خط دوم ---- */
+function ingIconOf(m){ const c=CATEGORIES.find(x=>x.id===(m.category||'other')); return c?c.icon:'🔸'; }
+function ingWarnText(r){
+  switch(r && r.reason){
+    case 'need-density': return '⚠️ برای تبدیل گرم↔میلی‌لیتر، چگالی این ماده لازم است. وارد صفحه‌ی ماده بشید و چگالی را بنویسید، یا واحد مصرف را هم‌نوع واحد خرید بگذارید.';
+    case 'count-mismatch': return '⚠️ واحد مصرف با واحد خرید این ماده سازگار نیست.';
+    case 'bad-amount': return '⚠️ مقدار باید بیشتر از صفر باشد.';
+    default: return '⚠️ اطلاعات این ماده ناقص است.';
   }
-  editingProduct.items.forEach((it,idx)=>{
-    const m=materials.find(x=>x.id===it.materialId);
-    const row=document.createElement('div'); row.className='ing-row';
-    if(!m){
-      row.innerHTML='<span class="ic">⚠️</span><div class="nm"><div class="t">ماده حذف‌شده</div><div class="hint" style="color:var(--danger);margin:0;">این ماده حذف شده؛ سطر را پاک کنید یا ماده را دوباره بسازید.</div></div><button class="x-btn" aria-label="حذف این سطر" onclick="removeIng('+idx+')">✕</button>';
-    } else {
-      const catIcon=(CATEGORIES.find(c=>c.id===(m.category||'other'))||{icon:'🔸'}).icon;
-      const r=convertItem(m,it.amount,it.unit);
-      let warn='';
-      if(!r.ok){
-        warn='<div class="hint" style="color:var(--danger);margin:0;">'+({
-          'need-density':'⚠️ چگالی مشخص نیست',
-          'count-mismatch':'⚠️ واحد سازگار نیست',
-          'bad-amount':'⚠️ مقدار باید بیشتر از صفر باشد'
-        }[r.reason]||'⚠️ اطلاعات ناقص است')+'</div>';
-      }
-      row.innerHTML='<span class="ic">'+catIcon+'</span>'+
-        '<div class="nm"><div class="t">'+escapeHtml(m.name)+'</div>'+warn+'</div>'+
-        '<div class="qty">'+
-          '<input type="tel" value="'+escapeHtml(it.amount)+'" aria-label="مقدار مصرف" onchange="updateIng('+idx+',\'amount\',this.value)">'+
-          '<span class="div"></span>'+
-          '<select aria-label="واحد مصرف" onchange="updateIng('+idx+',\'unit\',this.value)">'+unitOptions(it.unit,m.unit)+'</select>'+
-        '</div>'+
-        '<button class="x-btn" aria-label="حذف این ماده" onclick="removeIng('+idx+')">✕</button>';
-    }
-    box.appendChild(row);
+}
+function allocateRounded(values){                              // «بزرگ‌ترین باقی‌مانده»: جمعِ عددهای گردشده دقیقاً برابر گردشده‌ی جمع می‌شه
+  const total=Math.round(values.reduce(function(a,b){ return a+b; },0));
+  const floors=values.map(function(v){ return Math.floor(v); });
+  let left=total-floors.reduce(function(a,b){ return a+b; },0);
+  const order=values.map(function(v,i){ return {i:i,frac:v-Math.floor(v)}; }).sort(function(a,b){ return (b.frac-a.frac) || (a.i-b.i); });
+  const out=floors.slice();
+  for(let k=0;k<order.length && left>0;k++,left--) out[order[k].i]++;
+  return out;
+}
+function ingLineStates(){
+  const states=editingProduct.items.map(function(it){
+    const m=materials.find(function(x){ return x.id===it.materialId; });
+    if(!m) return {missing:true};
+    return {m:m, r:convertItem(m,it.amount,it.unit)};
   });
+  const okIdx=[], costs=[];
+  states.forEach(function(s,i){ if(s.r && s.r.ok){ okIdx.push(i); costs.push(s.r.cost); } });
+  const alloc=allocateRounded(costs);
+  okIdx.forEach(function(i,k){ states[i].shown=alloc[k]; });
+  return {states:states, total:costs.reduce(function(a,b){ return a+b; },0), bad:states.length-okIdx.length};
+}
+function ingCostHtml(s){ return (s.r && s.r.ok) ? '<span>'+fmtMoney(s.shown)+'</span><small>تومان</small>' : '<small>—</small>'; }   // عدد بالا، «تومان» زیرش: عرض ثابت و کوچیک می‌مونه
+function ingTotalHtml(L){ return fmtMoney(L.total)+' <small>تومان'+(L.bad?' (بدون موارد ⚠️)':'')+'</small>'; }
+function renderIngList(){
+  const box=document.getElementById('prod-ing-list');
+  if(editingProduct.items.length===0){
+    box.innerHTML='<div class="ing-empty">هنوز ماده‌ای اضافه نکرده‌اید.<br>با دکمه‌ی زیر، از فهرست مواد اولیه‌ی خودتون انتخاب کنید.</div>';
+    return;
+  }
+  const L=ingLineStates();
+  let html='';
+  editingProduct.items.forEach(function(it,idx){
+    const s=L.states[idx];
+    if(s.missing){
+      html+='<div class="ing-card"><div class="ing-top"><span class="ing-ic">⚠️</span><div class="ing-name">ماده‌ی حذف‌شده</div>'+
+        '<button type="button" class="ing-del" aria-label="حذف این سطر" onclick="removeIng('+idx+')">✕</button></div>'+
+        '<div class="ing-warn">این ماده از فهرست مواد اولیه حذف شده؛ این سطر را پاک کنید یا ماده را دوباره بسازید.</div></div>';
+      return;
+    }
+    const m=s.m, nm=escapeHtml(m.name);
+    html+='<div class="ing-card"><div class="ing-top"><span class="ing-ic">'+ingIconOf(m)+'</span><div class="ing-name">'+nm+'</div>'+
+      '<button type="button" class="ing-del" aria-label="حذف '+nm+'" onclick="removeIng('+idx+')">✕</button></div>'+
+      '<div class="ing-ctl"><span class="qty"><input type="text" inputmode="decimal" value="'+escapeHtml(it.amount)+'" aria-label="مقدار مصرف '+nm+'" oninput="onIngInput('+idx+',this)">'+
+      '<span class="div"></span><select aria-label="واحد مصرف '+nm+'" onchange="updateIng('+idx+',\'unit\',this.value)">'+unitOptions(it.unit,m.unit)+'</select></span>'+
+      '<span class="ing-cost" id="ing-cost-'+idx+'">'+ingCostHtml(s)+'</span></div>'+
+      '<div class="ing-warn'+(s.r.ok?' hidden':'')+'" id="ing-warn-'+idx+'">'+(s.r.ok?'':escapeHtml(ingWarnText(s.r)))+'</div></div>';
+  });
+  html+='<div class="ing-total"><span>جمع هزینه‌ی مواد</span><b id="ing-total">'+ingTotalHtml(L)+'</b></div>';
+  box.innerHTML=html;
+}
+function refreshIngLive(){                                     // بدون ساختن دوباره‌ی کادرها (تا نشان‌گر تایپ و کیبورد نپره)
+  const L=ingLineStates();
+  editingProduct.items.forEach(function(it,idx){
+    const s=L.states[idx]; if(!s || s.missing) return;
+    const c=document.getElementById('ing-cost-'+idx); if(c) c.innerHTML=ingCostHtml(s);
+    const w=document.getElementById('ing-warn-'+idx);
+    if(w){ w.textContent = s.r.ok ? '' : ingWarnText(s.r); w.classList.toggle('hidden', !!s.r.ok); }
+  });
+  const t=document.getElementById('ing-total'); if(t) t.innerHTML=ingTotalHtml(L);
+  renderProductResult();
 }
 function unitOptions(sel, matUnit){
   const opts = UNITS[matUnit].type==='count' ? ['count'] : ['g','kg','ml','l'];
-  return opts.map(u=>'<option value="'+u+'" '+(u===sel?'selected':'')+'>'+UNITS[u].label+'</option>').join('');
+  let html = opts.map(u=>'<option value="'+u+'" '+(u===sel?'selected':'')+'>'+UNITS[u].label+'</option>').join('');
+  if(UNITS[sel] && opts.indexOf(sel)===-1) html='<option value="'+sel+'" selected>'+UNITS[sel].label+' (ناسازگار)</option>'+html;   // واحد ذخیره‌شده با نوع ماده نمی‌خونه؛ بی‌صدا عوض نمی‌شه
+  return html;
+}
+function onIngInput(idx, el){
+  normDecimalInput(el);
+  const it=editingProduct.items[idx]; if(!it) return;
+  it.amount=toNum(el.value);
+  refreshIngLive();
 }
 function updateIng(idx,key,val){
   const it=editingProduct.items[idx]; if(!it) return;
-  if(key==='amount'){ if(hasNegativeSign(val)) toast('عدد منفی مجاز نیست'); it.amount=toNum(val); }
+  if(key==='amount') it.amount=toNum(val);
   if(key==='unit' && UNITS[val]) it.unit=val;
-  renderIngList(); renderProductResult();
+  refreshIngLive();
 }
 function removeIng(idx){ editingProduct.items.splice(idx,1); renderIngList(); renderProductResult(); }
 
@@ -1405,8 +2069,8 @@ function renderExtras(){
     const row=document.createElement('div'); row.className='ex-row';
     row.innerHTML='<div class="ex-top">'+
       '<input type="text" class="inp" placeholder="مثلاً: جعبه" value="'+escapeHtml(e.name)+'" aria-label="نام هزینه" oninput="updateExtra('+idx+',\'name\',this.value)">'+
-      '<input type="tel" class="inp" style="max-width:132px" placeholder="مبلغ (تومان)" value="'+(e.amount?fmtMoney(e.amount):'')+'" aria-label="مبلغ هزینه" oninput="onMoneyInput(this);updateExtra('+idx+',\'amount\',this.value);">'+
-      '<button class="x-btn" aria-label="حذف این هزینه" onclick="removeExtra('+idx+')">✕</button></div>'+
+      '<input type="text" inputmode="numeric" class="inp" style="max-width:132px" placeholder="مبلغ (تومان)" value="'+(e.amount?fmtMoney(e.amount):'')+'" aria-label="مبلغ هزینه" oninput="onMoneyInput(this);updateExtra('+idx+',\'amount\',this.value);">'+
+      '<button type="button" class="x-btn" aria-label="حذف این هزینه" onclick="removeExtra('+idx+')">✕</button></div>'+
       '<div class="seg" role="radiogroup" aria-label="نوع هزینه">'+
         '<button type="button" role="radio" aria-checked="'+(e.mode!=='scale')+'" class="'+(e.mode!=='scale'?'on':'')+'" onclick="setExtraMode('+idx+',\'fixed\')">ثابت برای کل محصول</button>'+
         '<button type="button" role="radio" aria-checked="'+(e.mode==='scale')+'" class="'+(e.mode==='scale'?'on':'')+'" onclick="setExtraMode('+idx+',\'scale\')">متناسب با وزن</button>'+
@@ -1429,30 +2093,47 @@ function setExtraMode(idx,mode){
 function removeExtra(idx){ editingProduct.extras.splice(idx,1); renderExtras(); renderProductResult(); }
 
 /* افزودن ماده به محصول */
-function openPicker(){ document.getElementById('picker-search').value=''; renderPicker(); openModal('modal-picker'); }
+let pkDraft={};                                                 // مقدار/واحدی که کاربر توی ردیف‌های فهرست تایپ کرده (با جستجو نپره)
+function pkSet(mid,key,val){ const d=pkDraft[mid]||(pkDraft[mid]={}); d[key]=val; }
+function openPicker(){ document.getElementById('picker-search').value=''; pkDraft={}; renderPicker(); openModal('modal-picker'); }
+function pickerRow(m){
+  const already=editingProduct.items.some(it=>it.materialId===m.id);
+  const head='<div class="p-name"><span class="p-ic">'+ingIconOf(m)+'</span><span>'+escapeHtml(m.name)+'</span></div>';
+  if(already) return '<div class="picker-row">'+head+'<div class="p-ctl"><span class="added-badge">✓ توی این محصول هست</span></div></div>';
+  const defUnit = UNITS[m.unit].type==='count'?'count':(UNITS[m.unit].type==='vol'?'ml':'g');
+  const d=pkDraft[m.id]||{};
+  return '<div class="picker-row">'+head+'<div class="p-ctl"><span class="qty">'+
+    '<input type="text" inputmode="decimal" placeholder="مقدار" aria-label="مقدار مصرف '+escapeHtml(m.name)+'" id="pk-amt-'+m.id+'" value="'+escapeHtml(d.amt||'')+'" oninput="normDecimalInput(this);pkSet(\''+m.id+'\',\'amt\',this.value)">'+
+    '<span class="div"></span><select aria-label="واحد مصرف" id="pk-unit-'+m.id+'" onchange="pkSet(\''+m.id+'\',\'unit\',this.value)">'+unitOptions(d.unit||defUnit,m.unit)+'</select></span>'+
+    '<button type="button" class="btn sm" onclick="addIng(\''+m.id+'\')">افزودن</button></div></div>';
+}
 function renderPicker(){
-  const q=(document.getElementById('picker-search').value||'').toLowerCase();
-  const list=document.getElementById('picker-list'); list.innerHTML='';
+  const q=normFa(document.getElementById('picker-search').value||'');
+  const list=document.getElementById('picker-list');
   if(materials.length===0){
-    list.innerHTML='<div class="empty">هنوز مواد اولیه‌ای ثبت نکرده‌اید.<br><br><button class="btn sm" onclick="closeModal(\'modal-picker\');closeModal(\'modal-product\');switchTab(\'materials\')">رفتن به مواد اولیه</button></div>';
+    list.innerHTML='<div class="empty">هنوز مواد اولیه‌ای ثبت نکرده‌اید.<br><br><button type="button" class="btn sm" onclick="goMaterialsFromPicker()">رفتن به مواد اولیه</button></div>';
     return;
   }
-  const filtered=materials.filter(m=>m.name.toLowerCase().includes(q));
+  const byName=function(a,b){ return a.name.localeCompare(b.name,'fa'); };
+  const filtered=materials.filter(m=>!q || normFa(m.name).indexOf(q)!==-1);
   if(filtered.length===0){ list.innerHTML='<div class="empty">چیزی پیدا نشد.</div>'; return; }
-  filtered.forEach(m=>{
-    const already=editingProduct.items.some(it=>it.materialId===m.id);
-    const row=document.createElement('div'); row.className='picker-row';
-    if(already){
-      row.innerHTML='<div class="nm">'+escapeHtml(m.name)+'</div><span class="added-badge">✓ اضافه شده</span>';
-    } else {
-      const defUnit = UNITS[m.unit].type==='count'?'count':(UNITS[m.unit].type==='vol'?'ml':'g');
-      row.innerHTML='<div class="nm">'+escapeHtml(m.name)+'</div>'+
-        '<input type="tel" placeholder="مقدار" aria-label="مقدار مصرف" id="pk-amt-'+m.id+'">'+
-        '<select aria-label="واحد مصرف" id="pk-unit-'+m.id+'">'+unitOptions(defUnit,m.unit)+'</select>'+
-        '<button class="btn sm" onclick="addIng(\''+m.id+'\')">افزودن</button>';
-    }
-    list.appendChild(row);
-  });
+  let html='';
+  if(q){ filtered.slice().sort(byName).forEach(m=>{ html+=pickerRow(m); }); }
+  else{
+    CATEGORIES.forEach(cat=>{
+      const items=filtered.filter(m=>(m.category||'other')===cat.id).sort(byName);
+      if(!items.length) return;
+      html+='<div class="sec-head">'+cat.icon+' '+escapeHtml(cat.label)+'</div>';
+      items.forEach(m=>{ html+=pickerRow(m); });
+    });
+  }
+  list.innerHTML=html;
+}
+async function goMaterialsFromPicker(){                         // از فهرست خالی، رفتن به «مواد اولیه»: اگه محصول تغییر ذخیره‌نشده داره اول می‌پرسه
+  closeModal('modal-picker');
+  if(isDirty('modal-product')){ const ok=await askLeave('modal-product'); if(!ok) return; }
+  closeModal('modal-product');
+  switchTab('materials');
 }
 function addIng(mid){
   const raw=document.getElementById('pk-amt-'+mid).value;
@@ -1460,8 +2141,66 @@ function addIng(mid){
   if(hasNegativeSign(raw)){ toast('عدد منفی مجاز نیست'); return; }
   if(!(amt>0)){ toast('مقدار مصرفی را (بیشتر از صفر) وارد کنید'); return; }
   const unit=document.getElementById('pk-unit-'+mid).value;
+  if(!UNITS[unit]){ toast('واحد مصرف معتبر نیست'); return; }
   editingProduct.items.push({materialId:mid, amount:amt, unit});
+  delete pkDraft[mid];
   renderPicker(); renderIngList(); renderProductResult(); toast('اضافه شد ✓');
+}
+
+/* ---- پیش‌نویس خودکار: اگه وسط ویرایش محصول، برنامه بسته (یا توسط گوشی کشته) بشه، دفعه‌ی بعد پیشنهاد بازیابی می‌ده ---- */
+let draftTimer=null;
+function scheduleDraftSave(){ if(draftTimer) clearTimeout(draftTimer); draftTimer=setTimeout(saveDraftNow,500); }
+function saveDraftNow(){
+  if(draftTimer){ clearTimeout(draftTimer); draftTimer=null; }
+  try{
+    if(!modalOpen('modal-product') || !editingProduct || !isDirty('modal-product')) return;
+    const pr=parseInt(document.getElementById('prod-profit').value,10);
+    lsSet(KEY_DRAFT, JSON.stringify({v:1,app:APP_ID,at:new Date().toISOString(),pid:editingProduct.id||null,
+      name:String(document.getElementById('prod-name').value||''), weight:String(document.getElementById('prod-weight').value||''),
+      profit:isNaN(pr)?30:pr, items:editingProduct.items, extras:editingProduct.extras}));
+  }catch(e){}
+}
+function clearDraft(){ if(draftTimer){ clearTimeout(draftTimer); draftTimer=null; } lsRemove(KEY_DRAFT); }
+function sanitizeDraft(d){
+  if(!d || typeof d!=='object' || d.app!==APP_ID) return null;
+  const items=[], extras=[];
+  if(Array.isArray(d.items)) d.items.forEach(function(it){
+    if(it && typeof it==='object' && cleanId(it.materialId) && isNum(it.amount) && it.amount>=0 && UNITS[it.unit]) items.push({materialId:cleanId(it.materialId),amount:it.amount,unit:it.unit});
+  });
+  if(Array.isArray(d.extras)) d.extras.forEach(function(e){
+    if(e && typeof e==='object' && isNum(e.amount) && e.amount>=0) extras.push({id:cleanId(e.id)||newId(),name:(typeof e.name==='string'?e.name.slice(0,80):''),amount:e.amount,mode:e.mode==='scale'?'scale':'fixed'});
+  });
+  return {pid:cleanId(d.pid), name:(typeof d.name==='string'?d.name.slice(0,120):''), weight:(typeof d.weight==='string'?d.weight.slice(0,20):''),
+          profit:isNum(d.profit)?Math.max(0,Math.min(PROFIT_MAX,Math.round(d.profit))):30, items:items, extras:extras};
+}
+function readDraft(){
+  const t=lsGet(KEY_DRAFT); if(!t) return null;
+  let d=null;
+  try{ d=JSON.parse(t); }catch(e){ lsRemove(KEY_DRAFT); return null; }
+  const age=Date.now()-Date.parse(d && d.at);
+  if(!(age>=0) || age>7*86400000){ lsRemove(KEY_DRAFT); return null; }       // قدیمی‌تر از یک هفته یا نامعتبر
+  const c=sanitizeDraft(d);
+  if(!c || (c.items.length===0 && c.extras.length===0 && !c.name.trim() && !c.weight.trim())){ lsRemove(KEY_DRAFT); return null; }
+  return c;
+}
+function applyDraftToEditor(c){
+  editingProduct.items=c.items; editingProduct.extras=c.extras;
+  document.getElementById('prod-name').value=c.name;
+  document.getElementById('prod-weight').value=c.weight;
+  document.getElementById('prod-profit').value=c.profit;
+  renderIngList(); renderExtras(); renderProductResult();
+}
+function checkDraftRecovery(){
+  if(storageBlocked) return;
+  const c=readDraft(); if(!c) return;
+  const existing=c.pid ? products.find(function(p){ return p.id===c.pid; }) : null;
+  const title=(c.name.trim()||(existing?existing.name:'')||'محصول جدید');
+  showDialog({type:'confirm',title:'تغییرات ذخیره‌نشده پیدا شد',
+    message:'وقتی داشتید «'+title+'» را ویرایش می‌کردید، برنامه بسته شد و تغییرات ذخیره نشد. می‌خواهید ادامه‌اش بدید؟',
+    primary:{label:'بله، ادامه می‌دم'},secondary:{label:'نه، دور بینداز'}}).then(function(yes){
+    if(yes){ openProductEditor(existing?existing.id:null, c); }
+    else clearDraft();
+  });
 }
 
 /* نتیجه‌ی قیمت */
@@ -1472,6 +2211,7 @@ function readProductForm(){
 }
 function renderProductResult(){
   readProductForm();
+  scheduleDraftSave();
   document.getElementById('prod-profit-val').textContent=editingProduct.profit+'%';
   const c=calcProduct(editingProduct);
   const box=document.getElementById('prod-result');
@@ -1484,14 +2224,14 @@ function renderProductResult(){
       '<ul class="res-list">'+c.issues.map(i=>'<li>'+escapeHtml(issueText(i))+'</li>').join('')+'</ul>';
   } else {
     const parts=[];
-    parts.push('<div class="line"><span>جمع هزینه مواد</span><span data-k="mat">'+fmtMoney(c.matCost)+' ت</span></div>');
-    if(c.scaleExtras>0) parts.push('<div class="line"><span>هزینه‌های متناسب با وزن</span><span data-k="scale">'+fmtMoney(c.scaleExtras)+' ت</span></div>');
-    if(c.fixedExtras>0) parts.push('<div class="line"><span>هزینه‌های ثابت</span><span data-k="fixed">'+fmtMoney(c.fixedExtras)+' ت</span></div>');
-    parts.push('<div class="line"><span>قیمت تمام‌شده کل</span><span data-k="total">'+fmtMoney(c.totalCost)+' ت</span></div>');
-    parts.push('<div class="line"><span>قیمت فروش کل همین محصول</span><span data-k="total-sell">'+fmtMoney(roundPrice(c.totalSell))+' ت</span></div>');
+    parts.push('<div class="line"><span>جمع هزینه مواد</span><span data-k="mat">'+moneyU(c.matCost)+'</span></div>');
+    if(c.scaleExtras>0) parts.push('<div class="line"><span>هزینه‌های متناسب با وزن</span><span data-k="scale">'+moneyU(c.scaleExtras)+'</span></div>');
+    if(c.fixedExtras>0) parts.push('<div class="line"><span>هزینه‌های ثابت</span><span data-k="fixed">'+moneyU(c.fixedExtras)+'</span></div>');
+    parts.push('<div class="line"><span>قیمت تمام‌شده کل</span><span data-k="total">'+moneyU(c.totalCost)+'</span></div>');
+    parts.push('<div class="line"><span>قیمت فروش کل همین محصول</span><span data-k="total-sell">'+moneyU(roundPrice(c.totalSell))+'</span></div>');
     box.innerHTML='<div class="res-head">'+badge(c.status)+'</div>'+
-      '<div class="main sell"><span class="lbl">قیمت فروش پیشنهادی هر کیلو</span><span class="val" data-k="sell-kg">'+fmtMoney(roundPrice(c.sellPerKg))+' ت</span></div>'+
-      '<div class="main cost"><span class="lbl">قیمت تمام‌شده هر کیلو (دقیق)</span><span class="val" data-k="cost-kg">'+fmtMoney(c.costPerKg)+' ت</span></div>'+
+      '<div class="main sell"><span class="lbl">قیمت فروش پیشنهادی هر کیلو</span><span class="val" data-k="sell-kg">'+moneyU(roundPrice(c.sellPerKg))+'</span></div>'+
+      '<div class="main cost"><span class="lbl">قیمت تمام‌شده هر کیلو (دقیق)</span><span class="val" data-k="cost-kg">'+moneyU(c.costPerKg)+'</span></div>'+
       '<div class="details">'+parts.join('')+'</div>'+
       c.issues.map(i=>'<div class="note warn">⚠️ '+escapeHtml(issueText(i))+'</div>').join('');
   }
@@ -1510,12 +2250,12 @@ function renderQtyCalc(){
   if(!c.ok){ box.innerHTML='<div class="hint">برای محاسبه‌ی قیمت این مقدار، اول مواد و وزن محصول را کامل و درست کنید.</div>'; return; }
   const q=calcForWeight(c, editingProduct, grams);
   const lines=[];
-  lines.push('<div class="stat-row"><span>قیمت مواد</span><span data-k="q-mat">'+fmtMoney(q.mat)+' ت</span></div>');
-  if(q.scaled>0) lines.push('<div class="stat-row"><span>هزینه‌های متناسب با وزن</span><span data-k="q-scale">'+fmtMoney(q.scaled)+' ت</span></div>');
-  if(q.fixed>0) lines.push('<div class="stat-row"><span>هزینه‌های ثابت (یک‌بار)</span><span data-k="q-fixed">'+fmtMoney(q.fixed)+' ت</span></div>');
-  lines.push('<div class="stat-row"><b>قیمت تمام‌شده</b><b data-k="q-cost">'+fmtMoney(q.cost)+' ت</b></div>');
+  lines.push('<div class="stat-row"><span>قیمت مواد</span><span data-k="q-mat">'+moneyU(q.mat)+'</span></div>');
+  if(q.scaled>0) lines.push('<div class="stat-row"><span>هزینه‌های متناسب با وزن</span><span data-k="q-scale">'+moneyU(q.scaled)+'</span></div>');
+  if(q.fixed>0) lines.push('<div class="stat-row"><span>هزینه‌های ثابت (یک‌بار)</span><span data-k="q-fixed">'+moneyU(q.fixed)+'</span></div>');
+  lines.push('<div class="stat-row"><b>قیمت تمام‌شده</b><b data-k="q-cost">'+moneyU(q.cost)+'</b></div>');
   box.innerHTML='<div class="qty-box">'+lines.join('')+
-    '<div class="main sell" style="border-top:1px solid var(--border);margin-top:6px;padding-top:8px;"><span class="lbl">قیمت فروش پیشنهادی برای '+fmtQty(amt)+' '+(unit==='kg'?'کیلوگرم':'گرم')+'</span><span class="val" data-k="q-sell">'+fmtMoney(q.sell)+' ت</span></div></div>';
+    '<div class="main sell" style="border-top:1px solid var(--border);margin-top:6px;padding-top:8px;"><span class="lbl">قیمت فروش پیشنهادی برای '+fmtQty(amt)+' '+(unit==='kg'?'کیلوگرم':'گرم')+'</span><span class="val" data-k="q-sell">'+moneyU(q.sell)+'</span></div></div>';
 }
 function validateProductForSave(p){
   const errors=[], warnings=[];
@@ -1571,7 +2311,7 @@ async function deleteProduct(){
 
 /* ---------- تنظیمات ---------- */
 function renderThemeGrid(){
-  const cur=localStorage.getItem('cc_theme')||'auto';
+  const cur=lsGet('cc_theme')||'auto';
   const box=document.getElementById('theme-grid'); box.innerHTML='';
   THEMES.forEach(t=>{
     const b=document.createElement('button'); b.className='theme-btn'+(t.id===cur?' active':'');
@@ -1581,13 +2321,13 @@ function renderThemeGrid(){
   });
 }
 function setTheme(id){
-  try{ localStorage.setItem('cc_theme', id); }catch(e){}
+  lsSet('cc_theme', id);
   if(id==='auto') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', id);
   renderThemeGrid();
 }
 function renderFontRow(){
-  const cur=parseInt(localStorage.getItem('cc_fontscale'))||100;
+  const cur=parseInt(lsGet('cc_fontscale'))||100;
   const box=document.getElementById('fs-row'); box.innerHTML='';
   FONT_SIZES.forEach(f=>{
     const b=document.createElement('button'); b.className='fs-btn'+(f.id===cur?' active':'');
@@ -1597,72 +2337,353 @@ function renderFontRow(){
   });
 }
 function setFontScale(pct){
-  try{ localStorage.setItem('cc_fontscale', pct); }catch(e){}
+  lsSet('cc_fontscale', String(pct));
   document.documentElement.style.fontSize=(16*pct/100)+'px';
   renderFontRow();
 }
 function renderRoundRow(){
-  const cur=parseInt(localStorage.getItem('cc_round'));
+  const cur=parseInt(lsGet('cc_round'));
   const val=isNaN(cur)?1000:cur;
   const box=document.getElementById('round-row'); box.innerHTML='';
   ROUND_STEPS.forEach(s=>{
     const b=document.createElement('button'); b.className='fs-btn'+(s.id===val?' active':'');
-    b.onclick=()=>{ try{ localStorage.setItem('cc_round', s.id); }catch(e){} renderRoundRow(); renderProducts(); };
+    b.onclick=()=>{ lsSet('cc_round', String(s.id)); renderRoundRow(); renderProducts(); };
     b.innerHTML='<span class="lbl">'+s.label+'</span>';
     box.appendChild(b);
   });
+}
+function fmtDateTimeFa(iso){
+  const d=new Date(iso); if(isNaN(d)) return '';
+  try{ return d.toLocaleString('fa-IR',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}); }catch(e){ return String(iso); }
+}
+let persistState=null;                          // آیا مرورگر قول داده حافظه‌ی این برنامه رو خودش پاک نکنه؟ (true / false / ناشناخته)
+function renderPersistRow(){
+  const el=document.getElementById('about-persist'); if(!el) return;
+  el.textContent = persistState===true ? 'فعال ✓' : (persistState===false ? 'فعال نیست' : '—');
+}
+function requestPersistentStorage(){
+  try{
+    if(!(navigator.storage && navigator.storage.persisted)) return;
+    navigator.storage.persisted().then(function(p){
+      persistState=!!p; renderPersistRow();
+      if(!p && navigator.storage.persist) return navigator.storage.persist().then(function(r){ persistState=!!r; renderPersistRow(); });
+    }).catch(function(){});
+  }catch(e){}
 }
 function renderSettings(){
   document.getElementById('stat-mat').textContent=fmtInt(materials.length);
   document.getElementById('stat-prod').textContent=fmtInt(products.length);
   document.getElementById('about-version').textContent=APP_VERSION;
-  let savedTxt='—';
-  try{
-    const raw=localStorage.getItem(KEY_STATE);
-    if(raw){ const s=JSON.parse(raw); if(s && s.savedAt){ const d=new Date(s.savedAt); if(!isNaN(d)) savedTxt=fmtDateFa(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')); } }
-  }catch(e){}
-  document.getElementById('about-saved').textContent=savedTxt;
+  document.getElementById('about-saved').textContent=(loadedStamp && fmtDateTimeFa(loadedStamp)) || '—';
+  renderPersistRow();
   renderThemeGrid(); renderFontRow(); renderRoundRow();
+  renderBackupUI(); renderAutoList(); renderInstallCard();
+}
+
+/* ---------- وضعیت پشتیبان و یادآوری ---------- */
+function lastBackupText(st){
+  const d=st.days;
+  const t=(d==null) ? 'نامشخص' : (d<=0 ? 'امروز' : (d===1 ? 'دیروز' : fmtInt(d)+' روز پیش'));
+  return t+(st.kind==='share' ? ' (ارسال‌شده)' : '');
+}
+function renderBackupUI(){
+  const box=document.getElementById('bk-status'); if(!box) return;
+  const st=backupStatus();
+  let cls='bk-status', ic='ℹ️', html='';
+  if(storageBlocked){ cls+=' warn'; ic='⚠️'; html='اطلاعات ذخیره‌شده مشکل دارد؛ تا وقتی بازیابی نشده، پشتیبان‌گیری از آن ممکن نیست.'; }
+  else if(st.level==='none'){ html='هنوز اطلاعاتی ثبت نکرده‌اید. بعد از ثبت اولین ماده یا محصول، وضعیت پشتیبان‌گیری را اینجا می‌بینید.'; }
+  else if(st.level==='never' || st.level==='new'){ cls+=' warn'; ic='⚠️'; html='<b>هنوز هیچ فایل پشتیبانی نگرفته‌اید.</b><br>همین الان یک فایل بگیرید تا اگه گوشی گم شد یا حافظه‌ی مرورگر پاک شد، اطلاعاتتون از بین نره.'; }
+  else if(st.level==='due'){ cls+=' warn'; ic='⚠️'; html='<b>وقت پشتیبان‌گیری است.</b><br>آخرین پشتیبان: '+lastBackupText(st)+'. از آن موقع '+fmtInt(st.changes)+' تغییر ثبت شده که توی فایل پشتیبان نیست.'; }
+  else { cls+=' ok'; ic='✅'; html='<b>آخرین پشتیبان: '+lastBackupText(st)+'.</b><br>'+(st.changes>0 ? fmtInt(st.changes)+' تغییر بعد از آن ثبت شده.' : 'همه‌ی اطلاعات فعلی توی آن هست.'); }
+  if(storageLow) html+='<br>⚠️ حافظه‌ی مرورگر کم است؛ ساختن نسخه‌های ایمنی خودکار فعلاً متوقف شده. حتماً فایل پشتیبان بگیرید.';
+  box.className=cls;
+  box.innerHTML='<span class="bk-ic" aria-hidden="true">'+ic+'</span><div>'+html+'</div>';
+  const note=document.getElementById('share-note');
+  if(note) note.textContent = shareSupported()
+    ? 'صفحه‌ی اشتراک‌گذاری گوشی باز می‌شه؛ مثلاً «تلگرام» و بعد «پیام‌های ذخیره‌شده» (Saved Messages) رو انتخاب کنید تا فایل همیشه توی تلگرام خودتون بمونه.'
+    : 'این مرورگر ارسال مستقیم فایل را پشتیبانی نمی‌کند. اول «ذخیره‌ی فایل پشتیبان» را بزنید و بعد فایل را از پوشه‌ی دانلودها برای تلگرام یا واتساپ بفرستید.';
+}
+function backupBannerHtml(st){
+  const title = st.level==='never' ? '⚠️ هنوز از اطلاعاتتون پشتیبان نگرفته‌اید' : '⚠️ وقتشه پشتیبان بگیرید';
+  const why = st.level==='never'
+    ? 'اطلاعات فقط روی همین گوشی ذخیره می‌شه. اگه گوشی گم یا عوض بشه، یا حافظه‌ی مرورگر پاک بشه، همه‌چیز از بین می‌ره.'
+    : 'از آخرین پشتیبان ('+lastBackupText(st)+') '+fmtInt(st.changes)+' تغییر ثبت شده که توی فایل پشتیبان نیست.';
+  return '<div class="bnr warn" role="region" aria-label="یادآوری پشتیبان"><span class="bnr-t">'+title+'</span><p>'+why+'</p><div class="bnr-btns">'+
+    '<button type="button" class="btn sm" onclick="downloadBackup()">💾 ذخیره‌ی پشتیبان</button>'+
+    (shareSupported()?'<button type="button" class="btn sm outline" onclick="shareBackup()">📤 ارسال (تلگرام و...)</button>':'')+
+    '<button type="button" class="btn sm ghost" onclick="snoozeBackupReminder()">بعداً</button></div></div>';
+}
+function installBannerHtml(){
+  return '<div class="bnr" role="region" aria-label="نصب برنامه"><span class="bnr-t">📲 برنامه را روی گوشی نصب کنید</span>'+
+    '<p>با نصب، برنامه مثل بقیه‌ی برنامه‌های گوشی یک آیکون روی صفحه‌ی اصلی می‌گیره، سریع‌تر باز می‌شه و بدون اینترنت هم کار می‌کنه.</p>'+
+    '<div class="bnr-btns"><button type="button" class="btn sm" onclick="doInstall()">📲 نصب برنامه</button>'+
+    '<button type="button" class="btn sm ghost" onclick="dismissInstallBanner()">بعداً</button></div></div>';
+}
+function installDismissedRecently(m){ return !!m.installDismissedAt && (Date.now()-Date.parse(m.installDismissedAt))<14*86400000; }
+function renderTopBanners(){
+  const box=document.getElementById('top-banners'); if(!box) return;
+  let html='';
+  if(storageUnavailable){
+    html='<div class="bnr warn" role="alert"><span class="bnr-t">⚠️ حافظه‌ی مرورگر در دسترس نیست</span><p>شاید مرورگر در حالت خصوصی (ناشناس) است. هر چیزی که وارد کنید با بستن برنامه از بین می‌ره. برنامه را در حالت عادی Chrome باز کنید.</p></div>';
+  } else if(storageLow){
+    html='<div class="bnr warn" role="alert"><span class="bnr-t">⚠️ حافظه‌ی مرورگر کم است</span><p>برای اینکه اطلاعات اصلی ذخیره بشه، نسخه‌های ایمنی خودکار موقتاً متوقف شد. همین حالا یک فایل پشتیبان بگیرید.</p>'+
+      '<div class="bnr-btns"><button type="button" class="btn sm" onclick="downloadBackup()">💾 ذخیره‌ی پشتیبان</button></div></div>';
+  } else {
+    const st=backupStatus();
+    if((st.level==='never' || st.level==='due') && !backupSnoozed() && !storageBlocked) html=backupBannerHtml(st);
+    else if(deferredPrompt && !isStandalone() && !installDismissedRecently(metaGet())) html=installBannerHtml();
+  }
+  box.innerHTML=html;
+}
+function snoozeBackupReminder(){
+  metaSet({snoozeUntil:new Date(Date.now()+2*86400000).toISOString()});
+  renderTopBanners();
+  toast('باشه، دو روز دیگه دوباره یادآوری می‌کنم');
+}
+function dismissInstallBanner(){ metaSet({installDismissedAt:new Date().toISOString()}); renderTopBanners(); }
+
+/* ---------- نصب روی گوشی (PWA) ---------- */
+let deferredPrompt=null;
+function isStandalone(){
+  try{ if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true; }catch(e){}
+  try{ if(navigator.standalone===true) return true; }catch(e){}
+  return false;
+}
+function isIOS(){
+  try{ const ua=navigator.userAgent||''; return /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1); }catch(e){ return false; }
+}
+function renderInstallCard(){
+  const box=document.getElementById('install-body'); if(!box) return;
+  let html;
+  if(isStandalone()){
+    html='<div class="install-ok"><span>✅</span><span>برنامه روی گوشی شما نصب شده است و از همان استفاده می‌کنید.</span></div>';
+  } else if(deferredPrompt){
+    html='<p class="hint" style="margin-top:0;">با نصب، برنامه مثل بقیه‌ی برنامه‌های گوشی یک آیکون روی صفحه‌ی اصلی می‌گیره، سریع‌تر باز می‌شه و بدون اینترنت هم کار می‌کنه. معمولاً مرورگر هم اطلاعات ذخیره‌شده‌ی برنامه‌ی نصب‌شده را خودش پاک نمی‌کند.</p>'+
+      '<button type="button" class="btn" onclick="doInstall()">📲 نصب برنامه روی گوشی</button>';
+  } else if(isIOS()){
+    html='<p class="hint" style="margin-top:0;">روی آیفون و آیپد:</p>'+
+      '<ol class="help-box" style="margin:0;padding-inline-start:30px;"><li>دکمه‌ی اشتراک‌گذاری (مربعِ دارای فلش رو به بالا) پایین مرورگر Safari را بزنید.</li><li>گزینه‌ی «Add to Home Screen» (افزودن به صفحه‌ی اصلی) را انتخاب کنید.</li><li>«Add» را بزنید.</li></ol>'+
+      '<p class="hint">توجه: روی آیفون، اگه برنامه روی صفحه‌ی اصلی نصب نشده باشه و چند هفته باز نشه، Safari ممکنه اطلاعات ذخیره‌شده را پاک کند. پس حتماً نصبش کنید و پشتیبان بگیرید.</p>';
+  } else {
+    html='<p class="hint" style="margin-top:0;">برای نصب روی گوشی اندروید:</p>'+
+      '<ol class="help-box" style="margin:0;padding-inline-start:30px;"><li>منوی ⋮ (سه‌نقطه‌ی بالای مرورگر Chrome) را بزنید.</li><li>«نصب برنامه» (Install app) یا «افزودن به صفحه‌ی اصلی» (Add to Home screen) را انتخاب کنید.</li><li>اگه این گزینه را ندیدید، برنامه را با مرورگر Chrome باز کنید (از داخل تلگرام یا اینستاگرام نصب نمی‌شود).</li></ol>';
+  }
+  box.innerHTML=html;
+}
+async function doInstall(){
+  if(!deferredPrompt){ renderInstallCard(); return; }
+  const dp=deferredPrompt; deferredPrompt=null;
+  try{
+    dp.prompt();
+    const r=await dp.userChoice;
+    if(r && r.outcome==='accepted') toast('در حال نصب برنامه...');
+  }catch(e){}
+  renderInstallCard(); renderTopBanners();
+}
+
+/* ---------- نسخه‌های ایمنی خودکار: نمایش و بازگرداندن ---------- */
+function autoWhyLabel(a){
+  if(a.why==='last') return 'قبل از آخرین تغییر';
+  if(a.why==='day') return 'ابتدای روز '+(fmtDateFa(a.day)||a.day||'');
+  if(a.why==='risk') return a.note||'قبل از یک کار پرخطر';
+  return 'نسخه‌ی ایمنی';
+}
+let autoRenderToken=0;
+function autoRowHtml(title, counts, at, onclick){
+  return '<div class="auto-row"><div><div class="a-t">'+escapeHtml(title)+'</div><div class="a-s">'+fmtInt(counts.m)+' ماده · '+fmtInt(counts.p)+' محصول'+(at?' · '+escapeHtml(fmtDateTimeFa(at)):'')+'</div></div>'+
+    '<button type="button" class="btn sm ghost" onclick="'+onclick+'">بازگردانی</button></div>';
+}
+function renderAutoList(){
+  const box=document.getElementById('auto-list'); if(!box) return;
+  const token=++autoRenderToken;
+  const items=listAutoCopies();
+  box.innerHTML = items.length
+    ? items.map(function(a){ return autoRowHtml(autoWhyLabel(a), a.counts, a.at, 'restoreAutoCopy(\''+a.key+'\')'); }).join('')
+    : '<div class="hint" style="margin:0;">هنوز نسخه‌ای ساخته نشده. بعد از اولین تغییری که ذخیره کنید، خودکار ساخته می‌شه.</div>';
+  // نسخه‌ی کمکی IndexedDB فقط وقتی نشون داده می‌شه که با اطلاعات فعلی فرق داشته باشه (مثلاً رکورد اصلی خراب یا پاک شده)
+  const sv=document.getElementById('view-settings');
+  if(sv && sv.classList.contains('hidden')) return;               // تب تنظیمات دیده نمی‌شه؛ موقع باز شدنش دوباره ساخته می‌شه
+  mirrorRead().then(function(rec){
+    if(token!==autoRenderToken || !rec || typeof rec.json!=='string') return;
+    const res=parseBackupText(rec.json);
+    if(!res.ok || res.state.materials.length+res.state.products.length===0) return;
+    if(!storageBlocked && stampOf(rec.json)===loadedStamp) return;
+    const row=autoRowHtml('نسخه‌ی کمکی (حافظه‌ی دوم مرورگر)', {m:res.state.materials.length,p:res.state.products.length}, rec.at, 'restoreMirrorCopy()');
+    if(items.length===0) box.innerHTML=row; else box.innerHTML+=row;
+  }).catch(function(){});
+}
+async function restoreAutoCopy(key){
+  const a=readAuto(key);
+  if(!a){ toast('این نسخه دیگر پیدا نشد'); renderAutoList(); return 'missing'; }
+  const res=parseBackupText(a.raw);
+  if(!res.ok){
+    await showDialog({type:'error',title:'این نسخه قابل بازگردانی نیست',message:res.error+'.\nاطلاعات فعلی شما هیچ تغییری نکرد.',primary:{label:'باشه'}});
+    return 'invalid';
+  }
+  return offerRestore(res,{source:'auto',label:'«'+autoWhyLabel(a)+'»'});
+}
+async function restoreMirrorCopy(){
+  const rec=await mirrorRead();
+  const res=(rec && typeof rec.json==='string') ? parseBackupText(rec.json) : {ok:false,error:'نسخه‌ی کمکی پیدا نشد'};
+  if(!res.ok){
+    await showDialog({type:'error',title:'این نسخه قابل بازگردانی نیست',message:res.error+'.\nاطلاعات فعلی شما هیچ تغییری نکرد.',primary:{label:'باشه'}});
+    return 'invalid';
+  }
+  return offerRestore(res,{source:'mirror',label:'«نسخه‌ی کمکی»'});
+}
+function checkMirrorRecovery(){                 // فقط وقتی حافظه‌ی اصلی کاملاً خالیه (نه خراب): شاید برنامه‌ی دیگری روی همین آدرس آن را پاک کرده
+  if(storageUnavailable || bootStatus!=='fresh') return;
+  mirrorRead().then(function(rec){
+    if(!rec || typeof rec.json!=='string') return;
+    if(storageBlocked || lsGet(KEY_STATE)!=null) return;
+    const res=parseBackupText(rec.json);
+    if(!res.ok || res.state.materials.length+res.state.products.length===0) return;
+    return showDialog({type:'confirm',title:'اطلاعات قبلی شما پیدا شد',
+      message:'حافظه‌ی اصلی برنامه خالی است، ولی یک نسخه‌ی کمکی از اطلاعات قبلی شما ('+fmtInt(res.state.materials.length)+' ماده، '+fmtInt(res.state.products.length)+' محصول'+(rec.at?'، مربوط به '+fmtDateTimeFa(rec.at):'')+') روی همین گوشی پیدا شد. بازیابی بشه؟',
+      primary:{label:'بله، بازیابی کن'},secondary:{label:'نه، شروع تازه'}}).then(function(yes){
+      if(lsGet(KEY_STATE)!=null) return;                           // تا کاربر جواب بده، خودش چیزی ذخیره کرده؛ روش نمی‌نویسیم
+      if(yes){
+        if(applyRestore(res.state, null, 'mirror')){ updateBanner(); renderAll(); toast('اطلاعات قبلی بازیابی شد ✓'); }
+        else showStorageError();
+      } else {
+        saveRiskCopyRaw(rec.json, 'نسخه‌ی کمکی ردشده');               // رد کرد؛ ولی کاملاً از بین نمی‌ره (می‌شه بعداً از «نسخه‌های ایمنی خودکار» برگشت)
+      }
+    });
+  }).catch(function(){});
+}
+function saveRiskCopyRaw(raw, note){
+  try{
+    const counts=countsOfRaw(raw); if(!counts || (counts.m===0 && counts.p===0)) return false;
+    const prev=lsGet('cc_auto_risk0'); if(prev) lsSet('cc_auto_risk1', prev);
+    return lsSet('cc_auto_risk0', wrapAuto('risk',note,raw,counts));
+  }catch(e){ return false; }
 }
 
 /* ---------- پشتیبان‌گیری و بازیابی ---------- */
-function backupPayload(){
-  return JSON.stringify({app:APP_ID,appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),materials,products}, null, 2);
+function currentSettings(){
+  const th=lsGet('cc_theme'), fs=parseInt(lsGet('cc_fontscale')), rd=parseInt(lsGet('cc_round'));
+  return {theme:(th && THEMES.some(t=>t.id===th)) ? th : 'auto',
+          fontScale:FONT_SIZES.some(f=>f.id===fs) ? fs : 100,
+          round:ROUND_STEPS.some(r=>r.id===rd) ? rd : 1000};
 }
-async function doBackup(){
-  const data=backupPayload();
-  const d=new Date();
-  const fname='پشتیبان-حسابگر-قنادی-'+d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()+'.json';
+function sanitizeSettings(s){
+  if(!s || typeof s!=='object' || Array.isArray(s)) return null;
+  const out={};
+  if(typeof s.theme==='string' && THEMES.some(t=>t.id===s.theme)) out.theme=s.theme;
+  if(isNum(s.fontScale) && FONT_SIZES.some(f=>f.id===s.fontScale)) out.fontScale=s.fontScale;
+  if(isNum(s.round) && ROUND_STEPS.some(r=>r.id===s.round)) out.round=s.round;
+  return Object.keys(out).length ? out : null;
+}
+function applySettingsFromBackup(s){
+  if(!s) return;
+  if(s.theme!==undefined) setTheme(s.theme);
+  if(s.fontScale!==undefined) setFontScale(s.fontScale);
+  if(s.round!==undefined){ lsSet('cc_round', String(s.round)); renderRoundRow(); }
+}
+function backupPayload(){
+  return JSON.stringify({app:APP_ID,appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),settings:currentSettings(),materials,products}, null, 2);
+}
+function jalaliParts(d){
   try{
-    const file=new File([data], fname, {type:'application/json'});
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({files:[file], title:fname});
-      toast('فایل پشتیبان آماده شد ✓');
-      return;
-    }
+    const f=new Intl.DateTimeFormat('fa-IR-u-ca-persian-nu-latn',{year:'numeric',month:'2-digit',day:'2-digit'});
+    const o={}; f.formatToParts(d).forEach(function(p){ o[p.type]=p.value; });
+    if(o.year && o.month && o.day) return o;
+  }catch(e){}
+  return null;
+}
+function backupFileName(ext, d){                // مثلاً: پشتیبان-حسابگر-قنادی-1405-07-22-1530.json (تاریخ شمسی + ساعت؛ تا فایل‌ها هم‌نام نشن)
+  d=d||new Date();
+  const pad=function(n){ return String(n).padStart(2,'0'); };
+  const j=jalaliParts(d);
+  const date=j ? (j.year+'-'+j.month+'-'+j.day) : (d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()));
+  return 'پشتیبان-حسابگر-قنادی-'+date+'-'+pad(d.getHours())+pad(d.getMinutes())+(ext||'.json');
+}
+function triggerDownload(blob, fname){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=fname; a.rel='noopener'; a.style.display='none';
+  const host=document.body||document.documentElement;
+  host.appendChild(a); a.click();
+  setTimeout(function(){ try{ host.removeChild(a); }catch(e){} try{ URL.revokeObjectURL(url); }catch(e){} }, 4000);
+}
+async function blockedBackupNotice(){
+  await showDialog({type:'warning',title:'فعلاً پشتیبان‌گیری ممکن نیست',message:'اطلاعات ذخیره‌شده مشکل دارد و چیزی برای پشتیبان‌گیری سالم نیست. اول «بازیابی از فایل پشتیبان» یا «نسخه‌های خودکار» را امتحان کنید.',primary:{label:'باشه'}});
+}
+async function downloadBackup(){                // «ذخیره‌ی فایل در گوشی»: فقط فایل رو توی حافظه‌ی گوشی ذخیره می‌کنه (جدا از اشتراک‌گذاری)
+  if(storageBlocked){ await blockedBackupNotice(); return false; }
+  try{
+    triggerDownload(new Blob([backupPayload()],{type:'application/json'}), backupFileName('.json'));
   }catch(e){
-    if(e && e.name==='AbortError') return;
+    await showDialog({type:'error',title:'فایل پشتیبان ساخته نشد',message:'متأسفانه فایل پشتیبان ساخته نشد. دوباره امتحان کنید.',primary:{label:'باشه'}});
+    return false;
+  }
+  markBackedUp('file');
+  renderBackupUI(); renderTopBanners();
+  toast('فایل پشتیبان ذخیره شد ✓ (معمولاً در پوشه‌ی «دانلودها»)');
+  return true;
+}
+function shareSupported(){
+  try{
+    if(typeof navigator==='undefined' || typeof navigator.share!=='function' || typeof navigator.canShare!=='function' || typeof File!=='function') return false;
+    return !!(navigator.canShare({files:[new File(['{}'],'t.json',{type:'application/json'})]}) || navigator.canShare({files:[new File(['{}'],'t.json.txt',{type:'text/plain'})]}));
+  }catch(e){ return false; }
+}
+function makeShareFile(){
+  // Chrome فقط چند نوع فایل رو برای اشتراک‌گذاری مجاز می‌دونه؛ اول .json، اگه نشد همون متن با پسوند .json.txt (قابل بازیابی است: نوع فایل مهم نیست)
+  const payload=backupPayload();
+  const f1=new File([payload], backupFileName('.json'), {type:'application/json'});
+  if(navigator.canShare({files:[f1]})) return f1;
+  const f2=new File([payload], backupFileName('.json.txt'), {type:'text/plain'});
+  if(navigator.canShare({files:[f2]})) return f2;
+  return null;
+}
+async function shareBackup(){                   // «اشتراک‌گذاری»: صفحه‌ی ارسال گوشی (تلگرام، واتساپ، ...)؛ جدا از ذخیره در گوشی
+  if(storageBlocked){ await blockedBackupNotice(); return 'blocked'; }
+  let file=null;
+  try{
+    // ساخت فایل باید همزمان (بدون await) و فوراً بعد از لمس کاربر انجام بشه؛ وگرنه مرورگر اجازه‌ی share نمی‌ده
+    if(typeof navigator.share==='function' && typeof navigator.canShare==='function' && typeof File==='function') file=makeShareFile();
+  }catch(e){ file=null; }
+  if(!file){
+    const go=await showDialog({type:'confirm',title:'ارسال مستقیم ممکن نیست',
+      message:'این مرورگر یا گوشی اجازه‌ی ارسال مستقیم فایل را نمی‌دهد.\nمی‌توانید فایل را در گوشی ذخیره کنید و بعد از پوشه‌ی «دانلودها» برای تلگرام یا واتساپ بفرستید.',
+      primary:{label:'ذخیره‌ی فایل در گوشی'},secondary:{label:'باشه'}});
+    if(go) await downloadBackup();
+    return 'unsupported';
   }
   try{
-    const blob=new Blob([data], {type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url; a.download=fname;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url), 2000);
-    toast('فایل پشتیبان دانلود شد ✓');
-  }catch(e2){
-    await showDialog({type:'error',title:'فایل پشتیبان ساخته نشد',message:'متأسفانه فایل پشتیبان ساخته نشد. دوباره امتحان کنید.',primary:{label:'باشه'}});
+    await navigator.share({files:[file], title:'پشتیبان حساب‌گر قنادی'});
+  }catch(e){
+    if(e && e.name==='AbortError') return 'cancelled';           // کاربر خودش بست؛ خطا نیست
+    const go=await showDialog({type:'warning',title:'ارسال انجام نشد',
+      message:'ارسال فایل انجام نشد. می‌توانید فایل را در گوشی ذخیره کنید و بعد از پوشه‌ی «دانلودها» برای تلگرام یا واتساپ بفرستید.',
+      primary:{label:'ذخیره‌ی فایل در گوشی'},secondary:{label:'بیخیال'}});
+    if(go) await downloadBackup();
+    return 'failed';
   }
+  markBackedUp('share');
+  renderBackupUI(); renderTopBanners();
+  toast('فایل پشتیبان ارسال شد ✓');
+  return 'ok';
 }
 function pickRestoreFile(){ document.getElementById('restore-file').click(); }
-function applyRestore(state){
-  const snap=snapshot(), prevBlocked=storageBlocked;
-  if(prevBlocked && storageCorruptRaw){ try{ localStorage.setItem(KEY_CORRUPT, storageCorruptRaw); }catch(e){} }
+function keepCorruptCopy(){                     // نسخه‌ی خراب‌شده قبل از هر جایگزینی جدا نگه داشته می‌شه (برای تعمیر احتمالی)
+  if(!storageCorruptRaw) return true;
+  return lsSet(KEY_CORRUPT, storageCorruptRaw);
+}
+function applyRestore(state, settings, reason){
+  const snap=snapshot(), prevBlocked=storageBlocked, prevStamp=loadedStamp;
+  if(prevBlocked) keepCorruptCopy();
   materials=state.materials; products=state.products;
   storageBlocked=false;
-  if(persist()){ storageCorruptRaw=null; return true; }
-  restoreSnapshot(snap); storageBlocked=prevBlocked;
+  adoptStoredStamp();                           // بازیابی عمدی همه‌چیز رو جایگزین می‌کنه؛ بررسی «تداخل» نباید جلوش رو بگیره
+  if(persist()){
+    storageCorruptRaw=null; storageBlockNewer=false;
+    try{ metaSet({changes:0, firstChangeAt:null, snoozeUntil:null}); }catch(e){}
+    try{ applySettingsFromBackup(settings); }catch(e){}
+    return true;
+  }
+  restoreSnapshot(snap); storageBlocked=prevBlocked; loadedStamp=prevStamp;
   return false;
 }
 function danglingProductNames(state){
@@ -1674,14 +2695,16 @@ function dropDanglingProducts(state){
   const products=state.products.filter(p=>(p.items||[]).every(it=>ids.has(it.materialId)));
   return {schemaVersion:state.schemaVersion, materials:state.materials, products};
 }
-async function handleRestoreText(text){
-  const res=parseBackupText(text);
-  if(!res.ok){
-    await showDialog({type:'error',title:'این فایل قابل بازیابی نیست',message:res.error+'.\nاطلاعات فعلی شما هیچ تغییری نکرد.',primary:{label:'باشه'}});
-    return 'invalid';
-  }
+async function ensureSafetyCopy(note){          // قبل از کارهای بدون برگشت: نسخه‌ی ایمنی از اطلاعات فعلی؛ اگه نشد، صریح می‌پرسه
+  if(saveRiskCopy(note)) return true;
+  return await showDialog({type:'warning',title:'نسخه‌ی ایمنی ساخته نشد',
+    message:'جای کافی برای نگه‌داشتن یک نسخه‌ی ایمنی از اطلاعات فعلی نبود. اگه ادامه بدید، اطلاعات فعلی قابل برگشت نیست. بهتره اول یک فایل پشتیبان بگیرید.',
+    primary:{label:'با این حال ادامه بده'},secondary:{label:'انصراف'},focusSecondary:true});
+}
+async function offerRestore(res, opts){         // res: نتیجه‌ی موفق parseBackupText؛ opts: {source:'file'|'auto'|'mirror', label}
+  opts=opts||{};
   let s=res.state;
-  if(res.warnings.dangling>0){
+  if(res.warnings && res.warnings.dangling>0){
     const names=danglingProductNames(s);
     const cont=await showDialog({type:'warning',title:'ارجاع ناقص در فایل پشتیبان',
       message:'در این فایل '+fmtInt(res.warnings.dangling)+' سطر دستور به ماده‌ای اشاره می‌کند که در همین فایل وجود ندارد. این محصولات را می‌بینید:',
@@ -1693,10 +2716,16 @@ async function handleRestoreText(text){
       primary:{label:'بازیابی کامل'},secondary:{label:'فقط اطلاعات سالم'}});
     if(!full) s=dropDanglingProducts(s);
   }
-  let msg='الان '+fmtInt(materials.length)+' ماده اولیه و '+fmtInt(products.length)+' محصول دارید. با بازیابی، همه با اطلاعات این فایل ('+fmtInt(s.materials.length)+' ماده، '+fmtInt(s.products.length)+' محصول) جایگزین می‌شود و قابل برگشت نیست.';
+  const label=opts.label||'این فایل';
+  const incoming='با اطلاعات '+label+' ('+fmtInt(s.materials.length)+' ماده، '+fmtInt(s.products.length)+' محصول) جایگزین می‌شود.';
+  const msg = storageBlocked
+    ? 'اطلاعات ذخیره‌شده‌ی فعلی مشکل دارد و '+incoming+' نسخه‌ی خراب‌شده جداگانه نگه داشته می‌شود.'
+    : 'الان '+fmtInt(materials.length)+' ماده اولیه و '+fmtInt(products.length)+' محصول دارید. با بازیابی، همه '+incoming+'\nقبل از جایگزین شدن، برنامه از اطلاعات فعلی یک «نسخه‌ی ایمنی» روی همین گوشی نگه می‌دارد (در تنظیمات، بخش «نسخه‌های ایمنی خودکار»).';
   const yes=await showDialog({type:'danger',title:'بازیابی اطلاعات',message:msg,primary:{label:'بازیابی کن'},secondary:{label:'انصراف'}});
   if(!yes) return 'cancelled';
-  if(applyRestore(s)){
+  if(!(await ensureSafetyCopy('قبل از بازیابی'))) return 'cancelled';
+  closeAllModals();
+  if(applyRestore(s, res.settings, opts.source)){
     updateBanner(); renderAll();
     toast('اطلاعات بازیابی شد ✓');
     return 'ok';
@@ -1705,8 +2734,21 @@ async function handleRestoreText(text){
   await showDialog({type:'error',title:'بازیابی انجام نشد',message:'بازیابی انجام نشد و اطلاعات قبلی شما حفظ شد.',primary:{label:'باشه'}});
   return 'failed';
 }
+async function handleRestoreText(text){
+  const res=parseBackupText(text);
+  if(!res.ok){
+    await showDialog({type:'error',title:'این فایل قابل بازیابی نیست',message:res.error+'.\nاطلاعات فعلی شما هیچ تغییری نکرد.',primary:{label:'باشه'}});
+    return 'invalid';
+  }
+  return offerRestore(res,{source:'file',label:'این فایل'});
+}
 function doRestore(ev){
   const file=ev.target.files[0]; if(!file) return;
+  if(file.size>10*1024*1024){
+    ev.target.value='';
+    showDialog({type:'error',title:'این فایل قابل بازیابی نیست',message:'حجم فایل بیش از حد بزرگ است؛ فایل پشتیبان این برنامه معمولاً چند ده کیلوبایت است.\nاطلاعات فعلی شما هیچ تغییری نکرد.',primary:{label:'باشه'}});
+    return;
+  }
   const reader=new FileReader();
   reader.onload=function(){ handleRestoreText(String(reader.result||'')); };
   reader.onerror=function(){ showDialog({type:'error',title:'فایل خوانده نشد',message:'خواندن فایل ممکن نشد. دوباره امتحان کنید.',primary:{label:'باشه'}}); };
@@ -1717,14 +2759,18 @@ async function startFresh(){
   const yes=await showDialog({type:'danger',title:'شروع با اطلاعات خالی',message:'برنامه با فهرست خالی شروع می‌شود. نسخه‌ی خراب‌شده‌ی قبلی به‌صورت جداگانه نگه داشته می‌شود تا در صورت نیاز بشود سراغش رفت. ترجیحاً اول «بازیابی از فایل پشتیبان» را امتحان کنید.',primary:{label:'شروع با اطلاعات خالی'},secondary:{label:'انصراف'}});
   if(!yes) return;
   const snap=snapshot();
-  if(storageCorruptRaw){ try{ localStorage.setItem(KEY_CORRUPT, storageCorruptRaw); }catch(e){} }
+  if(!keepCorruptCopy()){
+    await showDialog({type:'error',title:'شروع با اطلاعات خالی ممکن نشد',message:'جای کافی برای نگه‌داشتن نسخه‌ی خراب‌شده‌ی فعلی نبود و برای اینکه چیزی از بین نره، ادامه ندادیم. اگه ممکنه فضای گوشی را خالی کنید و دوباره امتحان کنید.',primary:{label:'باشه'}});
+    return;
+  }
   materials=[]; products=[]; storageBlocked=false;
-  if(persist()){ storageCorruptRaw=null; updateBanner(); renderAll(); toast('با اطلاعات خالی شروع شد'); }
+  adoptStoredStamp();
+  if(persist()){ storageCorruptRaw=null; storageBlockNewer=false; updateBanner(); renderAll(); toast('با اطلاعات خالی شروع شد'); }
   else { restoreSnapshot(snap); storageBlocked=true; renderAll(); await showStorageError(); }
 }
 
 async function askDeleteAll(){
-  const yes=await showDialog({type:'danger',title:'پاک کردن کامل اطلاعات',message:'با این کار، تمام مواد اولیه و محصولاتی که ثبت کرده‌اید برای همیشه پاک می‌شود. قبلش حتماً یک فایل پشتیبان بگیرید.',primary:{label:'ادامه'},secondary:{label:'انصراف'}});
+  const yes=await showDialog({type:'danger',title:'پاک کردن کامل اطلاعات',message:'با این کار، تمام مواد اولیه و محصولاتی که ثبت کرده‌اید پاک می‌شود. قبلش حتماً یک فایل پشتیبان بگیرید. (برنامه خودش هم یک نسخه‌ی ایمنی روی همین گوشی نگه می‌دارد.)',primary:{label:'ادامه'},secondary:{label:'انصراف'}});
   if(!yes) return;
   document.getElementById('danger-confirm-input').value='';
   document.getElementById('danger-confirm-btn').disabled=true;
@@ -1735,20 +2781,63 @@ function checkDangerInput(){
   document.getElementById('danger-confirm-btn').disabled=(v!=='حذف');
 }
 async function confirmDeleteAll(){
+  if(!(await ensureSafetyCopy('قبل از پاک کردن کامل'))) return;
   const ok=tryCommit(()=>{ materials=[]; products=[]; });
   if(ok){ closeModal('modal-danger'); renderAll(); toast('همه اطلاعات پاک شد'); }
   else { renderAll(); await showStorageError(); }
 }
 
 /* ---------- راه‌اندازی ---------- */
-document.addEventListener('keydown', dlgKey);
-renderAll();
-updateBanner();
-if(storageBlocked){
-  showDialog({type:'error',title:'اطلاعات ذخیره‌شده مشکل دارد',
-    message:'اطلاعات ذخیره‌شده مشکل دارد.\nاطلاعات شما لزوماً از بین نرفته است. از فایل پشتیبان استفاده کنید.',
-    primary:{label:'بازیابی از فایل پشتیبان'},secondary:{label:'فعلاً ببندم'}}).then(yes=>{ if(yes) pickRestoreFile(); });
+let swRegistration=null, waitingWorker=null, updateReloading=false, updateFailTimer=null;
+let updateRequested=false, pendingUpdateOffer=false, lastUpdateCheck=0;
+function safeRun(label, fn){                    // خطا در یک بخش فرعیِ راه‌اندازی نباید بقیه‌ی برنامه رو از کار بندازه
+  try{ fn(); }catch(e){ try{ console.error('init:'+label, e); }catch(_){} }
 }
+function on(target, ev, fn){ try{ if(target && typeof target.addEventListener==='function') target.addEventListener(ev, fn); }catch(e){} }
+function onVisibility(){
+  try{
+    if(document.visibilityState==='hidden'){ saveDraftNow(); return; }
+    if(document.visibilityState==='visible'){ syncFromOtherWindow(); renderTopBanners(); maybeCheckUpdate(); }
+  }catch(e){}
+}
+on(document, 'keydown', dlgKey);
+on(document, 'visibilitychange', onVisibility);
+on(window, 'popstate', onPopState);
+on(window, 'storage', function(e){ if(!e || e.key===null || e.key===undefined || e.key===KEY_STATE) safeRun('storage-sync', syncFromOtherWindow); });
+on(window, 'pagehide', function(){ safeRun('draft-flush', saveDraftNow); });
+on(window, 'online', function(){ safeRun('online-update', maybeCheckUpdate); });
+on(window, 'beforeinstallprompt', function(e){
+  try{ e.preventDefault(); }catch(_){}
+  deferredPrompt=e;
+  safeRun('install-ui', function(){ renderInstallCard(); renderTopBanners(); });
+});
+on(window, 'appinstalled', function(){
+  deferredPrompt=null;
+  safeRun('installed-ui', function(){ toast('برنامه روی گوشی نصب شد ✓'); renderInstallCard(); renderTopBanners(); requestPersistentStorage(); });
+});
+safeRun('categories', fillCategorySelect);
+safeRun('meta', initMeta);
+safeRun('first-render', function(){ renderAll(); updateBanner(); });
+safeRun('persistent-storage', requestPersistentStorage);
+safeRun('mirror-seed', mirrorSeed);
+safeRun('boot-dialogs', function(){
+  if(storageUnavailable) return;                 // توضیحش توی بنر بالای صفحه هست
+  if(storageBlocked){
+    if(storageBlockNewer){
+      showDialog({type:'warning',title:'اطلاعات با نسخه‌ی جدیدتری ذخیره شده',
+        message:'اطلاعات شما سالم است ولی با نسخه‌ی جدیدتری از این برنامه ذخیره شده و نسخه‌ای که الان باز است قدیمی‌تر است.\nبرنامه را کامل ببندید و دوباره باز کنید، یا بروزرسانی را بزنید. تا آن موقع چیزی روی اطلاعاتتان نوشته نمی‌شود.',
+        primary:{label:'باشه'}});
+    } else {
+      const hasAuto=listAutoCopies().length>0;
+      showDialog({type:'error',title:'اطلاعات ذخیره‌شده مشکل دارد',
+        message:'اطلاعات ذخیره‌شده مشکل دارد.\nاطلاعات شما لزوماً از بین نرفته است. از فایل پشتیبان استفاده کنید.'+(hasAuto?'\nیا از دکمه‌ی «نسخه‌های خودکار» بالای صفحه.':''),
+        primary:{label:'بازیابی از فایل پشتیبان'},secondary:{label:'فعلاً ببندم'}}).then(yes=>{ if(yes) pickRestoreFile(); });
+    }
+  } else {
+    checkMirrorRecovery();
+    checkDraftRecovery();
+  }
+});
 
 /* ============================================================================
    به‌روزرسانی امن PWA — بدون نیاز به حذف/نصب مجدد
@@ -1757,6 +2846,11 @@ if(storageBlocked){
    به داده‌ی کاربر (localStorage) اصلاً دست نمی‌زنه — آپدیت کد و داده‌ی کاربر دو سیستم کاملاً
    جدان. تنها مسیری که داده می‌تونه تغییر کنه، migrateState (بالای همین فایل) هست که خودش
    backup‌-قبل-از-migrate و rollback-روی-شکست داره.
+   قواعد این نسخه:
+   • صفحه فقط وقتی بعد از آپدیت reload می‌شه که خودِ کاربر «بروزرسانی» رو زده باشه (updateRequested)؛
+     controllerchange به‌تنهایی (مثلاً اولین نصب) هیچ‌وقت صفحه رو وسط کار کاربر دوباره بارگذاری نمی‌کنه.
+   • اگه فرمی باز باشه، پنجره‌ی «نسخه جدید» نمایش داده نمی‌شه تا کار کاربر قطع نشه؛ بعد از بسته شدن فرم می‌آد.
+   • «بروزرسانی» تا وقتی فرم باز (و شاید ذخیره‌نشده) هست انجام نمی‌شه.
    ============================================================================ */
 function compareVersions(a,b){
   const pa=String(a||'0').split('.').map(n=>parseInt(n,10)||0);
@@ -1778,7 +2872,6 @@ async function fetchVersionInfo(){
   }catch(e){ return null; }
 }
 
-let swRegistration=null, waitingWorker=null, updateReloading=false, updateFailTimer=null;
 
 function setUpdateUI(mode, opts){
   opts=opts||{};
@@ -1789,7 +2882,7 @@ function setUpdateUI(mode, opts){
   const title=document.getElementById('update-title');
   if(mode==='offer'){
     title.textContent='نسخه جدید موجود است ✨';
-    msg.innerHTML='<p>نسخه جدیدی از حساب‌گر قیمت شیرینی و کیک آماده شده است. برای دریافت آخرین امکانات و اصلاحات، برنامه را بروزرسانی کنید.</p>';
+    msg.innerHTML='<p>نسخه جدیدی از حساب‌گر قیمت شیرینی و کیک آماده شده است. برای دریافت آخرین امکانات و اصلاحات، برنامه را بروزرسانی کنید. اطلاعات شما دست‌نخورده می‌ماند.</p>';
     msg.classList.remove('hidden'); status.classList.add('hidden');
     btns.innerHTML='<button type="button" class="btn ghost" onclick="dismissUpdate()">بعداً</button><button type="button" class="btn" onclick="performUpdate()">بروزرسانی</button>';
     ov.classList.add('open'); ov.setAttribute('aria-hidden','false');
@@ -1799,57 +2892,103 @@ function setUpdateUI(mode, opts){
     btns.innerHTML='<button type="button" class="btn" disabled style="opacity:.6;">'+(opts.text||'')+'</button>';
   } else if(mode==='failed'){
     title.textContent='بروزرسانی انجام نشد';
-    msg.innerHTML='<p>اطلاعات شما محفوظ است. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.</p>';
+    msg.innerHTML='<p>اطلاعات شما محفوظ است. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید. اگه نسخه‌ی جدید همین الان منتشر شده، ممکنه چند دقیقه طول بکشه تا کامل در دسترس باشه.</p>';
     msg.classList.remove('hidden'); status.classList.add('hidden');
     btns.innerHTML='<button type="button" class="btn ghost" onclick="dismissUpdate()">بعداً</button><button type="button" class="btn" onclick="performUpdate()">تلاش دوباره</button>';
+    ov.classList.add('open'); ov.setAttribute('aria-hidden','false');
   } else if(mode==='hide'){
     ov.classList.remove('open'); ov.setAttribute('aria-hidden','true');
   }
 }
 function dismissUpdate(){ setUpdateUI('hide'); }
+function showUpdateOffer(){
+  if(modalStack.length){ pendingUpdateOffer=true; return; }      // وسط ویرایش فرم مزاحم نمی‌شیم؛ بعد از بسته شدن فرم نشون داده می‌شه
+  pendingUpdateOffer=false;
+  if(!updateOverlayOpen()) setUpdateUI('offer');
+}
+function flushPendingUpdateOffer(){ if(pendingUpdateOffer && modalStack.length===0) setTimeout(showUpdateOffer, 400); }
 function offerUpdate(worker){
   waitingWorker=worker;
-  setUpdateUI('offer');
+  showUpdateOffer();
+}
+function failUpdate(){
+  if(updateFailTimer){ clearTimeout(updateFailTimer); updateFailTimer=null; }
+  updateRequested=false;
+  setUpdateUI('failed');
+}
+function waitForWaiting(reg, timeoutMs){        // swRegistration.update() فقط «بررسی» می‌کنه؛ نصب نسخه‌ی جدید (دریافت فایل‌ها) بعدش اتفاق می‌افته
+  return new Promise(function(resolve){
+    if(!reg) return resolve(null);
+    if(reg.waiting) return resolve(reg.waiting);
+    let done=false, timer=null;
+    const finish=function(w){
+      if(done) return; done=true; clearTimeout(timer);
+      try{ reg.removeEventListener('updatefound', onFound); }catch(e){}
+      resolve(w||null);
+    };
+    const watch=function(w){
+      if(!w) return;
+      const check=function(){ if(w.state==='installed') finish(reg.waiting||w); else if(w.state==='redundant') finish(null); };
+      w.addEventListener('statechange', check); check();
+    };
+    const onFound=function(){ watch(reg.installing); };
+    try{ reg.addEventListener('updatefound', onFound); }catch(e){}
+    if(reg.installing) watch(reg.installing);
+    timer=setTimeout(function(){ finish(reg.waiting||null); }, timeoutMs);
+  });
 }
 async function performUpdate(){
+  if(modalStack.length){
+    setUpdateUI('hide'); pendingUpdateOffer=true;
+    await showDialog({type:'warning',title:'اول فرم باز را ببندید',message:'الان یک فرم باز است. اول آن را ذخیره کنید (یا ببندید)، بعد «بروزرسانی» را بزنید تا چیزی از دست نره.',primary:{label:'باشه'}});
+    return;
+  }
+  updateRequested=true;
   if(updateFailTimer) clearTimeout(updateFailTimer);
-  updateFailTimer=setTimeout(function(){ if(!updateReloading) setUpdateUI('failed'); }, 15000);
+  updateFailTimer=setTimeout(function(){ if(!updateReloading) failUpdate(); }, 35000);
   try{
-    setUpdateUI('progress',{text:'در حال آماده‌سازی بروزرسانی...'});
-    if(swRegistration){
-      setUpdateUI('progress',{text:'در حال دریافت نسخه جدید...'});
+    setUpdateUI('progress',{text:'در حال دریافت نسخه جدید...'});
+    let w=(swRegistration && swRegistration.waiting) ? swRegistration.waiting : null;
+    if(!w && swRegistration){
       try{ await swRegistration.update(); }catch(e){}
+      w=await waitForWaiting(swRegistration, 25000);
     }
-    const w = (swRegistration && swRegistration.waiting) || waitingWorker;
+    w=w||waitingWorker;
     if(w){
       setUpdateUI('progress',{text:'در حال فعال‌سازی...'});
       w.postMessage({type:'SKIP_WAITING'});
       // بقیه‌ی کار (reload) با رویداد controllerchange پایین همین فایل انجام می‌شه
-    } else {
-      // sw جدیدی در انتظار نبود (شاید فقط کد صفحه عوض شده، نه خود sw) — فقط دوباره بارگذاری کن
-      clearTimeout(updateFailTimer);
-      setUpdateUI('progress',{text:'در حال بارگذاری دوباره...'});
-      setTimeout(function(){ window.location.reload(); }, 300);
+      return;
     }
-  }catch(e){
+    // نسخه‌ی در انتظاری پیدا نشد: یا واقعاً چیزی منتشر نشده/ناقص منتشر شده، یا فقط ارتباط قطعه
+    const info=await fetchVersionInfo();
+    if(!info || compareVersions(info.version, APP_VERSION)>0){ failUpdate(); return; }
     clearTimeout(updateFailTimer);
-    setUpdateUI('failed');
+    setUpdateUI('progress',{text:'در حال بارگذاری دوباره...'});
+    updateReloading=true;
+    setTimeout(function(){ window.location.reload(); }, 300);
+  }catch(e){
+    failUpdate();
   }
 }
 async function checkForUpdate(){
+  lastUpdateCheck=Date.now();
   const info=await fetchVersionInfo();
   if(!info) return; // آفلاین یا خطای شبکه → بی‌صدا هیچ کاری نکن؛ چیزی خراب نمی‌شه
   if(compareVersions(info.version, APP_VERSION)>0){
     if(swRegistration){ try{ await swRegistration.update(); }catch(e){} }
-    if(!(document.getElementById('update-ov').classList.contains('open'))) setUpdateUI('offer');
+    showUpdateOffer();
   }
+}
+function maybeCheckUpdate(){                    // برنامه‌ی نصب‌شده ممکنه روزها در حافظه بمونه؛ هر بار که برمی‌گردیم (حداکثر هر ۳۰ دقیقه) نسخه‌ی جدید رو چک می‌کنیم
+  if(Date.now()-lastUpdateCheck>30*60*1000) checkForUpdate().catch(function(){});
 }
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./sw.js').then(function(reg){
+    navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).then(function(reg){
       swRegistration=reg;
-      if(reg.waiting && reg.active) offerUpdate(reg.waiting);
+      if(reg.waiting && navigator.serviceWorker.controller) offerUpdate(reg.waiting);
       reg.addEventListener('updatefound', function(){
         const nw=reg.installing;
         if(!nw) return;
@@ -1860,7 +2999,7 @@ if('serviceWorker' in navigator){
       checkForUpdate();
     }).catch(function(){});
     navigator.serviceWorker.addEventListener('controllerchange', function(){
-      if(updateReloading) return;
+      if(!updateRequested || updateReloading) return;           // مثلاً اولین نصب Service Worker: بدون درخواست کاربر، صفحه دوباره بارگذاری نمی‌شه
       updateReloading=true;
       if(updateFailTimer) clearTimeout(updateFailTimer);
       window.location.reload();
