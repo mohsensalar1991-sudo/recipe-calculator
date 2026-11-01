@@ -16,8 +16,8 @@
       نسخه‌ی قبلی و اطلاعات کاربر سالم می‌مونه.
    5) version.json هیچ‌وقت از کش سرو نمی‌شه (no-store)؛ وگرنه تشخیص «نسخه‌ی جدید» قابل‌اعتماد نیست. */
 const CACHE_PREFIX = 'ccalc-shell-';
-const CACHE_NAME = 'ccalc-shell-v0.4.0';
-const VERSION = CACHE_NAME.slice(CACHE_PREFIX.length + 1);          // مثلاً «0.4.0»؛ همان چیزی که در index.html به‌صورت APP_VERSION نوشته شده
+const CACHE_NAME = 'ccalc-shell-v0.4.1';
+const VERSION = CACHE_NAME.slice(CACHE_PREFIX.length + 1);          // مثلاً «0.4.1»؛ همان چیزی که در index.html به‌صورت APP_VERSION نوشته شده
 const PAGE = './';
 const OPTIONAL_ASSETS = ['./manifest.json', './icon-192.png', './icon-512.png', './fonts/Vazirmatn-subset.woff2'];
 
@@ -27,7 +27,8 @@ const ASSET_PATHS = OPTIONAL_ASSETS.map(pathOf);
 
 async function precache() {
   // صفحه‌ی اصلی ضروری است: باید دریافت بشه و دقیقاً همین نسخه باشه، وگرنه کل نصب شکست می‌خوره
-  // (و چون کش بعد از این بررسی باز می‌شه، نصبِ ناموفق هیچ کش نصفه‌ای از خودش جا نمی‌ذاره)
+  // (کش بعد از این بررسی باز می‌شه؛ اگه ذخیره‌ی فایل‌ها وسط کار شکست بخوره ممکنه ورودیِ ناقصی توی کشِ همین نسخه بمونه؛
+  // بی‌خطره چون این کش فقط بعد از «نصبِ کامل» فعال می‌شه و نصبِ دوباره‌ی همین نسخه همه‌ی ورودی‌ها رو دوباره می‌نویسه)
   const res = await fetch(PAGE, { cache: 'reload' });
   if (!res || !res.ok) throw new Error('shell-fetch-failed');
   const html = await res.clone().text();
@@ -35,10 +36,13 @@ async function precache() {
   const cache = await caches.open(CACHE_NAME);
   await cache.put(PAGE, res.clone());
   await cache.put('./index.html', res.clone());
-  // بقیه‌ی فایل‌ها (آیکون، فونت، manifest) هر کدوم جدا؛ گم یا خراب بودن یکی‌شون نباید کل نصب را خراب کنه
-  await Promise.allSettled(OPTIONAL_ASSETS.map(async (url) => {
-    const r = await fetch(url, { cache: 'reload' });
-    if (r && r.ok) await cache.put(url, r);
+  // بقیه‌ی فایل‌ها (آیکون، فونت، manifest) هر کدوم جدا؛ گم یا خراب بودن یکی‌شون نباید کل نصب را خراب کنه.
+  // (عمداً try/catch به‌جای Promise.allSettled: allSettled فقط از Chrome 76 به بعد هست و روی گوشی‌های قدیمی‌تر نصب را می‌شکست)
+  await Promise.all(OPTIONAL_ASSETS.map(async (url) => {
+    try {
+      const r = await fetch(url, { cache: 'reload' });
+      if (r && r.ok) await cache.put(url, r);
+    } catch (e) { /* این فایل اختیاری است؛ بعداً هنگام استفاده از شبکه گرفته و کش می‌شود */ }
   }));
 }
 
