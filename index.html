@@ -23,43 +23,53 @@
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
   font-size:16px;
-  --bg:#FCF0DC; --surface:#FFFFFF; --surface2:#FBF1DE; --text:#3A2A1E; --muted:#8A7561;
-  --primary:#C98A2B; --primary-ink:#3A2A1E; --success:#5B7F4B; --danger:#A83232; --warn:#A85A0B;
+  --bg:#FCF0DC; --surface:#FFFFFF; --surface2:#FBF1DE; --text:#3A2A1E; --muted:#7E6A58;
+  --primary:#C98A2B; --primary-ink:#3A2A1E; --success:#557646; --danger:#A83232; --warn:#A85A0B;
+  /* متغیر «primary-text» رنگِ نوشته‌ی برجسته است (تب فعال، درصد سود، …). رنگ «primary» برای پس‌زمینه‌ی دکمه‌هاست و
+     به‌عنوان رنگ نوشته روی زمینه‌ی روشن کم‌کنتراست می‌شد؛ پس نوشته‌ها از متغیر primary-text می‌خوانند. */
+  --primary-text:#91631F;
   --border:rgba(58,42,30,.15); --radius:16px; --nav-h:78px;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px);}
+/* رنگ نوشته‌ی راهنما (placeholder): پیش‌فرض مرورگرها کم‌رنگ‌تر از آن است که پیرها بخوانند؛ همان --muted با کدری کامل. */
+::placeholder{color:var(--muted);opacity:1;}
 @media (prefers-color-scheme:dark){
   :root:not([data-theme]){
     --bg:#1E1710; --surface:#2A2014; --surface2:#352818; --text:#F5E9D6; --muted:#B8A688;
     --primary:#E0A83D; --primary-ink:#241A0C; --success:#8FBF77; --danger:#E4837E; --warn:#F0B04A;
+    --primary-text:#E0A83D;
     --border:rgba(245,233,214,.15);
   }
 }
 :root[data-theme="dark"]{
   --bg:#1E1710; --surface:#2A2014; --surface2:#352818; --text:#F5E9D6; --muted:#B8A688;
   --primary:#E0A83D; --primary-ink:#241A0C; --success:#8FBF77; --danger:#E4837E; --warn:#F0B04A;
+  --primary-text:#E0A83D;
   --border:rgba(245,233,214,.15);
 }
 :root[data-theme="sepia"]{
-  --bg:#F1E6D2; --surface:#FAF3E6; --surface2:#EDDFC7; --text:#4A3524; --muted:#8C7658;
-  --primary:#9C6B3E; --primary-ink:#FFFFFF; --success:#5F7A4C; --danger:#A15C46; --warn:#9A5A12;
+  --bg:#F1E6D2; --surface:#FAF3E6; --surface2:#EDDFC7; --text:#4A3524; --muted:#716047;
+  --primary:#9C6B3E; --primary-ink:#FFFFFF; --success:#526941; --danger:#8F523E; --warn:#915511;
+  --primary-text:#835A34;
   --border:rgba(74,53,36,.18);
 }
 :root[data-theme="contrast"]{
   --bg:#FFFFFF; --surface:#FFFFFF; --surface2:#EFEFEF; --text:#000000; --muted:#333333;
   --primary:#0B4FCC; --primary-ink:#FFFFFF; --success:#0A7D30; --danger:#CC0000; --warn:#8A4B00;
+  --primary-text:#0B4FCC;
   --border:rgba(0,0,0,.4);
 }
 :root[data-theme="green"]{
-  --bg:#EEF3E7; --surface:#FFFFFF; --surface2:#E4EEDA; --text:#2C3B26; --muted:#6E8060;
-  --primary:#4F7A3D; --primary-ink:#FFFFFF; --success:#3D6B4A; --danger:#A6433A; --warn:#A0600F;
+  --bg:#EEF3E7; --surface:#FFFFFF; --surface2:#E4EEDA; --text:#2C3B26; --muted:#5F6E53;
+  --primary:#4F7A3D; --primary-ink:#FFFFFF; --success:#3D6B4A; --danger:#A6433A; --warn:#985B0E;
+  --primary-text:#4A7339;
   --border:rgba(44,59,38,.18);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Vazirmatn',Tahoma,Arial,sans-serif;font-size:1.0625rem;line-height:1.65;padding-bottom:calc(var(--nav-h) + 26px);}
-button:focus-visible,.inp:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--primary);outline-offset:2px;}
+button:focus-visible,.inp:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--primary-text);outline-offset:2px;}
 .wrap{max-width:560px;margin:0 auto;padding:16px;}
 .hidden{display:none !important;}
 h1,h2{margin:0 0 4px;}
@@ -75,7 +85,7 @@ h1,h2{margin:0 0 4px;}
 .btn.outline{background:transparent;border:2px solid var(--primary);color:var(--text);}
 .btn.ghost{background:var(--surface2);color:var(--text);font-weight:600;}
 .btn.danger{background:transparent;color:var(--danger);border:2px solid var(--danger);}
-.btn.sm{padding:10px 14px;font-size:.875rem;min-height:42px;width:auto;}
+.btn.sm{padding:10px 14px;font-size:.875rem;min-height:44px;width:auto;}
 
 label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .hint{font-size:.8125rem;color:var(--muted);margin:6px 0 12px;line-height:1.7;}
@@ -141,17 +151,20 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 
 .slider-row{display:flex;align-items:center;gap:10px;}
 .slider-row input[type=range]{flex:1;height:6px;accent-color:var(--primary);}
-.slider-row .pct{font-weight:800;font-size:1.0625rem;width:54px;text-align:center;color:var(--primary);}
+.slider-row .pct{font-weight:800;font-size:1.0625rem;width:54px;text-align:center;color:var(--primary-text);}
 
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom,0px);}
 .nav-btn{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-family:inherit;font-size:.75rem;font-weight:600;cursor:pointer;}
 .nav-btn .ic{font-size:1.5625rem;}
-.nav-btn.active{color:var(--primary);}
+.nav-btn.active{color:var(--primary-text);}
 
 .fab{position:fixed;left:20px;bottom:calc(var(--nav-h) + 16px);width:58px;height:58px;border-radius:50%;background:var(--primary);color:var(--primary-ink);border:none;font-size:1.75rem;box-shadow:0 6px 16px rgba(0,0,0,.25);z-index:45;cursor:pointer;}
 
-.modal-ov{position:fixed;inset:0;background:rgba(30,20,10,.55);z-index:100;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:.25s;}
-.modal-ov.open{opacity:1;pointer-events:all;}
+/* فرم‌های بسته باید «واقعاً» پنهان باشند، نه فقط شفاف: با visibility:hidden از Tab، صفحه‌خوان (TalkBack) و لمس کنار می‌روند.
+   تأخیرِ visibility هم‌اندازه‌ی انیمیشن است تا بسته‌شدن نرم دیده شود؛ هنگام باز شدن بدون تأخیر ظاهر می‌شود.
+   چهار مقدارِ top/right/bottom/left پیش از inset:0 برای مرورگرهای قدیمی‌تر از Chrome 87 است (inset را نمی‌شناسند). */
+.modal-ov{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(30,20,10,.55);z-index:100;display:flex;align-items:flex-end;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility 0s linear .25s;}
+.modal-ov.open{opacity:1;visibility:visible;pointer-events:all;transition:opacity .25s,visibility 0s;}
 #modal-picker{z-index:110;}
 .sheet{background:var(--bg);width:100%;max-height:92vh;max-height:92dvh;border-radius:22px 22px 0 0;padding:20px;padding-bottom:36px;overflow-y:auto;overscroll-behavior:contain;transform:translateY(100%);transition:.25s;}
 .modal-ov.open .sheet{transform:translateY(0);}
@@ -244,8 +257,8 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .install-ok{display:flex;gap:10px;align-items:center;color:var(--success);font-weight:700;}
 
 /* ---- in-app dialog ---- */
-.dlg-ov{position:fixed;inset:0;background:rgba(20,12,4,.6);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
-.dlg-ov.open{opacity:1;pointer-events:all;}
+.dlg-ov{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(20,12,4,.6);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s,visibility 0s linear .2s;}
+.dlg-ov.open{opacity:1;visibility:visible;pointer-events:all;transition:opacity .2s,visibility 0s;}
 .dlg{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:22px;width:100%;max-width:400px;padding:24px 20px 18px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.35);max-height:88vh;overflow:auto;}
 .dlg-ic{width:58px;height:58px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.75rem;font-weight:800;border:3px solid currentColor;background:var(--surface2);}
 .dlg-ic.t-success{color:var(--success);} .dlg-ic.t-warning{color:var(--warn);} .dlg-ic.t-error{color:var(--danger);}
@@ -372,7 +385,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 <button class="fab" id="fab-btn" onclick="fabAction()">+</button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<div class="modal-ov" id="modal-material">
+<div class="modal-ov" id="modal-material" role="dialog" aria-modal="true" aria-label="ماده‌ی اولیه">
   <div class="sheet">
     <div class="sheet-head"><h2 id="mat-modal-title">ماده اولیه جدید</h2><div class="sheet-head-actions"><button class="head-icon-btn hidden" id="mat-del-icon" aria-label="حذف این ماده" onclick="deleteMaterial()">🗑️</button><button class="head-icon-btn" aria-label="ذخیره ماده اولیه" onclick="saveMaterial()">💾</button><button class="close-btn" aria-label="بستن" onclick="requestClose('modal-material')">✕</button></div></div>
     <div class="hint" id="mat-stale-warn" style="display:none;color:var(--danger);background:var(--surface2);padding:10px;border-radius:10px;">⏰ این قیمت مدتی است بروزرسانی نشده. لطفاً بررسی کنید که هنوز درست باشه.</div>
@@ -382,7 +395,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
       <div class="sec-bd">
         <div class="field">
           <label for="mat-name">نام ماده</label>
-          <input type="text" class="inp" id="mat-name" placeholder="مثلاً: آرد، شکر، تخم‌مرغ، روغن" oninput="onMatNameInput()" autocomplete="off">
+          <input type="text" class="inp" id="mat-name" maxlength="150" placeholder="مثلاً: آرد، شکر، تخم‌مرغ، روغن" oninput="onMatNameInput()" autocomplete="off">
         </div>
         <div class="field" style="margin-bottom:0;">
           <label for="mat-category">دسته‌بندی</label>
@@ -399,7 +412,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
           <label for="mat-price">قیمت خرید (تومان)</label>
           <input type="text" inputmode="numeric" class="inp" id="mat-price" placeholder="مثلاً 350.000" oninput="onMoneyInput(this);updateUnitPriceHint();updatePriceWords();">
           <div class="hint">قیمتی که برای همین مقدار پرداخت کردید</div>
-          <div class="hint" id="mat-price-words" style="font-weight:700;color:var(--primary);"></div>
+          <div class="hint" id="mat-price-words" style="font-weight:700;color:var(--primary-text);"></div>
         </div>
         <div class="row2">
           <div class="field">
@@ -427,6 +440,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
       <div class="sec-bd">
         <label for="mat-density">وزن هر ۱ لیتر از این ماده به کیلوگرم</label>
         <input type="text" inputmode="decimal" class="inp" id="mat-density" placeholder="مثلاً 0.92 برای روغن" oninput="normDecimalInput(this);onMatDensityInput()">
+        <div class="hint" id="mat-density-auto" style="margin:4px 0 0;font-weight:700;"></div>
         <div class="hint" style="margin-bottom:0;">برای موادی مثل روغن، شیر، ماست، گلاب. اگه نام ماده رو تایپ کنید ممکنه خودش عدد مناسب رو پیشنهاد بده. اگه این ماده رو هم به لیتر بخرید و هم به لیتر توی دستور مصرف کنید، چگالی لازم نیست. ولی اگه یک‌جا با لیتر و یک‌جا با گرم حسابش کنید، پر کردن این فیلد لازمه؛ وگرنه برنامه بهتون هشدار می‌ده.</div>
       </div>
     </div>
@@ -441,7 +455,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
   </div>
 </div>
 
-<div class="modal-ov" id="modal-picker">
+<div class="modal-ov" id="modal-picker" role="dialog" aria-modal="true" aria-label="انتخاب ماده‌ی اولیه">
   <div class="sheet">
     <div class="sheet-head"><h2>افزودن ماده به محصول</h2><button class="close-btn" aria-label="بستن" onclick="closeModal('modal-picker')">✕</button></div>
     <input type="text" class="inp" id="picker-search" placeholder="🔍 جستجو در مواد اولیه" oninput="renderPicker()" style="margin-bottom:14px;" autocomplete="off">
@@ -449,14 +463,14 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
   </div>
 </div>
 
-<div class="modal-ov" id="modal-product">
+<div class="modal-ov" id="modal-product" role="dialog" aria-modal="true" aria-label="محصول">
   <div class="sheet">
     <div class="sheet-head"><h2 id="prod-modal-title">محصول جدید</h2><div class="sheet-head-actions"><button class="head-icon-btn hidden" id="prod-del-icon" aria-label="حذف این محصول" onclick="deleteProduct()">🗑️</button><button class="head-icon-btn" aria-label="ذخیره محصول" onclick="saveProduct()">💾</button><button class="close-btn" aria-label="بستن" onclick="requestClose('modal-product')">✕</button></div></div>
 
     <div class="card sec">
       <div class="sec-hd"><span class="sec-ic">🍰</span><h2>نام محصول</h2></div>
       <div class="sec-bd">
-        <input type="text" class="inp" id="prod-name" aria-label="نام محصول" placeholder="مثلاً: کیک شکلاتی، شیرینی زبان" autocomplete="off" oninput="scheduleDraftSave()">
+        <input type="text" class="inp" id="prod-name" maxlength="150" aria-label="نام محصول" placeholder="مثلاً: کیک شکلاتی، شیرینی زبان" autocomplete="off" oninput="scheduleDraftSave()">
       </div>
     </div>
 
@@ -518,7 +532,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
   </div>
 </div>
 
-<div class="modal-ov" id="modal-danger">
+<div class="modal-ov" id="modal-danger" role="dialog" aria-modal="true" aria-label="پاک کردن همه‌ی اطلاعات">
   <div class="sheet">
     <div class="sheet-head"><h2>تایید نهایی حذف</h2><button class="close-btn" aria-label="بستن" onclick="closeModal('modal-danger')">✕</button></div>
     <p class="hint">برای پاک شدن همیشگی همه‌ی اطلاعات، کلمه «حذف» رو دقیقاً توی کادر زیر تایپ کنید:</p>
@@ -534,7 +548,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
     <div class="dlg-ic t-confirm" id="update-ic">✨</div>
     <h2 id="update-title">نسخه جدید موجود است ✨</h2>
     <div class="dlg-msg" id="update-msg"></div>
-    <div class="dlg-msg hidden" id="update-status" style="text-align:center;font-weight:700;color:var(--primary);"></div>
+    <div class="dlg-msg hidden" id="update-status" style="text-align:center;font-weight:700;color:var(--primary-text);"></div>
     <div class="dlg-btns" id="update-btns"></div>
   </div>
 </div>
@@ -585,19 +599,23 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
   10) کل اطلاعات یک رکورد واحده (کلید cc_state_v2؛ فیلد schemaVersion از
       APP_VERSION برنامه جداست). هر تغییر با tryCommit انجام می‌شه: snapshot قبل
       از تغییر، mutate، persist؛ اگه persist شکست بخوره، Rollback کامل به همون
-      snapshot. بازیابی از بکاپ هم از همین مسیر رد می‌شه.
+      snapshot. بازیابی از بکاپ مسیر هم‌ارزِ خودش رو داره (applyRestore: snapshot ← persist ← Rollback
+      در صورت شکست)، نه خودِ tryCommit؛ و اگه جا کم باشه نسخه‌ی ایمنیِ «قبل از بازیابی» رو قربانی نمی‌کنه.
   11) بکاپ همیشه شامل app/appVersion/schemaVersion/exportedAt هست. اگه schemaVersion
       فایل از SCHEMA_VERSION فعلی بزرگ‌تر باشه، Restore متوقف می‌شه با پیام واضح.
   12) هیچ confirm/alert/prompt مرورگری نداریم؛ فقط showDialog (Promise-based، با
       Focus trap و Escape) و toast داخلی.
   13) ذخیره‌ی فایل پشتیبان (downloadBackup) و اشتراک‌گذاری آن (shareBackup) دو کار جدا با دو
-      دکمه‌ی جدا هستن. هر دو فقط وقتی «پشتیبان گرفته شد» حساب می‌شن که واقعاً انجام شده باشن.
+      دکمه‌ی جدا هستن. هر دو فقط وقتی «پشتیبان گرفته شد» حساب می‌شن که خودِ کاربر تأیید کرده باشه
+      (مرورگر نمی‌گه فایل واقعاً ذخیره یا ارسال شد یا نه): بعد از دانلود می‌پرسه «فایل ذخیره شد؟» و
+      بعد از اشتراک‌گذاری «پیام ارسال شد؟» (confirmBackupDone).
   14) persist فقط اطلاعاتِ سالم (sanitizeState) رو می‌نویسه، بعد از نوشتن دوباره می‌خونه و مقایسه
       می‌کنه، و اگه پنجره/تب دیگه‌ای بعد از بارگذاری ما چیزی نوشته باشه (savedAt عوض شده) روش
       نمی‌نویسه (conflict). نسخه‌های ایمنی خودکار (cc_auto_*) و نسخه‌ی کمکی IndexedDB فقط «بعد از
       موفقیت ذخیره‌ی اصلی» ساخته می‌شن و هیچ‌وقت جلوی ذخیره‌ی اصلی رو نمی‌گیرن.
   15) دکمه‌ی Back اندروید اول فرم بازِ برنامه رو می‌بنده (modalStack + History API)، نه کل برنامه رو؛
       فرم با تغییر ذخیره‌نشده قبل از بسته شدن می‌پرسه. تعداد ورودی‌های history = تعداد فرم‌های باز.
+      پنجره‌های پیام ورودی history نمی‌گذارن: روی صفحه‌ی اصلی (بدون فرم) Back همان رفتار عادی مرورگره.
   16) برنامه هیچ منبع خارجی (فونت/اسکریپت/تصویر از اینترنت) نداره؛ فونت وزیرمتن محلی است (fonts/).
   17) Service Worker فقط کش‌های خودش (پیشوند ccalc-shell-) رو پاک می‌کنه؛ آدرس github.io بین چند برنامه
       مشترکه و کش/ذخیره‌ی برنامه‌های دیگه نباید دست بخوره.
@@ -609,12 +627,13 @@ const UNITS = {
   ml:{label:'میلی‌لیتر',type:'vol',factor:1},
   count:{label:'عدد',type:'count',factor:1}
 };
+Object.setPrototypeOf(UNITS, null);   // تا «constructor» و «toString» و ... (که از Object.prototype ارث می‌رسند) واحد معتبر حساب نشن
 const BASE_LABEL = {mass:'گرم', vol:'میلی‌لیتر', count:'عدد'};
 const STALE_DAYS = 60;
 const PROFIT_MAX = 150;       // یک قانون واحد؛ Slider، Validation و Restore همه از همین استفاده می‌کنن.
                                // اینجا، کنار بقیه‌ی ثابت‌های پایه، تعریف می‌شه — نه پایین‌تر از boot() —
                                // چون sanitizeState از همین الان (در جریان خودِ boot) بهش نیاز داره.
-const APP_VERSION = '0.4.0';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
+const APP_VERSION = '0.4.1';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
 const SCHEMA_VERSION = 2;             // نسخه‌ی ساختار داده — از APP_VERSION جداست
 const APP_ID = 'cake-price-calculator';
 const KEY_STATE = 'cc_state_v2';
@@ -659,6 +678,8 @@ const CATEGORIES = [
 /* پیشنهاد خودکار دسته‌بندی از روی نام ماده. به ترتیب اولویت بررسی می‌شه؛ کلیدواژه‌ها روی نامِ «بدون فاصله» تطبیق داده می‌شن
    و پیشوند «=» یعنی «باید کلمه‌ی کامل باشه» (مثلاً «=هل» به «هلو» نمی‌خوره، و «=رنگ» به «نارنگی»). */
 const CAT_RULES = [
+  {id:'pack',      kw:['کاغذروغنی','کاغذپخت']},                       // «کاغذ روغنی» روغن نیست (باید پیش از قانون روغن بیاید)
+  {id:'nuts',      kw:['کرهبادام','کرهیبادام','کرهفندق','کرهیفندق','کرهگردو','کرهیگردو']},   // «کره بادام‌زمینی» و «کره‌ی بادام» لبنیات نیستن (باید پیش از قانون «=کره» بیان؛ «ی» = اضافه)
   {id:'chocolate', kw:['شکلات','کاکائو','کاکاو','کوورچر','چیپس','گاناش']},
   {id:'sugar',     kw:['شکر','قند','عسل','=شیره','گلوکز','=شربت','نبات','استیویا','فروکتوز','ملاس','شیرینکننده']},
   {id:'baking',    kw:['بکینگ','بیکینگ','جوششیرین','مخمر','ژلاتین','آگار','سیتریک','بیکربنات','=سودا']},
@@ -701,6 +722,8 @@ function guessDensity(name){
   const nn=normFa(name);
   if(!nn) return null;
   const tokens=nn.split(' '), ns=nn.replace(/ /g,'');
+  // «شیر خشک»، «پودر شیر»، «کاغذ روغنی»: پودر/خشک/کاغذ مایع نیستن؛ چگالی شیر یا روغن بهشون نمی‌چسبه (حدسِ غلط بدتر از بی‌حدسی است)
+  if(tokens.indexOf('خشک')!==-1 || tokens.indexOf('پودر')!==-1 || tokens.indexOf('کاغذ')!==-1) return null;
   for(const d of DENSITY_HINTS){
     if(d.exact ? tokens.indexOf(d.kw)!==-1 : ns.indexOf(d.kw)!==-1) return d;
   }
@@ -718,7 +741,13 @@ function faDigits(s){
 }
 function normalizeNumText(s){
   // «/» (و «٫») رو همون اعشار حساب می‌کنیم: خیلی‌ها «۱/۵» رو برای ۱٫۵ می‌نویسن؛ قبلاً «/» بی‌صدا حذف می‌شد و ۱/۵ می‌شد ۱۵
-  return faDigits(s).replace(/[٫\/⁄∕]/g,'.').replace(/[٬,،\s\u200c\u200e\u200f]/g,'');
+  // ویرگول («,» و «،») دو معنی داره: جداکننده‌ی هزارگان («۱,۵۰۰» = ۱۵۰۰) یا اعشار («۱,۵» = ۱٫۵).
+  // قاعده: ویرگولِ بعد از «۰» (مثل «0,250») یا ویرگولی که فقط ۱ یا ۲ رقم بعدش بیاد، اعشار است؛
+  // ویرگولی که دقیقاً ۳ رقم بعدش بیاد، هزارگان است. (قبلاً همه‌ی ویرگول‌ها بی‌صدا حذف می‌شدن و «۱,۵» می‌شد ۱۵.)
+  return faDigits(s).replace(/[٫\/⁄∕]/g,'.')
+    .replace(/(^|\D)0[,،](?=\d)/g,function(m,p){ return p+'0.'; })
+    .replace(/[,،](?=\d{1,2}(?!\d))/g,'.')
+    .replace(/[٬,،\s\u200c\u200e\u200f]/g,'');
 }
 function normFa(s){                            // یکسان‌سازی متن فارسی برای جستجو و تطبیق (ي/ك عربی، نیم‌فاصله، اعراب، ارقام)
   return faDigits(String(s==null?'':s))
@@ -748,7 +777,11 @@ function toNum(s){
   const n=parseFloat(v);
   return (isNaN(n)||!isFinite(n)) ? 0 : n;
 }
-function fmtMoney(n){ return groupMoneyDigits(String(Math.round(n||0))); }      // فقط برای پول
+function fmtMoney(n){                                                           // فقط برای پول
+  // String(1e21) می‌شد «1e+21» و رقم‌هاش خراب؛ toLocaleString بدون گروه‌بندی همیشه رقم‌های کامل می‌دهد. بی‌نهایت/NaN → «0».
+  n=(Math.round(n||0))||0;
+  return groupMoneyDigits(isFinite(n) ? n.toLocaleString('en-US',{useGrouping:false,maximumFractionDigits:0}) : '0');
+}
 function moneyU(n){ return '<span class="num">'+fmtMoney(n)+'</span> <small>تومان</small>'; }   // عدد + «تومان» کامل (نه «ت»)؛ عدد هیچ‌وقت وسط شکسته نمی‌شه
 function fmtInt(n){ return Math.round(n||0).toLocaleString('en-US'); }        // برای شمارش (تعداد ماده/محصول)
 function fmtQty(n){                                                          // فقط برای مقدار؛ اعشار حفظ می‌شه
@@ -843,6 +876,7 @@ function newId(){
 function cleanId(v){
   if(v==null) return null;
   const s=String(v);
+  if(s in Object.prototype) return null;       // «__proto__»، «constructor»، «toString»، ... شناسه‌ی معتبر نیستن (با آبجکت‌های ساده قاطی می‌شن)
   return /^[A-Za-z0-9_-]{1,64}$/.test(s) ? s : null;
 }
 
@@ -917,7 +951,9 @@ function convertItem(m, amt, unit){
   } else {                                    // مصرف حجمی، خرید وزنی: میلی‌لیتر × چگالی = گرم
     baseQty=(amt*iu.factor)*m.density;
   }
-  return {ok:true,cost:up*baseQty};
+  const cost=up*baseQty;
+  if(!isFinite(cost)) return {ok:false,reason:'bad-material'};     // عدد خیلی بزرگ (سرریز) هرگز «هزینه‌ی معتبر» حساب نمی‌شود
+  return {ok:true,cost};
 }
 function calcProduct(p, mats){
   mats = mats || materials;
@@ -927,7 +963,7 @@ function calcProduct(p, mats){
   if(items.length===0 && !(w>0)) return {status:'empty',ok:false,issues:[]};
   if(items.length===0) issues.push({level:'red',code:'no-items'});
   if(!(w>0)) issues.push({level:'red',code:'no-weight'});
-  let matCost=0; const staleSeen={};
+  let matCost=0; const staleSeen=Object.create(null);
   items.forEach((it,i)=>{
     const m=mats.find(x=>x.id===it.materialId);
     if(!m){ issues.push({level:'red',code:'missing',index:i}); return; }
@@ -1128,6 +1164,16 @@ function parseBackupText(text){
       toValidate=m.data;
     }
   }catch(e){}
+  // سقفِ معقول برای فایل‌های بیرونی: فایلِ خراب یا ساختگی با ده‌ها هزار ردیف یا نام‌های هزاران‌نویسه‌ای نباید گوشی را کند کند
+  // یا جای ذخیره را پر کند. (این سقف فقط برای «ورودی از فایل» است؛ داده‌ی خودِ برنامه با کادرهای ۱۵۰نویسه‌ای هرگز به آن نمی‌رسد.)
+  if(toValidate && typeof toValidate==='object' && Array.isArray(toValidate.materials) && Array.isArray(toValidate.products)){
+    const MAX_ROWS=20000, MAX_NAME=1000;
+    if(toValidate.materials.length>MAX_ROWS || toValidate.products.length>MAX_ROWS)
+      return {ok:false,error:'تعداد ردیف‌های فایل بیش از حد است'};
+    const longName=x=>!!(x && typeof x==='object' && typeof x.name==='string' && x.name.length>MAX_NAME);
+    if(toValidate.materials.some(longName) || toValidate.products.some(longName))
+      return {ok:false,error:'نام یکی از ردیف‌ها بیش از حد طولانی است'};
+  }
   const r=sanitizeState(toValidate);
   if(r.ok) r.settings=sanitizeSettings(data && data.settings);   // تنظیمات ظاهری (اختیاری)
   return r;
@@ -1241,10 +1287,11 @@ function buildStateDoc(stamp){
 /* persist یعنی «واقعاً و قابل‌اطمینان ذخیره کن یا false بده و هیچ چیز رو خراب نکن»:
    ۱) فقط اطلاعاتی نوشته می‌شه که دفعه‌ی بعد هم «سالم» خونده بشه (sanitizeState)؛
    ۲) اگه پنجره/تب دیگه‌ای بعد از بارگذاری ما چیزی نوشته باشه، روی کارش نمی‌نویسیم (conflict)؛
-   ۳) اگه حافظه پر بود، اول نسخه‌های خودکار پاک می‌شن (خودِ اطلاعات اولویت داره) و یک بار دیگه تلاش می‌شه؛
+   ۳) اگه حافظه پر بود، نسخه‌های خودکار «پله‌پله» پاک می‌شن (اول روزانه‌ها، بعد پرخطرها؛ خودِ اطلاعات اولویت داره) و بعد از هر پله دوباره تلاش می‌شه؛
+      کارِ «بازیابی» با keepRisk=true نسخه‌های «قبل از کار پرخطر» رو هرگز پاک نمی‌کنه (اگه جا نشد، ذخیره نمی‌شه و اطلاعات قبلی سالم می‌مونه)؛
    ۴) بعد از نوشتن، دوباره خونده و با چیزی که نوشتیم مقایسه می‌شه؛
    ۵) فقط بعد از موفقیت: نسخه‌ی ایمنی «قبل از این تغییر»، شمارنده‌ی یادآوری پشتیبان، و نسخه‌ی کمکی IndexedDB. */
-function persist(force){
+function persist(force, keepRisk){
   lastPersistError=null;
   if(storageBlocked && !force){ lastPersistError='blocked'; return false; }
   let chk;
@@ -1262,8 +1309,19 @@ function persist(force){
     try{ localStorage.setItem(KEY_STATE,json); }
     catch(e){
       if(!isQuotaError(e)) throw e;
-      dropAutoCopies(); storageLow=true;            // جا برای خودِ اطلاعات باز کن و یک بار دیگه امتحان کن
-      localStorage.setItem(KEY_STATE,json);
+      storageLow=true;
+      // جا برای خودِ اطلاعات باز کن، «پله‌پله» و از کم‌اهمیت‌ترین: اول نسخه‌های «روزانه» و «قبل از آخرین تغییر»؛ بعد (فقط اگه لازم بود و
+      // keepRisk نبود) نسخه‌های «قبل از کار پرخطر» از قدیمی‌تر به تازه‌تر. بعد از هر پله یک بار دیگه امتحان می‌شه و همین‌که جا شد،
+      // بقیه‌ی نسخه‌ها دست‌نخورده می‌مونن. (قبلاً همه‌ی نسخه‌ها، حتی نسخه‌ی ایمنیِ «قبل از بازیابی»، یک‌جا پاک می‌شدن.)
+      const tiers=[['cc_auto_day2','cc_auto_day1','cc_auto_last','cc_auto_day0']];
+      if(!keepRisk){ tiers.push(['cc_auto_risk1']); tiers.push(['cc_auto_risk0']); }
+      let done=false, lastErr=e;
+      for(let ti=0; ti<tiers.length && !done; ti++){
+        dropAutoCopyKinds(tiers[ti]);
+        try{ localStorage.setItem(KEY_STATE,json); done=true; }
+        catch(e2){ if(!isQuotaError(e2)) throw e2; lastErr=e2; }
+      }
+      if(!done) throw lastErr;
     }
     if(localStorage.getItem(KEY_STATE)!==json) throw new Error('verify');
   }catch(e){
@@ -1344,7 +1402,6 @@ function readAuto(key){
   }catch(e){}
   return null;
 }
-function dropAutoCopies(){ AUTO_SLOTS.forEach(lsRemove); }
 function rotateAutoCopies(prevRaw){
   if(typeof prevRaw!=='string' || prevRaw.length>AUTO_MAX_CHARS) return;
   const counts=countsOfRaw(prevRaw);
@@ -1461,11 +1518,14 @@ function metaGet(){
     if(t){
       const o=JSON.parse(t);
       if(o && typeof o==='object'){
-        if(validISO(o.lastBackupAt)) m.lastBackupAt=o.lastBackupAt;
+        // تاریخِ «آینده‌ی دور» (ساعتِ اشتباهِ گوشی در لحظه‌ی ثبت) نامعتبره؛ وگرنه «آخرین پشتیبان: سال دیگه» یادآوری رو تا آن موقع خاموش می‌کرد.
+        // کمی آینده (اختلاف ساعت) پذیرفته می‌شه: تا ۱ روز برای آخرین پشتیبان، تا ۳ روز برای «بعداً یادآوری کن».
+        const nowMs=Date.now();
+        if(validISO(o.lastBackupAt) && Date.parse(o.lastBackupAt)<=nowMs+86400000) m.lastBackupAt=o.lastBackupAt;
         if(o.lastBackupKind==='file' || o.lastBackupKind==='share') m.lastBackupKind=o.lastBackupKind;
         if(isNum(o.changes) && o.changes>=0) m.changes=Math.floor(o.changes);
         if(validISO(o.firstChangeAt)) m.firstChangeAt=o.firstChangeAt;
-        if(validISO(o.snoozeUntil)) m.snoozeUntil=o.snoozeUntil;
+        if(validISO(o.snoozeUntil) && Date.parse(o.snoozeUntil)<=nowMs+3*86400000) m.snoozeUntil=o.snoozeUntil;
         if(validISO(o.installDismissedAt)) m.installDismissedAt=o.installDismissedAt;
       }
     }
@@ -1573,7 +1633,7 @@ function dlgKey(e){
 function dlgBackdrop(ev){
   if(ev.target && ev.target.id==='dlg-ov' && dlgCur && !dlgCur.o.secondary) dlgClose(true);
 }
-function dismissTopOverlay(){                 // دکمه‌ی Back گوشی: اول پنجره‌ی پیام (یا پنجره‌ی بروزرسانی) بسته می‌شه
+function dismissTopOverlay(){                 // دکمه‌ی Back گوشی: وقتی فرمی باز است، اول پیام (یا پنجره‌ی بروزرسانی) بسته می‌شه؛ روی صفحه‌ی اصلی (بدون فرم) ورودیِ history نداریم و Back همان رفتار عادی مرورگر را دارد
   if(dlgOpen && dlgCur){ dlgClose(dlgCur.o.secondary?false:true); return true; }
   if(updateOverlayOpen()){ dismissUpdate(); return true; }
   return false;
@@ -1654,7 +1714,9 @@ function goBackupCard(){ switchTab('settings'); scrollToCard('backup-card'); }
 
 /* ---------- پنجره‌های باز (Modal) و دکمه‌ی Back گوشی ----------
    هر فرم بازِ برنامه یک ورودی توی history مرورگر می‌ذاره؛ دکمه‌ی Back اندروید اول همون فرم رو می‌بنده (نه کل برنامه رو).
-   اگه فرم تغییر ذخیره‌نشده داشته باشه، قبل از بستن می‌پرسه. رابطه‌ی ثابت: تعداد ورودی‌های history = تعداد فرم‌های باز. */
+   اگه فرم تغییر ذخیره‌نشده داشته باشه، قبل از بستن می‌پرسه. رابطه‌ی ثابت: تعداد ورودی‌های history = تعداد فرم‌های باز.
+   پنجره‌های پیام (showDialog) و پنجره‌ی بروزرسانی ورودیِ history نمی‌گذارن (فقط فرم‌ها می‌گذارن): وقتی فرمی باز است، Back اول پیام رو
+   می‌بنده؛ روی صفحه‌ی اصلی (بدون فرم) Back رفتار عادی مرورگر رو داره و پیامِ باز رو جداگانه نمی‌بنده. این یک سادگیِ آگاهانه است. */
 const modalStack=[];                          // شناسه‌ی فرم‌های باز، از پایین به بالا
 const modalSigs={};                           // «امضا»ی فرم در لحظه‌ی باز شدن، برای تشخیص تغییر ذخیره‌نشده
 let histDepth=0;                              // تعداد ورودی‌هایی که خودمون توی history گذاشتیم
@@ -1671,7 +1733,9 @@ function flushBack(){
   const extra=histDepth-modalStack.length;
   if(extra<=0) return;
   try{
-    expectPop=true; clearTimeout(expectPopTimer); expectPopTimer=setTimeout(function(){ expectPop=false; },800);
+    // popstateِ حاصل از history.go روی گوشی‌های کند ممکنه دیرتر از ۱ ثانیه برسه؛ اگه مهلت کوتاه باشه، آن را «Back خودِ کاربر» می‌پنداریم و
+    // فرمی که کاربر همین الان باز کرده بسته می‌شه. ۳ ثانیه فقط وقتی کار می‌کنه که popstate اصلاً نیاد (در حالت عادی با رسیدنش همان لحظه پاک می‌شه).
+    expectPop=true; clearTimeout(expectPopTimer); expectPopTimer=setTimeout(function(){ expectPop=false; },3000);
     histDepth-=extra;
     history.go(-extra);
   }catch(e){ expectPop=false; }
@@ -1823,8 +1887,16 @@ function onMatNameInput(){
   const r=nextDensityForName({name:name, current:toNum(densityInput.value), isAuto:matDensityAuto});
   densityInput.value = r.value>0 ? r.value : '';
   matDensityAuto=r.isAuto;
+  updateDensityAutoNote();
 }
-function onMatDensityInput(){ matDensityAuto=false; }
+function onMatDensityInput(){ matDensityAuto=false; updateDensityAutoNote(); }
+/* چگالیِ «پیشنهادی» (از روی نام ماده) فقط یک حدس است؛ تا وقتی کاربر خودش عدد را عوض نکرده، کنار کادر یادداشت می‌آید
+   تا بی‌خبر روی قیمت اثر نگذارد (مثلاً «شیر» ۱٫۰۳ و «روغن» ۰٫۹۲ برای مواد خاص ممکنه دقیق نباشد). */
+function updateDensityAutoNote(){
+  const el=document.getElementById('mat-density-auto'); if(!el) return;
+  const d=toNum(document.getElementById('mat-density').value);
+  el.textContent = (matDensityAuto && d>0) ? '✨ این عدد از روی نام ماده پیشنهاد شد و ممکن است برای ماده‌ی شما دقیق نباشد؛ اگه می‌دونید درست نیست، عوضش کنید.' : '';
+}
 function toggleHistory(){ document.getElementById('mat-history-list').classList.toggle('hidden'); }
 function renderHistory(m){
   const wrap=document.getElementById('mat-history-wrap');
@@ -1870,6 +1942,7 @@ function openMaterialEditor(id){
     warnEl.style.display='none';
   }
   toggleDensityField();
+  updateDensityAutoNote();
   renderHistory(m);
   updatePriceWords();
   updateCategoryHint();
@@ -1892,10 +1965,15 @@ async function saveMaterial(){
   const price=toNum(raw.price), amount=toNum(raw.amount);
   if(!(price>0)) return problem('لطفاً قیمت خرید را وارد کنید.');
   if(!(amount>0)) return problem('لطفاً مقدار خرید را وارد کنید.');
+  // سقف‌های «عقل سلیم»: یک رقم اضافه (یا ویرگولِ جاافتاده) نباید بی‌صدا قیمت‌ها را بی‌معنی کند (قیمت بیش از هزار میلیارد تومان یا
+  // خریدِ بیش از یک میلیارد واحد، و چگالی بیرون از ۰٫۰۵ تا ۳؛ همه‌ی مواد قنادی در این بازه‌اند).
+  if(price>1e12) return problem('قیمت خرید بیش از حد بزرگ است؛ لطفاً عدد را بررسی کنید.');
+  if(amount>1e9) return problem('مقدار خرید بیش از حد بزرگ است؛ لطفاً عدد را بررسی کنید.');
   let density=0;
   if(unit!=='count' && raw.density.trim()!==''){
     density=toNum(raw.density);
     if(!(density>0)) return problem('چگالی باید عددی بزرگ‌تر از صفر باشد. اگر نمی‌دانید، این کادر را خالی بگذارید.');
+    if(density<0.05 || density>3) return problem('چگالی معمولاً بین ۰٫۰۵ و ۳ است (مثلاً آب ۱، روغن ۰٫۹۲، عسل ۱٫۴۲). عدد را بررسی کنید.');
   }
   const old = editingMaterialId ? materials.find(x=>x.id===editingMaterialId) : null;
   const nm=buildMaterial(old,{name:raw.name,category,price,amount,unit,density,densityAuto:matDensityAuto},todayLocal());
@@ -2017,7 +2095,7 @@ function renderIngList(){
     if(s.missing){
       html+='<div class="ing-card"><div class="ing-top"><span class="ing-ic">⚠️</span><div class="ing-name">ماده‌ی حذف‌شده</div>'+
         '<button type="button" class="ing-del" aria-label="حذف این سطر" onclick="removeIng('+idx+')">✕</button></div>'+
-        '<div class="ing-warn">این ماده از فهرست مواد اولیه حذف شده؛ این سطر را پاک کنید یا ماده را دوباره بسازید.</div></div>';
+        '<div class="ing-warn">این ماده از فهرست مواد اولیه حذف شده؛ این سطر را پاک کنید و ماده را دوباره از «افزودن از فهرست مواد اولیه» اضافه کنید.</div></div>';
       return;
     }
     const m=s.m, nm=escapeHtml(m.name);
@@ -2093,9 +2171,9 @@ function setExtraMode(idx,mode){
 function removeExtra(idx){ editingProduct.extras.splice(idx,1); renderExtras(); renderProductResult(); }
 
 /* افزودن ماده به محصول */
-let pkDraft={};                                                 // مقدار/واحدی که کاربر توی ردیف‌های فهرست تایپ کرده (با جستجو نپره)
+let pkDraft=Object.create(null);                                                 // مقدار/واحدی که کاربر توی ردیف‌های فهرست تایپ کرده (با جستجو نپره)
 function pkSet(mid,key,val){ const d=pkDraft[mid]||(pkDraft[mid]={}); d[key]=val; }
-function openPicker(){ document.getElementById('picker-search').value=''; pkDraft={}; renderPicker(); openModal('modal-picker'); }
+function openPicker(){ document.getElementById('picker-search').value=''; pkDraft=Object.create(null); renderPicker(); openModal('modal-picker'); }
 function pickerRow(m){
   const already=editingProduct.items.some(it=>it.materialId===m.id);
   const head='<div class="p-name"><span class="p-ic">'+ingIconOf(m)+'</span><span>'+escapeHtml(m.name)+'</span></div>';
@@ -2265,13 +2343,18 @@ function validateProductForSave(p){
   p.items.forEach(it=>{
     const m=materials.find(x=>x.id===it.materialId);
     if(!UNITS[it.unit]){ errors.push('واحد یکی از مواد معتبر نیست.'); return; }
-    if(!m){ warnings.push('یکی از مواد این محصول حذف شده است. قیمت این محصول «قابل محاسبه نیست» می‌ماند تا آن سطر را پاک کنید یا ماده را دوباره بسازید.'); return; }
+    if(!m){ warnings.push('یکی از مواد این محصول از فهرست مواد اولیه حذف شده است. قیمت این محصول «قابل محاسبه نیست» می‌ماند تا آن سطر را پاک کنید و ماده را دوباره از «افزودن از فهرست مواد اولیه» اضافه کنید (ساختن دوباره‌ی خودِ ماده، این سطر را درست نمی‌کند).'); return; }
     if(!(it.amount>0)) errors.push('مقدار مصرف «'+m.name+'» باید بیشتر از صفر باشد.');
     else {
       const r=convertItem(m,it.amount,it.unit);
       if(!r.ok && r.reason==='need-density') errors.push('برای «'+m.name+'» چگالی لازم است. وارد صفحه‌ی آن ماده شوید و چگالی را بنویسید، یا واحد مصرف را هم‌نوع واحد خرید بگذارید (گرم/کیلو یا میلی‌لیتر/لیتر).');
       if(!r.ok && r.reason==='count-mismatch') errors.push('واحد مصرف «'+m.name+'» با واحد خریدش سازگار نیست.');
     }
+  });
+  // هزینه‌ی جانبیِ «دارای نام ولی بی‌مبلغ» هنگام ذخیره حذف می‌شد (فقط ردیف‌هایی با مبلغ ذخیره می‌شن)؛ احتمالاً کاربر مبلغ را فراموش کرده
+  (p.extras||[]).forEach(function(e){
+    if(!(e.amount>0) && String(e.name||'').trim())
+      warnings.push('هزینه‌ی جانبی «'+String(e.name).trim()+'» مبلغی ندارد و در قیمت حساب نمی‌شود. اگه مبلغ دارد، برگردید و بنویسید.');
   });
   return {errors,warnings};
 }
@@ -2284,7 +2367,11 @@ async function saveProduct(){
     return;
   }
   if(v.warnings.length){
-    const go=await showDialog({type:'warning',title:'محصول ناقص است',message:v.warnings[0],primary:{label:'با همین حالت ذخیره کن'},secondary:{label:'برگردم و درست کنم'}});
+    const multi=v.warnings.length>1;                         // همه‌ی هشدارها دیده بشن، نه فقط اولی
+    const wo={type:'warning',title:'محصول ناقص است',message:multi?'این موارد را ببینید:':v.warnings[0],
+              primary:{label:'با همین حالت ذخیره کن'},secondary:{label:'برگردم و درست کنم'}};
+    if(multi) wo.list=v.warnings;
+    const go=await showDialog(wo);
     if(!go) return;
   }
   const pid=editingProduct.id||newId();
@@ -2497,9 +2584,15 @@ function renderAutoList(){
   const box=document.getElementById('auto-list'); if(!box) return;
   const token=++autoRenderToken;
   const items=listAutoCopies();
-  box.innerHTML = items.length
+  // اگه حجمِ اطلاعات از سقفِ نسخه‌ی خودکار (AUTO_MAX_CHARS) بیشتر باشه، rotateAutoCopies دیگه نسخه‌ی ایمنی نمی‌سازه؛ کاربر باید بدونه
+  // که فقط فایل پشتیبان نجاتش می‌ده (قبلاً این وضعیت کاملاً بی‌صدا بود و فهرست «هنوز نسخه‌ای ساخته نشده» می‌گفت).
+  const stored=lsGet(KEY_STATE);
+  const bigNote=(stored && stored.length>AUTO_MAX_CHARS)
+    ? '<div class="hint" style="margin:0 0 8px;font-weight:700;">حجم اطلاعات شما زیاد شده و دیگر نسخه‌ی ایمنی خودکار ساخته نمی‌شود. حتماً فایل پشتیبان بگیرید.</div>'
+    : '';
+  box.innerHTML = bigNote + (items.length
     ? items.map(function(a){ return autoRowHtml(autoWhyLabel(a), a.counts, a.at, 'restoreAutoCopy(\''+a.key+'\')'); }).join('')
-    : '<div class="hint" style="margin:0;">هنوز نسخه‌ای ساخته نشده. بعد از اولین تغییری که ذخیره کنید، خودکار ساخته می‌شه.</div>';
+    : (bigNote ? '' : '<div class="hint" style="margin:0;">هنوز نسخه‌ای ساخته نشده. بعد از اولین تغییری که ذخیره کنید، خودکار ساخته می‌شه.</div>'));
   // نسخه‌ی کمکی IndexedDB فقط وقتی نشون داده می‌شه که با اطلاعات فعلی فرق داشته باشه (مثلاً رکورد اصلی خراب یا پاک شده)
   const sv=document.getElementById('view-settings');
   if(sv && sv.classList.contains('hidden')) return;               // تب تنظیمات دیده نمی‌شه؛ موقع باز شدنش دوباره ساخته می‌شه
@@ -2509,7 +2602,7 @@ function renderAutoList(){
     if(!res.ok || res.state.materials.length+res.state.products.length===0) return;
     if(!storageBlocked && stampOf(rec.json)===loadedStamp) return;
     const row=autoRowHtml('نسخه‌ی کمکی (حافظه‌ی دوم مرورگر)', {m:res.state.materials.length,p:res.state.products.length}, rec.at, 'restoreMirrorCopy()');
-    if(items.length===0) box.innerHTML=row; else box.innerHTML+=row;
+    if(items.length===0 && !bigNote) box.innerHTML=row; else box.innerHTML+=row;
   }).catch(function(){});
 }
 async function restoreAutoCopy(key){
@@ -2604,10 +2697,31 @@ function triggerDownload(blob, fname){
   a.href=url; a.download=fname; a.rel='noopener'; a.style.display='none';
   const host=document.body||document.documentElement;
   host.appendChild(a); a.click();
-  setTimeout(function(){ try{ host.removeChild(a); }catch(e){} try{ URL.revokeObjectURL(url); }catch(e){} }, 4000);
+  // لینک موقتِ فایل باید آن‌قدر بماند که گوشیِ کند هم فرصت خواندنش را داشته باشد (۴ ثانیه برای فایل بزرگ/گوشی کند کم بود)
+  setTimeout(function(){ try{ host.removeChild(a); }catch(e){} try{ URL.revokeObjectURL(url); }catch(e){} }, 40000);
 }
 async function blockedBackupNotice(){
   await showDialog({type:'warning',title:'فعلاً پشتیبان‌گیری ممکن نیست',message:'اطلاعات ذخیره‌شده مشکل دارد و چیزی برای پشتیبان‌گیری سالم نیست. اول «بازیابی از فایل پشتیبان» یا «نسخه‌های خودکار» را امتحان کنید.',primary:{label:'باشه'}});
+}
+/* مرورگر نمی‌گوید فایل «واقعاً» ذخیره یا ارسال شد یا نه (کاربر ممکنه صفحه‌ی ذخیره/ارسال رو بسته باشه، حافظه پر باشه، پیام ارسال نشده باشه).
+   «پشتیبان گرفته شد» که غلط ثبت بشه یعنی یادآوری خاموش می‌شه و کاربر با احساس امنیتِ دروغین می‌ره؛ پس فقط با تأییدِ خودِ کاربر ثبت می‌شه. */
+async function confirmBackupDone(kind){
+  const isFile = (kind!=='share');
+  const yes=await showDialog({type:'confirm',
+    title: isFile ? 'فایل ذخیره شد؟' : 'پیام ارسال شد؟',
+    message: isFile
+      ? 'اگر گوشی اعلان «دانلود شد» نشان داد (فایل در پوشه‌ی «دانلودها» ذخیره می‌شود و اسمش با «پشتیبان-حسابگر-قنادی» شروع می‌شود)، «بله» را بزنید.\nاگر اعلانی ندیدید یا مطمئن نیستید، «نه» را بزنید و دوباره امتحان کنید.'
+      : 'اگر فایل را در تلگرام، واتساپ یا ایمیل فرستادید، «بله» را بزنید.\nاگر منصرف شدید یا ارسال نشد، «نه» را بزنید.',
+    primary:{label: isFile ? 'بله، ذخیره شد' : 'بله، ارسال شد'},
+    secondary:{label: isFile ? 'نه، دوباره امتحان می‌کنم' : 'نه'}});
+  if(!yes){
+    toast('پشتیبان ثبت نشد. هر وقت خواستید دوباره امتحان کنید.');
+    return false;
+  }
+  markBackedUp(isFile ? 'file' : 'share');
+  renderBackupUI(); renderTopBanners();
+  toast('پشتیبان ثبت شد ✓');
+  return true;
 }
 async function downloadBackup(){                // «ذخیره‌ی فایل در گوشی»: فقط فایل رو توی حافظه‌ی گوشی ذخیره می‌کنه (جدا از اشتراک‌گذاری)
   if(storageBlocked){ await blockedBackupNotice(); return false; }
@@ -2617,10 +2731,7 @@ async function downloadBackup(){                // «ذخیره‌ی فایل د
     await showDialog({type:'error',title:'فایل پشتیبان ساخته نشد',message:'متأسفانه فایل پشتیبان ساخته نشد. دوباره امتحان کنید.',primary:{label:'باشه'}});
     return false;
   }
-  markBackedUp('file');
-  renderBackupUI(); renderTopBanners();
-  toast('فایل پشتیبان ذخیره شد ✓ (معمولاً در پوشه‌ی «دانلودها»)');
-  return true;
+  return await confirmBackupDone('file');
 }
 function shareSupported(){
   try{
@@ -2661,10 +2772,7 @@ async function shareBackup(){                   // «اشتراک‌گذاری»
     if(go) await downloadBackup();
     return 'failed';
   }
-  markBackedUp('share');
-  renderBackupUI(); renderTopBanners();
-  toast('فایل پشتیبان ارسال شد ✓');
-  return 'ok';
+  return (await confirmBackupDone('share')) ? 'ok' : 'unconfirmed';     // موفقیتِ navigator.share یعنی «کاربر مقصد را انتخاب کرد»، نه «پیام رفت»
 }
 function pickRestoreFile(){ document.getElementById('restore-file').click(); }
 function keepCorruptCopy(){                     // نسخه‌ی خراب‌شده قبل از هر جایگزینی جدا نگه داشته می‌شه (برای تعمیر احتمالی)
@@ -2673,11 +2781,14 @@ function keepCorruptCopy(){                     // نسخه‌ی خراب‌شد
 }
 function applyRestore(state, settings, reason){
   const snap=snapshot(), prevBlocked=storageBlocked, prevStamp=loadedStamp;
-  if(prevBlocked) keepCorruptCopy();
+  // اگه رکورد فعلی «خراب» است، اول باید نسخه‌ی خرابش کنار گذاشته بشه؛ اگه جا نبود، چیزی رو جایگزین نمی‌کنیم (نسخه‌ی خراب ممکنه تنها
+  // شانس تعمیر باشه). حالت «شروع با اطلاعات خالی» (startFresh) هم همین قانون رو داره.
+  if(prevBlocked && !keepCorruptCopy()){ lastPersistError='quota'; return false; }
   materials=state.materials; products=state.products;
   storageBlocked=false;
   adoptStoredStamp();                           // بازیابی عمدی همه‌چیز رو جایگزین می‌کنه؛ بررسی «تداخل» نباید جلوش رو بگیره
-  if(persist()){
+  // keepRisk=true: اگه جا کم بود، نسخه‌ی ایمنیِ «قبل از بازیابی» (cc_auto_risk*) هرگز قربانی نمی‌شه؛ ذخیره نمی‌شه و اطلاعات قبلی سالم می‌مونه
+  if(persist(false,true)){
     storageCorruptRaw=null; storageBlockNewer=false;
     try{ metaSet({changes:0, firstChangeAt:null, snoozeUntil:null}); }catch(e){}
     try{ applySettingsFromBackup(settings); }catch(e){}
@@ -2731,7 +2842,7 @@ async function offerRestore(res, opts){         // res: نتیجه‌ی موفق
     return 'ok';
   }
   renderAll();
-  await showDialog({type:'error',title:'بازیابی انجام نشد',message:'بازیابی انجام نشد و اطلاعات قبلی شما حفظ شد.',primary:{label:'باشه'}});
+  await showDialog({type:'error',title:'بازیابی انجام نشد',message:'بازیابی انجام نشد و اطلاعات قبلی شما حفظ شد.'+(lastPersistError==='quota'?'\nدلیل: جای کافی در حافظه‌ی این گوشی نبود.':''),primary:{label:'باشه'}});
   return 'failed';
 }
 async function handleRestoreText(text){
@@ -2790,6 +2901,7 @@ async function confirmDeleteAll(){
 /* ---------- راه‌اندازی ---------- */
 let swRegistration=null, waitingWorker=null, updateReloading=false, updateFailTimer=null;
 let updateRequested=false, pendingUpdateOffer=false, lastUpdateCheck=0;
+let reloadAfterForms=false;                      // نسخه‌ی جدید وسط ویرایش فرم فعال شد؛ بعد از بسته شدن آخرین فرم صفحه تازه می‌شه (نه زیر دست کاربر)
 function safeRun(label, fn){                    // خطا در یک بخش فرعیِ راه‌اندازی نباید بقیه‌ی برنامه رو از کار بندازه
   try{ fn(); }catch(e){ try{ console.error('init:'+label, e); }catch(_){} }
 }
@@ -2906,7 +3018,14 @@ function showUpdateOffer(){
   pendingUpdateOffer=false;
   if(!updateOverlayOpen()) setUpdateUI('offer');
 }
-function flushPendingUpdateOffer(){ if(pendingUpdateOffer && modalStack.length===0) setTimeout(showUpdateOffer, 400); }
+function flushPendingUpdateOffer(){
+  if(reloadAfterForms && modalStack.length===0){
+    reloadAfterForms=false; updateReloading=true;
+    setTimeout(function(){ window.location.reload(); }, 400);
+    return;
+  }
+  if(pendingUpdateOffer && modalStack.length===0) setTimeout(showUpdateOffer, 400);
+}
 function offerUpdate(worker){
   waitingWorker=worker;
   showUpdateOffer();
@@ -2926,15 +3045,16 @@ function waitForWaiting(reg, timeoutMs){        // swRegistration.update() فق�
       try{ reg.removeEventListener('updatefound', onFound); }catch(e){}
       resolve(w||null);
     };
+    const arm=function(ms){ if(done) return; clearTimeout(timer); timer=setTimeout(function(){ finish(reg.waiting||null); }, ms); };
     const watch=function(w){
       if(!w) return;
       const check=function(){ if(w.state==='installed') finish(reg.waiting||w); else if(w.state==='redundant') finish(null); };
       w.addEventListener('statechange', check); check();
     };
-    const onFound=function(){ watch(reg.installing); };
+    const onFound=function(){ watch(reg.installing); arm(timeoutMs); };       // نسخه‌ی جدید شروع به نصب شد: مهلت کامل
     try{ reg.addEventListener('updatefound', onFound); }catch(e){}
-    if(reg.installing) watch(reg.installing);
-    timer=setTimeout(function(){ finish(reg.waiting||null); }, timeoutMs);
+    if(reg.installing){ watch(reg.installing); arm(timeoutMs); }
+    else arm(Math.min(timeoutMs, 4000));        // چیزی در حال نصب نیست (مثلاً نسخه‌ی جدید قبلاً در پنجره‌ی دیگر فعال شده): ۲۵ ثانیه‌ی بیهوده منتظر نمی‌مونیم
   });
 }
 async function performUpdate(){
@@ -2953,7 +3073,9 @@ async function performUpdate(){
       try{ await swRegistration.update(); }catch(e){}
       w=await waitForWaiting(swRegistration, 25000);
     }
-    w=w||waitingWorker;
+    // waitingWorker نسخه‌ای است که قبلاً «در انتظار» بود؛ اگه همین حالا دیگر در انتظار نیست (مثلاً در پنجره‌ی دیگر فعال شده)،
+    // فرستادن SKIP_WAITING به آن بی‌اثر است و صفحه تا ۳۵ ثانیه بی‌دلیل منتظر controllerchange می‌ماند
+    if(!w && waitingWorker && waitingWorker.state==='installed') w=waitingWorker;
     if(w){
       setUpdateUI('progress',{text:'در حال فعال‌سازی...'});
       w.postMessage({type:'SKIP_WAITING'});
@@ -2962,7 +3084,28 @@ async function performUpdate(){
     }
     // نسخه‌ی در انتظاری پیدا نشد: یا واقعاً چیزی منتشر نشده/ناقص منتشر شده، یا فقط ارتباط قطعه
     const info=await fetchVersionInfo();
-    if(!info || compareVersions(info.version, APP_VERSION)>0){ failUpdate(); return; }
+    if(info && compareVersions(info.version, APP_VERSION)>0){
+      // نسخه‌ی جدید روی سرور هست ولی هیچ Service Workerِ «در انتظار» نیست: معمولاً یعنی نسخه‌ی جدید قبلاً (مثلاً در پنجره‌ی دیگر یا
+      // با باز و بسته شدن برنامه) فعال شده و همین صفحه هنوز کدِ قدیمی را در حافظه دارد؛ یک بار بارگذاری دوباره کافی است.
+      // برای اینکه حلقه نشود، به‌ازای هر نسخه فقط یک بار در هر نشست (sessionStorage) امتحان می‌کنیم؛ بار دوم «بروزرسانی انجام نشد» می‌آید.
+      let tried=null; try{ tried=sessionStorage.getItem('cc_upd_try'); }catch(e){}
+      const busy=!!(swRegistration && (swRegistration.installing || swRegistration.waiting));
+      // بارگذاری دوباره فقط وقتی فایده دارد که کشِ نسخه‌ی جدید روی همین گوشی ساخته شده باشد (نام کش در sw.js: ccalc-shell-v<نسخه>)؛
+      // اگه نباشد یعنی سرور/CDN هنوز نسخه‌ی قدیمی را می‌دهد و تازه‌سازی فقط همان نسخه را برمی‌گرداند → «بروزرسانی انجام نشد».
+      // اگه مرورگر دسترسی به کش‌ها را نداشت، همان یک بار امتحان می‌کنیم.
+      let ready=true;
+      try{ if(window.caches && typeof caches.keys==='function') ready=(await caches.keys()).indexOf('ccalc-shell-v'+info.version)!==-1; }catch(e){ ready=true; }
+      if(ready && tried!==info.version && !modalStack.length && !busy){
+        try{ sessionStorage.setItem('cc_upd_try', info.version); }catch(e){}
+        clearTimeout(updateFailTimer);
+        setUpdateUI('progress',{text:'در حال بارگذاری دوباره...'});
+        updateReloading=true;
+        setTimeout(function(){ window.location.reload(); }, 300);
+        return;
+      }
+      failUpdate(); return;
+    }
+    if(!info){ failUpdate(); return; }
     clearTimeout(updateFailTimer);
     setUpdateUI('progress',{text:'در حال بارگذاری دوباره...'});
     updateReloading=true;
@@ -3000,6 +3143,7 @@ if('serviceWorker' in navigator){
     }).catch(function(){});
     navigator.serviceWorker.addEventListener('controllerchange', function(){
       if(!updateRequested || updateReloading) return;           // مثلاً اولین نصب Service Worker: بدون درخواست کاربر، صفحه دوباره بارگذاری نمی‌شه
+      if(modalStack.length){ reloadAfterForms=true; return; }   // کاربر پنجره‌ی بروزرسانی را بسته و فرمی باز کرده: وسط ویرایشش صفحه تازه نمی‌شود
       updateReloading=true;
       if(updateFailTimer) clearTimeout(updateFailTimer);
       window.location.reload();
