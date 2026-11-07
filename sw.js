@@ -16,7 +16,7 @@
       نسخه‌ی قبلی و اطلاعات کاربر سالم می‌مونه.
    5) version.json هیچ‌وقت از کش سرو نمی‌شه (no-store)؛ وگرنه تشخیص «نسخه‌ی جدید» قابل‌اعتماد نیست. */
 const CACHE_PREFIX = 'ccalc-shell-';
-const CACHE_NAME = 'ccalc-shell-v0.4.1';
+const CACHE_NAME = 'ccalc-shell-v0.4.3';
 const VERSION = CACHE_NAME.slice(CACHE_PREFIX.length + 1);          // مثلاً «0.4.1»؛ همان چیزی که در index.html به‌صورت APP_VERSION نوشته شده
 const PAGE = './';
 const OPTIONAL_ASSETS = ['./manifest.json', './icon-192.png', './icon-512.png', './fonts/Vazirmatn-subset.woff2'];
