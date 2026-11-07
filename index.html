@@ -89,6 +89,9 @@ h1,h2{margin:0 0 4px;}
 
 label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
 .hint{font-size:.8125rem;color:var(--muted);margin:6px 0 12px;line-height:1.7;}
+/* مبلغ به حروف: درست زیر کادر قیمت، با همان سبزِ وضعیت «دقیق» (--success)؛ تا خالی است جایی نمی‌گیرد */
+.price-words{font-size:1.0625rem;font-weight:800;color:var(--success);margin:8px 2px 0;line-height:1.7;}
+.price-words:empty{display:none;}
 .inp,select{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:14px;border-radius:12px;font-family:inherit;font-size:1.0625rem;outline:none;}
 .inp:focus,select:focus{border-color:var(--primary);}
 .field{margin-bottom:18px;}
@@ -411,8 +414,8 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
         <div class="field">
           <label for="mat-price">قیمت خرید (تومان)</label>
           <input type="text" inputmode="numeric" class="inp" id="mat-price" placeholder="مثلاً 350.000" oninput="onMoneyInput(this);updateUnitPriceHint();updatePriceWords();">
+          <div class="price-words" id="mat-price-words"></div>
           <div class="hint">قیمتی که برای همین مقدار پرداخت کردید</div>
-          <div class="hint" id="mat-price-words" style="font-weight:700;color:var(--primary-text);"></div>
         </div>
         <div class="row2">
           <div class="field">
@@ -441,7 +444,7 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
         <label for="mat-density">وزن هر ۱ لیتر از این ماده به کیلوگرم</label>
         <input type="text" inputmode="decimal" class="inp" id="mat-density" placeholder="مثلاً 0.92 برای روغن" oninput="normDecimalInput(this);onMatDensityInput()">
         <div class="hint" id="mat-density-auto" style="margin:4px 0 0;font-weight:700;"></div>
-        <div class="hint" style="margin-bottom:0;">برای موادی مثل روغن، شیر، ماست، گلاب. اگه نام ماده رو تایپ کنید ممکنه خودش عدد مناسب رو پیشنهاد بده. اگه این ماده رو هم به لیتر بخرید و هم به لیتر توی دستور مصرف کنید، چگالی لازم نیست. ولی اگه یک‌جا با لیتر و یک‌جا با گرم حسابش کنید، پر کردن این فیلد لازمه؛ وگرنه برنامه بهتون هشدار می‌ده.</div>
+        <div class="hint" style="margin-bottom:0;">برای موادی که مایع یا غلیظ‌اند و با گرم یا لیتر حسابشان می‌کنید (روغن، شیر، خامه، ماست، عسل، شربت، آب‌لیمو، …). اگه نام ماده رو تایپ کنید، برنامه خودش عدد رو می‌ذاره. اگه این ماده رو هم به لیتر بخرید و هم به لیتر توی دستور مصرف کنید، چگالی لازم نیست؛ ولی اگه یک‌جا با لیتر و یک‌جا با گرم حسابش کنید، این عدد لازمه؛ وگرنه برنامه هشدار می‌ده.</div>
       </div>
     </div>
 
@@ -606,9 +609,9 @@ label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px;}
   12) هیچ confirm/alert/prompt مرورگری نداریم؛ فقط showDialog (Promise-based، با
       Focus trap و Escape) و toast داخلی.
   13) ذخیره‌ی فایل پشتیبان (downloadBackup) و اشتراک‌گذاری آن (shareBackup) دو کار جدا با دو
-      دکمه‌ی جدا هستن. هر دو فقط وقتی «پشتیبان گرفته شد» حساب می‌شن که خودِ کاربر تأیید کرده باشه
-      (مرورگر نمی‌گه فایل واقعاً ذخیره یا ارسال شد یا نه): بعد از دانلود می‌پرسه «فایل ذخیره شد؟» و
-      بعد از اشتراک‌گذاری «پیام ارسال شد؟» (confirmBackupDone).
+      دکمه‌ی جدا هستن. «پشتیبان گرفته شد» همان لحظه‌ی ذخیره/تحویل فایل ثبت می‌شه، بدون هیچ پرسشی از
+      کاربر (تصمیم مالک؛ پرسش برای کاربران مسن گیج‌کننده بود). مرورگر نمی‌گه فایل «واقعاً» ذخیره یا
+      پیام «واقعاً» ارسال شد؛ پس یادآوری‌های بعدی (تعداد تغییر / تعداد روز) سر جاشان می‌مونن.
   14) persist فقط اطلاعاتِ سالم (sanitizeState) رو می‌نویسه، بعد از نوشتن دوباره می‌خونه و مقایسه
       می‌کنه، و اگه پنجره/تب دیگه‌ای بعد از بارگذاری ما چیزی نوشته باشه (savedAt عوض شده) روش
       نمی‌نویسه (conflict). نسخه‌های ایمنی خودکار (cc_auto_*) و نسخه‌ی کمکی IndexedDB فقط «بعد از
@@ -633,7 +636,7 @@ const STALE_DAYS = 60;
 const PROFIT_MAX = 150;       // یک قانون واحد؛ Slider، Validation و Restore همه از همین استفاده می‌کنن.
                                // اینجا، کنار بقیه‌ی ثابت‌های پایه، تعریف می‌شه — نه پایین‌تر از boot() —
                                // چون sanitizeState از همین الان (در جریان خودِ boot) بهش نیاز داره.
-const APP_VERSION = '0.4.1';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
+const APP_VERSION = '0.4.3';          // نسخه‌ی برنامه (Semantic Versioning) — فقط همین یک‌جا تعریف می‌شه
 const SCHEMA_VERSION = 2;             // نسخه‌ی ساختار داده — از APP_VERSION جداست
 const APP_ID = 'cake-price-calculator';
 const KEY_STATE = 'cc_state_v2';
@@ -707,27 +710,133 @@ function suggestCategory(name){
   }
   return null;
 }
-const DENSITY_HINTS = [
-  {kw:'روغن', val:0.92},
-  {kw:'ماست', val:1.03},
-  {kw:'خامه', val:1.01},
-  {kw:'شیر', val:1.03, exact:true},          // «شیر» فقط به‌عنوان کلمه‌ی کامل؛ «شیره» و «شیرینی» نباید بخورن
-  {kw:'گلاب', val:1.0},
-  {kw:'عسل', val:1.42},
-  {kw:'شربت', val:1.3, exact:true},        // «تخم شربتی» (دانه) شربت نیست
-  {kw:'آبلیمو', val:1.03},
-  {kw:'آب', val:1.0, exact:true}             // «آب» فقط به‌عنوان کلمه‌ی کامل
+/* ---------- حدس چگالی از روی نام ماده (کیلوگرم در هر لیتر) ----------
+   خروجی: {val, label} یا null.
+   اصل: «حدسِ غلط بدتر از بی‌حدسی است»؛ پس فقط وقتی عدد می‌دهیم که نام ماده به‌روشنی با یکی از ردیف‌های جدول بخورد.
+   روش (کلمه‌به‌کلمه، نه «زیررشته»؛ پس «شیر» به «شیرینی» و «شیره» نمی‌خوره):
+   ۱) نام به کلمه‌ها شکسته می‌شه و املاهای رایج یکی می‌شن (آب = اب، ي/ك عربی، نیم‌فاصله، «آبلیمو» = «آب لیمو»، «لیموی» = «لیمو»،
+      «خامه‌ای» صفت است نه خامه، حروفِ تکراریِ اشتباهی).
+   ۲) هر ردیف یک «مجموعه‌ی کلمه» است؛ ردیفی می‌خوره که همه‌ی کلمه‌هاش در نام باشن (ترتیب مهم نیست).
+      ردیفِ با کلمه‌ی بیشتر دقیق‌تر است و برنده می‌شه؛ ردیف‌های «عمومی» (g: شربت، شیره، آب‌میوه) در برابر ردیفِ همان‌اندازه‌ی دقیق می‌بازن
+      (مثلاً «شربت گلوکز» ۱٫۴ می‌شه نه ۱٫۳). اگه دو ردیفِ هم‌ارزش عددهای متفاوت بدن («روغن شیر») نام مبهم است → بدون حدس.
+   ۳) ممنوعه‌ها: پودر/خشک/گرانول/کاغذ/… هر جای نام باشن، حدس نمی‌زنیم؛ و اگه اولین کلمه‌ی نام یک «محصول جامد یا ظرف» باشه
+      (کیک، بیسکویت، شکلات، پنیر، کره، ظرف، …) هم حدس نمی‌زنیم، مگر اینکه خودِ ردیف همان کلمه را داشته باشد (مثلاً «شکر مایع»).
+   ۴) ردیفی که عددش null است یعنی «نامِ مبهم؛ عمداً حدس نزن».
+   عددها: میانگینِ بازه‌ی معمولِ هر ماده (منابع و بازه‌ها در MANIFEST.md، بخش «حدس چگالی»). برای موادی که چگالی‌شان از برندی به برند دیگر
+   خیلی فرق می‌کنه (اسانس، رنگ خوراکی، ژل، مربا، سس، پوره، وانیل مایع) عددی گذاشته نشده؛ برنامه از کاربر می‌پرسه. */
+const DENSITY_TABLE = [
+  // [«عبارت‌ها» (با | جدا؛ هر عبارت = مجموعه‌ی کلمه)، چگالی یا null، گزینه‌ها {only، any، g، label}]
+  // ── آب و مایعات رقیق
+  ['آب', 1.0, {only:'جوش گرم سرد ولرم خنک معمولی آشامیدنی شرب مقطر معدنی تصفیه شده لوله کشی'}],   // «آب» فقط وقتی تنها باشه؛ «آب نبات»، «آب قند»، «آب پز» آب نیستن
+  ['گلاب|ماء الورد', 1.0],
+  ['عرق', 1.0],                                        // عرق نعنا، بیدمشک، شاهتره، بهارنارنج، …
+  ['بهار نارنج', 1.0],
+  ['سرکه', 1.01],
+  ['نوشابه', 1.04],
+  // ── آب‌میوه‌ها
+  ['آب لیمو', 1.03],                                   // آبلیمو، آب‌لیمو، آب لیموی تازه
+  ['آب نارنج', 1.03],
+  ['آب غوره', 1.02],
+  ['آب پرتقال', 1.05],
+  ['آب سیب', 1.05],
+  ['آب انار', 1.05],
+  ['آب انگور', 1.06],
+  ['آب آناناس', 1.06],
+  ['آب میوه', 1.05, {g:1}],
+  ['آب', 1.05, {g:1, label:'آب میوه', any:'پرتقال سیب انار انگور آناناس گیلاس آلبالو هلو انبه موز توت کیوی نارنگی زردآلو انجیر گلابی هویج طالبی هندوانه آلو'}],
+  // ── شیر و لبنیات مایع
+  ['شیر', 1.03],
+  ['شیر کاکائو|شیر کاکاو', 1.05],
+  ['شیر نارگیل', 0.97],
+  ['شیر کندانسه|کندانسه|شیر غلیظ|شیر تغلیظ', 1.3, {label:'شیر غلیظِ شیرین'}],
+  ['شیر غلیظ بدون|شیر تغلیظ بدون|شیر تبخیر|شیر اواپوره|اواپوره', 1.07, {label:'شیر غلیظِ بدون شکر'}],
+  ['شیر عسل|شیر عسلی', null],                          // نامِ مبهم (شیر غلیظِ شیرین یا شیرِ طعم‌دار؟) → عمداً حدس نمی‌زنیم
+  ['خامه|ویپینگ|ویپ', 1.01],                           // همان ۱٫۰۱ نسخه‌های قبل؛ بازه‌ی منابع ۰٫۹۹۴ (خامه‌ی ۳۶٪) تا ۱٫۰۱۲ (خامه‌ی ۲۰٪)
+  ['ماست|یوگورت|یوغورت|یوگرت', 1.03],
+  ['دوغ', 1.03],
+  // ── روغن‌ها (همه‌ی روغن‌های مایع و جامد ۰٫۹۱ تا ۰٫۹۳)
+  ['روغن', 0.92],
+  // ── شیرین‌کننده‌های مایع و غلیظ
+  ['عسل', 1.42],
+  ['گلوکز', 1.4],
+  ['ملاس|مولاس', 1.4],
+  ['ایزوگلوکز|ایزو گلوکز|شربت ذرت|سیروپ ذرت|کورن سیروپ|اینورت|شکر اینورت', 1.38, {label:'شربت ذرت و اینورت'}],
+  ['شیره|دوشاب|دبس', 1.35, {g:1, label:'شیره'}],
+  ['شربت|سیروپ|سیرپ|شکر مایع|قند مایع', 1.3, {g:1, label:'شربت'}],
+  ['گلیسیرین|گلیسرین|گلیسیرول|گلیسرول', 1.26],
+  // ── تخم‌مرغ مایع (بسته‌بندیِ قنادی)
+  ['تخم مرغ مایع|تخم مرغ پاستوریزه|سفیده مایع|سفیده پاستوریزه|زرده مایع|زرده پاستوریزه', 1.03, {label:'تخم‌مرغ مایع'}]
 ];
-function guessDensity(name){
-  const nn=normFa(name);
-  if(!nn) return null;
-  const tokens=nn.split(' '), ns=nn.replace(/ /g,'');
-  // «شیر خشک»، «پودر شیر»، «کاغذ روغنی»: پودر/خشک/کاغذ مایع نیستن؛ چگالی شیر یا روغن بهشون نمی‌چسبه (حدسِ غلط بدتر از بی‌حدسی است)
-  if(tokens.indexOf('خشک')!==-1 || tokens.indexOf('پودر')!==-1 || tokens.indexOf('کاغذ')!==-1) return null;
-  for(const d of DENSITY_HINTS){
-    if(d.exact ? tokens.indexOf(d.kw)!==-1 : ns.indexOf(d.kw)!==-1) return d;
+// کلمه‌هایی که هر جای نام باشن یعنی «مایع نیست / ماده نیست» → بدون حدس
+const DENSITY_STOP_WORDS = 'پودر پودری خشک گرانول گرانوله گرانولی کاغذ فویل سلفون قالب برچسب روبان دستمال';
+// اگر «اولین کلمه‌ی» نام یکی از این‌ها باشه، نام یک محصول جامد یا ظرف است («بیسکویت شیر»، «ظرف روغن»، «پنیر خامه‌ای»)
+const DENSITY_SOLID_HEADS = 'کیک بیسکویت شکلات کاکائو کاکاو نان شیرینی پنیر بستنی مربا ژله پودینگ کرم نوتلا ویفر کلوچه کوکی نقل پولکی سوهان گز باقلوا حلوا کره مارگارین شورتنینگ قیمر کشک آرد شکر قند نمک برنج ماکارونی رشته نشاسته ادویه ظرف جعبه کارتن قوطی بطری شیشه پاکت کیسه لیوان فنجان قاشق قالب کاپ';
+// کلمه‌های «بی‌اثر» در نام (اندازه و واحد و صفت‌های رایج) — فقط برای ردیف‌های «only»
+const DENSITY_NOISE_WORDS = 'لیتر لیتری کیلو کیلوگرم کیلویی کیلوگرمی گرم گرمی میلی میلیلیتر سیسی سی cc ml l g kg بطری بطریی قوطی قوطیی شیشه شیشهای پاکت پاکتی بسته بستهای عدد عددی تک بزرگ کوچک متوسط خانواده فله صنعتی تازه خالص طبیعی اصل مرغوب درجه ممتاز ویژه یک و';
+function densityWord(w){                             // شکل «مقایسه‌ای» یک کلمه: املاهای رایج یکی می‌شن
+  return String(w).replace(/[آأإٱ]/g,'ا').replace(/ئ/g,'ی').replace(/ؤ/g,'و').replace(/ء/g,'').replace(/(.)\1+/g,'$1');
+}
+function densityWords(s){                            // نام → فهرست کلمه‌های مقایسه‌ای
+  const t=normFa(s).replace(/[^ء-غف-يٱ-ۓa-z0-9 ]/g,' ').split(' ').filter(Boolean).map(densityWord);
+  const out=[];
+  for(let i=0;i<t.length;i++){
+    if((t[i]==='ای' || t[i]==='ینی' || t[i]==='ین') && out.length){ out[out.length-1]+=t[i]; continue; }   // «خامه‌ای» صفت است («پنیر خامه‌ای»)، نه خامه؛ «شیر‌ینی» هم شیر نیست
+    if(t[i]==='ی' || t[i]==='ها' || t[i]==='های') continue;                  // «ی» اضافه و «ها»ی جداشده
+    out.push(t[i]);
   }
-  return null;
+  return out;
+}
+const DENSITY_STOP = new Set(densityWords(DENSITY_STOP_WORDS));
+const DENSITY_HEADS = new Set(densityWords(DENSITY_SOLID_HEADS));
+const DENSITY_NOISE = new Set(densityWords(DENSITY_NOISE_WORDS));
+const DENSITY_COMPOUNDS = new Map();                 // «آبلیمو» → [«آب»، «لیمو»] (از خودِ جدول ساخته می‌شه)
+const DENSITY_RULES = DENSITY_TABLE.map(function(r){
+  const alts=String(r[0]).split('|').map(function(a){ return densityWords(a); }).filter(function(a){ return a.length; });
+  alts.forEach(function(a){ for(let i=0;i+1<a.length;i++) DENSITY_COMPOUNDS.set(densityWord(a[i]+a[i+1]), [a[i],a[i+1]]); });
+  const o=r[2]||{};
+  return {alts:alts, d:r[1], label:o.label||String(r[0]).split('|')[0], g:!!o.g,
+          only:o.only?new Set(densityWords(o.only)):null, any:o.any?densityWords(o.any):null};
+});
+function densityFind(words, w){                      // جای کلمه در نام (با «ها»ی چسبیده و «ی» اضافه‌ی بعد از ا/و)؛ نبود = -1
+  for(let i=0;i<words.length;i++){
+    const x=words[i];
+    if(x===w || x===w+'ها' || x===w+'های' || (/[او]$/.test(w) && x===w+'ی')) return i;
+  }
+  return -1;
+}
+function guessDensity(name){
+  const raw=densityWords(name);
+  if(!raw.length) return null;
+  const words=[];                                    // «آبلیمو» → «آب» «لیمو»
+  raw.forEach(function(x){
+    const c=DENSITY_COMPOUNDS.get(x) || DENSITY_COMPOUNDS.get(x.replace(/(ها|های)$/,'')) || (/[او]ی$/.test(x) ? DENSITY_COMPOUNDS.get(x.slice(0,-1)) : null);
+    if(c){ words.push(c[0],c[1]); } else { words.push(x); }
+  });
+  if(words.some(function(x){ return DENSITY_STOP.has(x); })) return null;
+  let top=0, hits=[];
+  DENSITY_RULES.forEach(function(r){
+    r.alts.forEach(function(a){
+      if(!a.every(function(w){ return densityFind(words,w)!==-1; })) return;
+      let score=a.length;
+      if(r.any){ if(!r.any.some(function(w){ return densityFind(words,w)!==-1; })) return; score++; }
+      if(r.only){                                    // «تنها» بودن: هر کلمه‌ی دیگر باید بی‌اثر یا مجاز باشه
+        const extra=words.some(function(x){
+          if(/^\d/.test(x) || DENSITY_NOISE.has(x) || r.only.has(x)) return false;
+          return !a.some(function(w){ return densityFind([x],w)!==-1; });
+        });
+        if(extra) return;
+      }
+      if(r.g) score-=0.5;
+      if(score>top){ top=score; hits=[]; }
+      if(score===top) hits.push({r:r, a:a});
+    });
+  });
+  if(!hits.length) return null;
+  const best=hits[0];
+  if(hits.some(function(h){ return h.r.d!==best.r.d; })) return null;             // «روغن شیر»: دو ماده‌ی هم‌ارزش با عددهای متفاوت → مبهم
+  if(DENSITY_HEADS.has(words[0]) && best.a.indexOf(words[0])===-1) return null;   // «بیسکویت شیر»، «ظرف روغن»
+  if(best.r.d===null) return null;
+  return {val:best.r.d, label:best.r.label};
 }
 /* ---------- ابزارهای امن برای localStorage ---------- */
 function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
@@ -766,6 +875,18 @@ function normDecimalInput(el){                 // همون لحظه‌ی تای�
     try{ if(pos!=null && el.setSelectionRange) el.setSelectionRange(pos,pos); }catch(e){}
   }
 }
+function finishDecimalInput(el){               // وقتی کاربر کادر را ترک کرد: عددی که با ویرگول نوشته («1,5»، «۱،۵»، «1,500») همان‌طور که برنامه می‌خواند نشان داده می‌شه («1.5»، «1.5»، «1500»)
+  if(!el) return;
+  const v=String(el.value==null?'':el.value);
+  if(!/[,،٬]/.test(v)) return;                 // «/» و «٫» همان موقع تایپ عوض شده‌ان (normDecimalInput)؛ اینجا فقط ویرگول مانده
+  const n=toNum(v);
+  if(!(n>0) || !isFinite(n)) return;
+  try{ el.value=n.toLocaleString('en-US',{useGrouping:false,maximumFractionDigits:12}); }catch(e){}
+}
+// فقط «بعد از ترک کادر»: وسط تایپ نمی‌شه عوضش کرد، چون «1,5» می‌تونه شروعِ «1,500» (هزارگان) باشه
+document.addEventListener('change', function(e){
+  try{ const el=e && e.target; if(el && el.tagName==='INPUT' && el.getAttribute('inputmode')==='decimal') finishDecimalInput(el); }catch(err){}
+});
 function hasNegativeSign(s){ return /^[-−–—]/.test(normalizeNumText(s)); }
 function toNum(s){
   let v=normalizeNumText(s);
@@ -1890,12 +2011,19 @@ function onMatNameInput(){
   updateDensityAutoNote();
 }
 function onMatDensityInput(){ matDensityAuto=false; updateDensityAutoNote(); }
-/* چگالیِ «پیشنهادی» (از روی نام ماده) فقط یک حدس است؛ تا وقتی کاربر خودش عدد را عوض نکرده، کنار کادر یادداشت می‌آید
-   تا بی‌خبر روی قیمت اثر نگذارد (مثلاً «شیر» ۱٫۰۳ و «روغن» ۰٫۹۲ برای مواد خاص ممکنه دقیق نباشد). */
+/* چگالیِ «خودکار» (از روی نام ماده): کنار کادر یک یادداشتِ کوتاه می‌آید که می‌گوید برنامه چه ماده‌ای را تشخیص داده؛
+   تا وقتی کاربر خودش عدد را عوض نکرده نمایش داده می‌شود. این یادداشت فقط اطلاع‌رسانی است (وضعیتِ محصول را عوض نمی‌کند). */
 function updateDensityAutoNote(){
   const el=document.getElementById('mat-density-auto'); if(!el) return;
   const d=toNum(document.getElementById('mat-density').value);
-  el.textContent = (matDensityAuto && d>0) ? '✨ این عدد از روی نام ماده پیشنهاد شد و ممکن است برای ماده‌ی شما دقیق نباشد؛ اگه می‌دونید درست نیست، عوضش کنید.' : '';
+  let t='';
+  if(matDensityAuto && d>0){
+    const g=guessDensity(document.getElementById('mat-name').value);
+    t = (g && g.val===d)
+      ? '✨ چگالیِ «'+g.label+'» خودکار گذاشته شد. اگه ماده‌ی شما فرق می‌کنه، عدد رو عوض کنید.'
+      : '✨ این عدد خودکار گذاشته شد. اگه ماده‌ی شما فرق می‌کنه، عدد رو عوض کنید.';
+  }
+  el.textContent=t;
 }
 function toggleHistory(){ document.getElementById('mat-history-list').classList.toggle('hidden'); }
 function renderHistory(m){
@@ -2703,26 +2831,9 @@ function triggerDownload(blob, fname){
 async function blockedBackupNotice(){
   await showDialog({type:'warning',title:'فعلاً پشتیبان‌گیری ممکن نیست',message:'اطلاعات ذخیره‌شده مشکل دارد و چیزی برای پشتیبان‌گیری سالم نیست. اول «بازیابی از فایل پشتیبان» یا «نسخه‌های خودکار» را امتحان کنید.',primary:{label:'باشه'}});
 }
-/* مرورگر نمی‌گوید فایل «واقعاً» ذخیره یا ارسال شد یا نه (کاربر ممکنه صفحه‌ی ذخیره/ارسال رو بسته باشه، حافظه پر باشه، پیام ارسال نشده باشه).
-   «پشتیبان گرفته شد» که غلط ثبت بشه یعنی یادآوری خاموش می‌شه و کاربر با احساس امنیتِ دروغین می‌ره؛ پس فقط با تأییدِ خودِ کاربر ثبت می‌شه. */
-async function confirmBackupDone(kind){
-  const isFile = (kind!=='share');
-  const yes=await showDialog({type:'confirm',
-    title: isFile ? 'فایل ذخیره شد؟' : 'پیام ارسال شد؟',
-    message: isFile
-      ? 'اگر گوشی اعلان «دانلود شد» نشان داد (فایل در پوشه‌ی «دانلودها» ذخیره می‌شود و اسمش با «پشتیبان-حسابگر-قنادی» شروع می‌شود)، «بله» را بزنید.\nاگر اعلانی ندیدید یا مطمئن نیستید، «نه» را بزنید و دوباره امتحان کنید.'
-      : 'اگر فایل را در تلگرام، واتساپ یا ایمیل فرستادید، «بله» را بزنید.\nاگر منصرف شدید یا ارسال نشد، «نه» را بزنید.',
-    primary:{label: isFile ? 'بله، ذخیره شد' : 'بله، ارسال شد'},
-    secondary:{label: isFile ? 'نه، دوباره امتحان می‌کنم' : 'نه'}});
-  if(!yes){
-    toast('پشتیبان ثبت نشد. هر وقت خواستید دوباره امتحان کنید.');
-    return false;
-  }
-  markBackedUp(isFile ? 'file' : 'share');
-  renderBackupUI(); renderTopBanners();
-  toast('پشتیبان ثبت شد ✓');
-  return true;
-}
+/* تصمیم مالک برنامه (۰.۴.۲): بعد از ذخیره/ارسال پشتیبان هیچ پرسشی نمی‌پرسیم (برای کاربران مسن گیج‌کننده بود). «پشتیبان گرفته شد» همان لحظه‌ی
+   ذخیره/تحویل فایل ثبت می‌شه. مرورگر نمی‌گه فایل «واقعاً» ذخیره یا پیام «واقعاً» ارسال شد؛ پس یادآوری‌های بعدی (تعداد تغییر و تعداد روز)
+   سر جاشان هستند و نسخه‌های ایمنی خودکار هم جدا از این کار می‌کنند. */
 async function downloadBackup(){                // «ذخیره‌ی فایل در گوشی»: فقط فایل رو توی حافظه‌ی گوشی ذخیره می‌کنه (جدا از اشتراک‌گذاری)
   if(storageBlocked){ await blockedBackupNotice(); return false; }
   try{
@@ -2731,7 +2842,10 @@ async function downloadBackup(){                // «ذخیره‌ی فایل د
     await showDialog({type:'error',title:'فایل پشتیبان ساخته نشد',message:'متأسفانه فایل پشتیبان ساخته نشد. دوباره امتحان کنید.',primary:{label:'باشه'}});
     return false;
   }
-  return await confirmBackupDone('file');
+  markBackedUp('file');
+  renderBackupUI(); renderTopBanners();
+  toast('فایل پشتیبان ذخیره شد ✓ (معمولاً در پوشه‌ی «دانلودها»)');
+  return true;
 }
 function shareSupported(){
   try{
@@ -2772,7 +2886,10 @@ async function shareBackup(){                   // «اشتراک‌گذاری»
     if(go) await downloadBackup();
     return 'failed';
   }
-  return (await confirmBackupDone('share')) ? 'ok' : 'unconfirmed';     // موفقیتِ navigator.share یعنی «کاربر مقصد را انتخاب کرد»، نه «پیام رفت»
+  markBackedUp('share');                        // موفقیتِ navigator.share یعنی «کاربر مقصد را انتخاب کرد»، نه لزوماً «پیام رفت»
+  renderBackupUI(); renderTopBanners();
+  toast('فایل پشتیبان ارسال شد ✓');
+  return 'ok';
 }
 function pickRestoreFile(){ document.getElementById('restore-file').click(); }
 function keepCorruptCopy(){                     // نسخه‌ی خراب‌شده قبل از هر جایگزینی جدا نگه داشته می‌شه (برای تعمیر احتمالی)
